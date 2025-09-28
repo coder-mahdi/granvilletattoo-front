@@ -1,0 +1,45 @@
+// Home page styles
+.home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  
+  .hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: $spacing-xl 0;
+    text-align: center;
+    
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 $spacing-md;
+    }
+    
+    h1 {
+      font-size: 3rem;
+      margin-bottom: $spacing-md;
+      
+      @include mobile {
+        font-size: 2rem;
+      }
+    }
+    
+    p {
+      font-size: 1.2rem;
+      margin-bottom: $spacing-lg;
+      opacity: 0.9;
+    }
+  }
+  
+  .content {
+    flex: 1;
+    padding: $spacing-xl 0;
+    
+    .content-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 $spacing-md;
+    }
+  }
+}
