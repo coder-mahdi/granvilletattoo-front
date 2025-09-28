@@ -1,0 +1,42 @@
+// Header styles
+.header {
+  background-color: $background-color;
+  border-bottom: 1px solid #eee;
+  padding: $spacing-md 0;
+  
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+    @include flex-between;
+  }
+  
+  .logo {
+    font-family: $primary-font;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: $primary-color;
+    text-decoration: none;
+  }
+  
+  .nav {
+    ul {
+      list-style: none;
+      display: flex;
+      gap: $spacing-lg;
+      margin: 0;
+      padding: 0;
+    }
+    
+    a {
+      font-family: $paragraph-font;
+      color: $text-color;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+}
