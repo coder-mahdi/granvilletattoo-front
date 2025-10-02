@@ -9,28 +9,21 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 $spacing-md;
-    @include flex-between;
+    text-align: center;
   }
   
   .footer-content {
     p {
       font-family: $paragraph-font;
-      margin: 0;
+      margin: 0 0 $spacing-sm 0;
       opacity: 0.8;
-    }
-  }
-  
-  .footer-links {
-    ul {
-      list-style: none;
-      display: flex;
-      gap: $spacing-lg;
-      margin: 0;
-      padding: 0;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
     
     a {
-      font-family: $paragraph-font;
       color: white;
       text-decoration: none;
       opacity: 0.8;

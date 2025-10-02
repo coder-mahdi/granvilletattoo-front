@@ -1,2 +1,10 @@
 @import 'header';
 @import 'footer';
+
+// Container styles for consistent layout
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+  width: 100%;
+}

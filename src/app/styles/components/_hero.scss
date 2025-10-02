@@ -20,10 +20,7 @@
   }
 
   .hero-container {
-    max-width: 1200px;
-    width: 100%;
-    padding: 0 20px;
-    text-align: center;
+    text-align: left;
     z-index: 2;
 
     .hero-title {
@@ -82,7 +79,7 @@
     .hero-buttons {
       display: flex;
       gap: 2rem;
-      justify-content: center;
+      justify-content: flex-start;
       flex-wrap: wrap;
       opacity: 0;
       transform: translateY(30px);
@@ -90,7 +87,7 @@
 
       @include mobile {
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         gap: 1rem;
       }
 
