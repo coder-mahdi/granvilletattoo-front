@@ -42,38 +42,45 @@
     width: 100%;
     position: relative;
 
+    .hero-logo {
+      position: absolute;
+      top: -8rem;
+      left: 8rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease-out 3.5s forwards;
+      z-index: 10;
+      
+      .logo-img {
+        height: 60px;
+        width: auto;
+        animation: logoShake 5s ease-in-out infinite;
+        animation-delay: 4.5s;
+      }
+    }
+
+    .hero-content {
+      position: absolute;
+      top: 5rem;
+      left: 0;
+      right: 0;
+      opacity: 0;
+      animation: fadeInUp 1s ease-out 3.8s forwards;
+    }
+
     .hero-title {
       font-family: $primary-font;
       font-size: 4rem;
       font-weight: bold;
       color: $text-color;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       text-transform: uppercase;
       letter-spacing: 3px;
-      opacity: 0;
-      transform: translateY(50px);
-      animation: fadeInUp 1s ease-out 3.8s forwards;
 
       @include mobile {
         font-size: 2.5rem;
         letter-spacing: 2px;
         margin-bottom: 1rem;
-      }
-    }
-
-    .hero-subtitle {
-      font-family: $paragraph-font;
-      font-size: 1.5rem;
-      color: $secondary-color;
-      margin-bottom: 2rem;
-      font-weight: 300;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 1s ease-out 4.1s forwards;
-
-      @include mobile {
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
       }
     }
 
@@ -83,71 +90,18 @@
       color: $secondary-color;
       max-width: 600px;
       line-height: 1.8;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 1s ease-out 4.4s forwards;
 
       @include mobile {
         font-size: 1rem;
-        margin-bottom: 2rem;
         padding: 0 10px;
       }
     }
 
-    .hero-buttons {
-      display: flex;
-      gap: 2rem;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 1s ease-out 4.7s forwards;
-
-      @include mobile {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-      }
-
-      .btn {
-        padding: 12px 24px;
-        border: 2px solid $primary-color;
-        border-radius: 8px;
-        background: transparent;
-        color: $primary-color;
-        font-family: $paragraph-font;
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-
-        &:hover {
-          background: $primary-color;
-          color: $background-color;
-          transform: translateY(-2px);
-          box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
-        }
-
-        &.btn-primary {
-          background: $primary-color;
-          color: $background-color;
-
-          &:hover {
-            background: transparent;
-            color: $primary-color;
-          }
-        }
-      }
-    }
   }
 
   .hero-side-nav {
     position: absolute;
-    top: 50%;
+    top: 5%;
     right: $spacing-md;
     transform: translateY(-50%);
     display: flex;
@@ -192,6 +146,42 @@
       }
     }
   }
+
+  .hero-social {
+    position: absolute;
+    bottom: -15rem;
+    right: $spacing-md;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    opacity: 1;
+    z-index: 10;
+
+    @include mobile {
+      display: none;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      color: $text-color;
+      transition: all 0.3s ease;
+      border-radius: 50%;
+      
+      &:hover {
+        color: $primary-color;
+        transform: scale(1.1);
+      }
+      
+      svg {
+        width: 26px;
+        height: 26px;
+      }
+    }
+  }
 }
 
 // Hero Animation Keyframes
@@ -214,5 +204,40 @@
   to {
     opacity: 1;
     transform: translateY(-50%) translateX(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+@keyframes logoShake {
+  0%, 90% {
+    transform: scale(1);
+  }
+  92% {
+    transform: scale(1.3);
+  }
+  93%, 95%, 97%, 99% {
+    transform: scale(1.3) translateX(0);
+  }
+  94% {
+    transform: scale(1.3) translateX(-3px);
+  }
+  96% {
+    transform: scale(1.3) translateX(3px);
+  }
+  98% {
+    transform: scale(1.3) translateX(-2px);
+  }
+  100% {
+    transform: scale(1.3) translateX(2px);
   }
 }
