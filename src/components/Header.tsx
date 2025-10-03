@@ -7,11 +7,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
-    { name: 'Book Now', href: '/book' },
     { name: 'About Us', href: '/about' },
-    { name: 'Gallery', href: '/gallery' },
-    { name: 'Artist', href: '/artist' },
-    { name: 'Services', href: '/services' },
     { name: 'Blogs', href: '/blogs' }
   ];
 

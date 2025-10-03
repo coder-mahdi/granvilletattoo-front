@@ -1,9 +1,11 @@
 // Header styles
 .header {
-  background-color: $background-color;
-  border-bottom: 1px solid #eee;
+  background-color: transparent;
   padding: $spacing-md 0;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 2000;
   
   .header-container {
