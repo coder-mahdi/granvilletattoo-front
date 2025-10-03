@@ -130,6 +130,89 @@
   }
 }
 
+// Gallery Section Styles
+.gallery-section {
+  min-height: 100vh;
+  background-color: $background-color;
+  padding: $spacing-xl 0;
+  position: relative;
+  
+  .gallery-title {
+    font-family: $primary-font;
+    font-size: 3rem;
+    font-weight: bold;
+    color: $text-color;
+    text-align: center;
+    margin-bottom: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    
+    @include mobile {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+  }
+  
+  .gallery-horizontal {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2rem 0;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: $primary-color;
+      border-radius: 4px;
+    }
+    
+    @include mobile {
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+  }
+  
+  .gallery-item {
+    flex-shrink: 0;
+    width: 400px;
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover img {
+      transform: scale(1.1);
+    }
+    
+    @include mobile {
+      width: 280px;
+      height: 350px;
+    }
+  }
+}
+
 // Loading Animation Keyframes
 @keyframes playInPlace {
   0% {

@@ -1,9 +1,11 @@
 // Header styles
 .header {
-  background-color: $background-color;
-  border-bottom: 1px solid #eee;
+  background-color: transparent;
   padding: $spacing-md 0;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 2000;
   
   .header-container {
@@ -13,13 +15,43 @@
     @include flex-between;
   }
   
-  .logo {
+  .contact-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
     position: relative;
     z-index: 3000;
     
-    .logo-img {
-      height: 50px;
-      width: auto;
+    .phone-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        .phone-icon {
+          transform: scale(1.1);
+          stroke: $primary-color;
+        }
+      }
+      
+      .phone-icon {
+        transition: all 0.3s ease;
+        stroke: $text-color;
+      }
+    }
+    
+    .divider {
+      width: 1px;
+      height: 20px;
+      background-color: white;
+    }
+    
+    .address {
+      font-family: $paragraph-font;
+      color: $text-color;
+      font-size: 0.9rem;
+      opacity: 0.9;
     }
   }
   
