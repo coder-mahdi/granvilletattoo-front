@@ -132,24 +132,64 @@
 
 // Gallery Section Styles
 .gallery-section {
-  min-height: 100vh;
-  background-color: $background-color;
-  padding: $spacing-xl 0;
+  height: 100vh; // Fixed height for proper wheel event handling
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 0;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/hero.png') center/cover no-repeat;
+    opacity: 0.1;
+    z-index: -1;
+  }
   
   .gallery-title {
     font-family: $primary-font;
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: bold;
     color: $text-color;
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 0.5rem;
+    margin-top: auto;
     text-transform: uppercase;
     letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
     
     @include mobile {
-      font-size: 2rem;
-      margin-bottom: 2rem;
+      font-size: 2.5rem;
+      margin-bottom: 0.25rem;
+    }
+  }
+  
+  .gallery-description {
+    font-family: $paragraph-font;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+    
+    @include mobile {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 0 1rem;
     }
   }
   
@@ -158,41 +198,44 @@
     gap: 2rem;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 2rem 0;
+    padding: 0 2rem 20px 2rem;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
+    white-space: nowrap;
+    scroll-snap-type: x mandatory;
+    height: fit-content;
+    align-items: center;
+    
+    // Hide scrollbar
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     
     &::-webkit-scrollbar {
-      height: 8px;
-    }
-    
-    &::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: $primary-color;
-      border-radius: 4px;
+      display: none;
     }
     
     @include mobile {
-      gap: 1rem;
-      padding: 1rem 0;
+      gap: 1.5rem;
+      padding: 0 1rem 15px 1rem;
     }
   }
   
   .gallery-item {
     flex-shrink: 0;
-    width: 400px;
-    height: 500px;
+    width: 350px;
+    height: 450px;
     position: relative;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 15px;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    scroll-snap-align: center;
     
     &:hover {
-      transform: scale(1.05);
+      transform: scale(1.05) translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
     
     img {
@@ -207,8 +250,33 @@
     }
     
     @include mobile {
-      width: 280px;
-      height: 350px;
+      width: 250px;
+      height: 320px;
+    }
+  }
+  
+  .gallery-scroll-indicator {
+    position: absolute;
+    bottom: 0.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    z-index: 2;
+    
+    .scroll-progress {
+      height: 100%;
+      background: linear-gradient(90deg, $primary-color, lighten($primary-color, 20%));
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    
+    @include mobile {
+      width: 200px;
+      bottom: 0.1rem;
     }
   }
 }
