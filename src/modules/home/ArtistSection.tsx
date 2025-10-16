@@ -9,27 +9,30 @@ export default function ArtistSection() {
   const artists = [
     {
       id: 1,
-      name: 'Alex Rodriguez',
-      specialty: 'Realistic Tattoos',
-      experience: '8 years',
+      name: 'John Doe',
+      specialty: 'Realistic Portraits',
+      experience: '10+ years',
       image: '/images/hero.png',
-      description: 'Specialized in realistic portraits and nature-inspired designs'
+      description: 'Specialized in realistic portraits and black & grey work',
+      slug: 'john-doe'
     },
     {
       id: 2,
-      name: 'Sarah Chen',
+      name: 'Jane Smith',
       specialty: 'Traditional Japanese',
-      experience: '6 years',
+      experience: '8 years',
       image: '/images/pic1.png',
-      description: 'Master of traditional Japanese tattoo art and cultural symbolism'
+      description: 'Master of traditional Japanese tattoo art and cultural symbolism',
+      slug: 'jane-smith'
     },
     {
       id: 3,
-      name: 'Marcus Johnson',
+      name: 'Alex Rodriguez',
       specialty: 'Black & Grey',
-      experience: '10 years',
+      experience: '6 years',
       image: '/images/hero.png',
-      description: 'Expert in black and grey realism with incredible attention to detail'
+      description: 'Expert in black and grey realism with incredible attention to detail',
+      slug: 'alex-rodriguez'
     },
     {
       id: 4,
@@ -37,7 +40,8 @@ export default function ArtistSection() {
       specialty: 'Fine Line & Geometric',
       experience: '5 years',
       image: '/images/pic1.png',
-      description: 'Specializing in delicate fine line work and intricate geometric patterns'
+      description: 'Specializing in delicate fine line work and intricate geometric patterns',
+      slug: 'elena-martinez'
     }
   ];
 
@@ -119,17 +123,12 @@ export default function ArtistSection() {
                   </div>
                   <div className="artist-details">
                     <p className="artist-description">{artist.description}</p>
-                    <button className="artist-button">View Portfolio</button>
+                    <a href={`/single-artist/${artist.slug}`} className="artist-button">View Portfolio</a>
                   </div>
                 </div>
               );
             })}
           </div>
-        </div>
-        
-        <div className="artist-cta">
-          <p className="cta-text">Ready to work with our artists?</p>
-          <a href="#book" className="cta-button">Book Consultation</a>
         </div>
       </Container>
     </section>

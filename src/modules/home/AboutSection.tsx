@@ -3,24 +3,19 @@ import Container from '@/components/Container';
 export default function AboutSection() {
   const features = [
     {
-      icon: '🎨',
+      image: '/images/hero.png',
       title: 'Professional Artists',
       description: 'Our team of skilled artists brings years of experience and passion to every piece.'
     },
     {
-      icon: '🏆',
+      image: '/images/pic1.png',
       title: 'Award Winning',
       description: 'Recognized as Vancouver\'s premier tattoo studio with numerous industry awards.'
     },
     {
-      icon: '🔒',
+      image: '/images/hero.png',
       title: 'Safe & Clean',
       description: 'We maintain the highest standards of hygiene and safety in all our procedures.'
-    },
-    {
-      icon: '⭐',
-      title: '5-Star Service',
-      description: 'Thousands of satisfied customers with consistently excellent reviews.'
     }
   ];
 
@@ -55,7 +50,9 @@ export default function AboutSection() {
           <div className="about-features">
             {features.map((feature, index) => (
               <div key={index} className="feature-card">
-                <div className="feature-icon">{feature.icon}</div>
+                <div className="feature-image">
+                  <img src={feature.image} alt={feature.title} />
+                </div>
                 <h3 className="feature-title">{feature.title}</h3>
                 <p className="feature-description">{feature.description}</p>
               </div>

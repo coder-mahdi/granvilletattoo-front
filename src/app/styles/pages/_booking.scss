@@ -1,0 +1,237 @@
+@import '../abstracts/abstracts';
+
+.booking-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(20, 20, 20, 0.95) 100%);
+  color: $text-color;
+  
+  .booking-hero {
+    padding: 6rem 0 $spacing-xl 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(20, 20, 20, 0.9) 100%);
+    position: relative;
+    
+    @include mobile {
+      padding: 5rem 0 $spacing-lg 0;
+    }
+    
+    .booking-header {
+      text-align: center;
+      
+      .booking-title {
+        font-family: $primary-font;
+        font-size: 3rem;
+        font-weight: bold;
+        color: $primary-color;
+        margin-bottom: $spacing-md;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        
+        @include mobile {
+          font-size: 2.5rem;
+        }
+      }
+      
+      .booking-subtitle {
+        font-family: $paragraph-font;
+        font-size: 1.2rem;
+        color: rgba($text-color, 0.8);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+    }
+  }
+  
+  .booking-form {
+    max-width: 800px;
+    margin: $spacing-xl auto;
+    background: rgba(255, 255, 255, 0.05);
+    padding: $spacing-xl;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    
+    @include mobile {
+      padding: $spacing-lg;
+      margin: $spacing-lg $spacing-md;
+    }
+  }
+  
+  .form-group {
+    margin-bottom: $spacing-lg;
+    
+    .form-label {
+      display: block;
+      font-family: $primary-font;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $text-color;
+      margin-bottom: $spacing-sm;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: $spacing-md;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      color: $text-color;
+      font-family: $paragraph-font;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      
+      &::placeholder {
+        color: rgba($text-color, 0.6);
+      }
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba($primary-color, 0.3);
+      }
+      
+      &.error {
+        border-color: #ff4444;
+        box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+      }
+    }
+    
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    
+    .form-file {
+      width: 100%;
+      padding: $spacing-md;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      color: $text-color;
+      font-family: $paragraph-font;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        border-color: $primary-color;
+        background: rgba(255, 255, 255, 0.15);
+      }
+    }
+    
+    .form-help {
+      font-family: $paragraph-font;
+      font-size: 0.9rem;
+      color: rgba($text-color, 0.6);
+      margin-top: $spacing-xs;
+    }
+    
+    .error-message {
+      display: block;
+      color: #ff4444;
+      font-family: $paragraph-font;
+      font-size: 0.9rem;
+      margin-top: $spacing-xs;
+    }
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-lg;
+    
+    @include mobile {
+      grid-template-columns: 1fr;
+      gap: $spacing-md;
+    }
+  }
+  
+  .recaptcha-container {
+    .recaptcha-placeholder {
+      padding: $spacing-lg;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      text-align: center;
+      color: rgba($text-color, 0.6);
+      font-family: $paragraph-font;
+    }
+  }
+  
+  .form-checkboxes {
+    margin: $spacing-xl 0;
+    
+    .checkbox-group {
+      margin-bottom: $spacing-lg;
+      
+      .form-checkbox {
+        margin-right: $spacing-sm;
+        transform: scale(1.2);
+        accent-color: $primary-color;
+      }
+      
+      .checkbox-label {
+        font-family: $paragraph-font;
+        color: $text-color;
+        line-height: 1.6;
+        cursor: pointer;
+        
+        .terms-link {
+          color: $primary-color;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            color: lighten($primary-color, 20%);
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+  
+  .form-submit {
+    text-align: center;
+    margin-top: $spacing-xl;
+    
+    .submit-button {
+      background: linear-gradient(45deg, $primary-color, lighten($primary-color, 10%));
+      color: #000;
+      border: none;
+      padding: $spacing-lg $spacing-xl;
+      font-family: $primary-font;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba($primary-color, 0.4);
+      min-width: 200px;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba($primary-color, 0.6);
+        background: linear-gradient(45deg, lighten($primary-color, 5%), lighten($primary-color, 15%));
+      }
+      
+      &:active:not(:disabled) {
+        transform: translateY(-1px);
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+  }
+  
+}

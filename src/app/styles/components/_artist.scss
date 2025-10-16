@@ -177,12 +177,15 @@
         letter-spacing: 1px;
         cursor: pointer;
         transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
 
         &:hover {
           background: $primary-color;
           color: $text-color;
-          transform: translateY(-2px);
         }
+        
+        @include button-hover-primary;
       }
     }
   }
@@ -218,6 +221,7 @@
       box-shadow: 0 10px 30px rgba($primary-color, 0.3);
 
       &:hover {
+        color: #000;
         transform: translateY(-3px);
         box-shadow: 0 15px 40px rgba($primary-color, 0.4);
       }

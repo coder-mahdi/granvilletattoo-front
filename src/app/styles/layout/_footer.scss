@@ -75,9 +75,10 @@
       
       &:hover {
         opacity: 1;
-        color: $primary-color;
-        transform: translateY(-2px);
+        color: #000;
       }
+      
+      @include button-hover-primary;
     }
   }
   
@@ -103,9 +104,10 @@
       
       &:hover {
         background: $primary-color;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+        color: #000;
       }
+      
+      @include button-hover-primary;
     }
   }
   
@@ -114,27 +116,92 @@
     padding-top: $spacing-lg;
     text-align: center;
     
-    p {
-      font-family: $paragraph-font;
-      margin: 0 0 $spacing-sm 0;
-      opacity: 0.7;
-      font-size: 0.9rem;
+    .footer-links {
+      margin-bottom: $spacing-lg;
       
-      &:last-child {
-        margin-bottom: 0;
+      .footer-link {
+        display: inline-block;
+        color: $primary-color;
+        text-decoration: none;
+        font-family: $paragraph-font;
+        font-size: 0.9rem;
+        margin: 0 $spacing-md;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          color: #000;
+          background: $primary-color;
+          transform: translateY(-2px);
+        }
+        
+        @include mobile {
+          display: block;
+          margin: $spacing-sm 0;
+        }
       }
     }
     
-    a {
-      color: $primary-color;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      
-      &:hover {
-        color: $text-color;
-        text-decoration: underline;
+    .footer-copyright {
+      p {
+        font-family: $paragraph-font;
+        margin: 0 0 $spacing-sm 0;
+        opacity: 0.7;
+        font-size: 0.9rem;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
       }
+      
+      a {
+        color: $primary-color;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          color: $text-color;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  
+  .back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    background: $primary-color;
+    color: #000;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba($primary-color, 0.4);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    
+    &:hover {
+      background: lighten($primary-color, 10%);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba($primary-color, 0.6);
+    }
+    
+    &:active {
+      transform: translateY(-1px);
+    }
+    
+    @include mobile {
+      bottom: 1rem;
+      right: 1rem;
+      width: 45px;
+      height: 45px;
     }
   }
 }

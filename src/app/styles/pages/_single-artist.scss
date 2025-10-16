@@ -52,17 +52,14 @@
       letter-spacing: 1px;
       transition: all 0.3s ease;
       
-      &:hover {
-        background: darken($primary-color, 10%);
-        transform: translateY(-2px);
-      }
+      @include button-hover-primary;
     }
   }
 }
 
 // Single Artist Hero Section
 .single-artist-hero {
-  padding: $spacing-xl 0;
+  padding: 6rem 0 $spacing-xl 0;
   background: linear-gradient(135deg, rgba($primary-color, 0.1) 0%, rgba($primary-color, 0.05) 100%);
   
   .artist-hero-content {
@@ -78,7 +75,36 @@
     }
   }
   
+  @include mobile {
+    padding: 5rem 0 $spacing-lg 0;
+  }
+  
   .artist-info {
+    .artist-logo {
+      margin-bottom: $spacing-md;
+      
+      .logo-link {
+        display: inline-block;
+        text-decoration: none;
+        
+        .logo-img {
+          height: 50px;
+          width: auto;
+          opacity: 0.8;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            opacity: 1;
+            transform: scale(1.05);
+          }
+          
+          @include mobile {
+            height: 40px;
+          }
+        }
+      }
+    }
+    
     .artist-name {
       font-family: $primary-font;
       font-size: 3.5rem;
@@ -186,13 +212,13 @@
       }
       
       .book-btn {
-        background: $primary-color;
+        background: linear-gradient(45deg, #ff6b35, #f7931e);
         color: white;
+        border: 2px solid transparent;
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        font-size: 1rem;
         
-        &:hover {
-          background: darken($primary-color, 10%);
-          transform: translateY(-2px);
-        }
+        @include button-hover-gradient;
       }
       
       .portfolio-btn {
@@ -200,11 +226,7 @@
         color: $primary-color;
         border: 2px solid $primary-color;
         
-        &:hover {
-          background: $primary-color;
-          color: white;
-          transform: translateY(-2px);
-        }
+        @include button-hover-primary;
       }
     }
   }
@@ -263,10 +285,10 @@
       
       &:hover {
         background: $primary-color;
-        color: white;
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba($primary-color, 0.3);
+        color: #000;
       }
+      
+      @include button-hover-lift;
     }
   }
 }
@@ -291,12 +313,14 @@
   }
   
   .portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: $spacing-lg;
+    justify-content: center;
     
     @include mobile {
-      grid-template-columns: 1fr;
+      flex-direction: column;
+      align-items: center;
     }
     
     .portfolio-item {
@@ -305,6 +329,8 @@
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
+      flex: 0 0 350px;
+      max-width: 450px;
       
       &:hover {
         transform: translateY(-10px);
@@ -408,10 +434,10 @@
       
       &:hover {
         background: $primary-color;
-        color: white;
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba($primary-color, 0.3);
+        color: #000;
       }
+      
+      @include button-hover-lift;
     }
   }
 }
