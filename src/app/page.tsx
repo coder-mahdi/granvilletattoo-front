@@ -7,7 +7,6 @@ import HeroSection from '@/modules/home/HeroSection';
 import AboutSection from '@/modules/home/AboutSection';
 import ArtistSection from '@/modules/home/ArtistSection';
 import GallerySection from '@/modules/home/GallerySection';
-import Footer from '@/components/Footer';
 
 export default function Home() {
   const [showContent, setShowContent] = useState(false);
@@ -29,7 +28,6 @@ export default function Home() {
         <GallerySection />
         <ArtistSection />
         <AboutSection />
-        <Footer />
       </div>
     </section>
   );

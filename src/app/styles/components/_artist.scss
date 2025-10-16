@@ -50,9 +50,14 @@
     }
   }
 
+  .artists-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
   .artists-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 3rem;
     margin-bottom: 5rem;
 
@@ -66,12 +71,15 @@
     background: rgba(255, 255, 255, 0.05);
     border-radius: 15px;
     overflow: hidden;
-    transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    // Initial state - cards start hidden and off-screen with more distance
+    transform: translateX(-300px);
+    opacity: 0;
 
     &:hover {
-      transform: translateY(-10px);
+      transform: translateY(-10px) !important;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
       border-color: $primary-color;
     }
