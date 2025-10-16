@@ -1,6 +1,11 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import Container from '@/components/Container';
 
 export default function ArtistSection() {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
   const artists = [
     {
       id: 1,
@@ -25,11 +30,52 @@ export default function ArtistSection() {
       experience: '10 years',
       image: '/images/hero.png',
       description: 'Expert in black and grey realism with incredible attention to detail'
+    },
+    {
+      id: 4,
+      name: 'Elena Martinez',
+      specialty: 'Fine Line & Geometric',
+      experience: '5 years',
+      image: '/images/pic1.png',
+      description: 'Specializing in delicate fine line work and intricate geometric patterns'
     }
   ];
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      
+      const rect = sectionRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      // Calculate how much of the section is visible
+      const sectionTop = rect.top;
+      const sectionHeight = rect.height;
+      
+      // Start animation when section enters viewport
+      const startPoint = windowHeight;
+      const endPoint = windowHeight - sectionHeight;
+      
+      let progress = 0;
+      if (sectionTop < startPoint && sectionTop > endPoint) {
+        progress = Math.min(1, Math.max(0, (startPoint - sectionTop) / (startPoint - endPoint)));
+      } else if (sectionTop <= endPoint) {
+        progress = 1;
+      }
+      
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial check
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
-    <section className="artist-section">
+    <section ref={sectionRef} className="artist-section">
       <Container>
         <div className="artist-header">
           <h2 className="artist-title">Our Artists</h2>
@@ -38,25 +84,47 @@ export default function ArtistSection() {
           </p>
         </div>
         
-        <div className="artists-grid">
-          {artists.map((artist) => (
-            <div key={artist.id} className="artist-card">
-              <div className="artist-image">
-                <img src={artist.image} alt={artist.name} />
-                <div className="artist-overlay">
-                  <div className="artist-info">
-                    <h3 className="artist-name">{artist.name}</h3>
-                    <p className="artist-specialty">{artist.specialty}</p>
-                    <p className="artist-experience">{artist.experience} experience</p>
+        <div className="artists-container">
+          <div className="artists-grid">
+            {artists.map((artist, index) => {
+              const isLeftSide = index % 2 === 0;
+              // Same progress for both left and right cards in each row
+              const rowIndex = Math.floor(index / 2);
+              const cardProgress = Math.max(0, Math.min(1, (scrollProgress - rowIndex * 0.2) / 0.4));
+              
+              const translateX = isLeftSide 
+                ? -300 + (300 * cardProgress)  // Increased from 100 to 300
+                : 300 - (300 * cardProgress);   // Increased from 100 to 300
+              const opacity = cardProgress;
+              
+              return (
+                <div 
+                  key={artist.id} 
+                  className="artist-card"
+                  style={{ 
+                    transform: `translateX(${translateX}px)`,
+                    opacity: opacity,
+                    transition: 'none'
+                  }}
+                >
+                  <div className="artist-image">
+                    <img src={artist.image} alt={artist.name} />
+                    <div className="artist-overlay">
+                      <div className="artist-info">
+                        <h3 className="artist-name">{artist.name}</h3>
+                        <p className="artist-specialty">{artist.specialty}</p>
+                        <p className="artist-experience">{artist.experience} experience</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="artist-details">
+                    <p className="artist-description">{artist.description}</p>
+                    <button className="artist-button">View Portfolio</button>
                   </div>
                 </div>
-              </div>
-              <div className="artist-details">
-                <p className="artist-description">{artist.description}</p>
-                <button className="artist-button">View Portfolio</button>
-              </div>
-            </div>
-          ))}
+              );
+            })}
+          </div>
         </div>
         
         <div className="artist-cta">
