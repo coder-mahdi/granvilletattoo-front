@@ -290,14 +290,11 @@
     border: 2px solid transparent;
     
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(255, 107, 53, 0.6);
       background: linear-gradient(45deg, #ff7a4a, #ffa726);
+      color: #000;
     }
     
-    &:active {
-      transform: translateY(-1px);
-    }
+    @include button-hover-gradient;
   }
   
   @include mobile {

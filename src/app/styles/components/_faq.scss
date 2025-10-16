@@ -1,0 +1,51 @@
+@import '../abstracts/abstracts';
+
+.faq-section {
+  margin-top: $spacing-xl;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  .faq-title {
+    font-family: $primary-font;
+    font-size: 2rem;
+    font-weight: bold;
+    color: $primary-color;
+    text-align: center;
+    margin-bottom: $spacing-xl;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .faq-list {
+    .faq-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: $spacing-lg;
+      margin-bottom: $spacing-md;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+      }
+      
+      .faq-question {
+        font-family: $primary-font;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: $primary-color;
+        margin-bottom: $spacing-sm;
+      }
+      
+      .faq-answer {
+        font-family: $paragraph-font;
+        color: rgba($text-color, 0.8);
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+  }
+}

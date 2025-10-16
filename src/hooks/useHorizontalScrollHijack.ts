@@ -37,9 +37,9 @@ export function useHorizontalScrollHijack({
       trigger: section,
       start: 'top top',
       end: () => `+=${getMaxScroll()}`,
-      pin: false, // Disable pinning to prevent scroll hijacking
-      scrub: 0.1, // Reduce scrub intensity
-      anticipatePin: 0, // Disable anticipate pin
+      pin: true,
+      scrub: 1,
+      anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         const progress = self.progress;

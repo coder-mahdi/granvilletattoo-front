@@ -9,8 +9,8 @@ export default function LoadingAnimation({ showContent }: LoadingAnimationProps)
     <div className={`loading-overlay ${showContent ? 'fade-out' : ''}`}>
       <div className="loading-content">
         <div className="loading-text">
-          <span>Vancouver Oldest</span>
-          <span>tattoo shop</span>
+          <span>Granville</span>
+          <span>Tattoo Shop</span>
         </div>
         <div className="loading-divider"></div>
         <div className="loading-images">

@@ -45,3 +45,37 @@
   line-height: 1.6;
   margin: 0 0 1rem 0;
 }
+
+// Button hover mixins
+@mixin button-hover-primary {
+  &:hover {
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba($primary-color, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+@mixin button-hover-gradient {
+  &:hover {
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+  }
+}
+
+@mixin button-hover-lift {
+  &:hover {
+    color: #000;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba($primary-color, 0.3);
+  }
+}

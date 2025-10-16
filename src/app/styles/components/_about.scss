@@ -122,12 +122,25 @@
         transform: translateY(-5px);
         border-color: $primary-color;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        
+        .feature-image img {
+          transform: scale(1.05);
+        }
       }
 
-      .feature-icon {
-        font-size: 3rem;
+      .feature-image {
+        width: 100%;
+        height: 200px;
         margin-bottom: 1rem;
-        display: block;
+        border-radius: 10px;
+        overflow: hidden;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s ease;
+        }
       }
 
       .feature-title {
