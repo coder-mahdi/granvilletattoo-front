@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import Container from '@/components/Container';
 
 export default function ArtistSection() {
@@ -112,7 +114,7 @@ export default function ArtistSection() {
                   }}
                 >
                   <div className="artist-image">
-                    <img src={artist.image} alt={artist.name} />
+                    <Image src={artist.image} alt={artist.name} width={480} height={480} className="artist-card-img" />
                     <div className="artist-overlay">
                       <div className="artist-info">
                         <h3 className="artist-name">{artist.name}</h3>
@@ -123,7 +125,7 @@ export default function ArtistSection() {
                   </div>
                   <div className="artist-details">
                     <p className="artist-description">{artist.description}</p>
-                    <a href={`/single-artist/${artist.slug}`} className="artist-button">View Portfolio</a>
+                    <Link href={`/single-artist/${artist.slug}`} className="artist-button">View Portfolio</Link>
                   </div>
                 </div>
               );

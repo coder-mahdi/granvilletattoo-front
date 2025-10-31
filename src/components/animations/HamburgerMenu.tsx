@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface HamburgerMenuProps {
   menuItems: Array<{ name: string; href: string }>;
@@ -10,46 +12,70 @@ interface HamburgerMenuProps {
 export default function HamburgerMenu({ menuItems, onCloseMenu }: HamburgerMenuProps) {
   const [visibleItems, setVisibleItems] = useState<number[]>([]);
   const [isClosing, setIsClosing] = useState(false);
+  const closeTimeoutsRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
 
   useEffect(() => {
-    // Start showing items one by one after 0.3s delay
-    const timer = setTimeout(() => {
+    const timeouts: Array<ReturnType<typeof setTimeout>> = [];
+
+    const startTimer = setTimeout(() => {
       menuItems.forEach((_, index) => {
-        setTimeout(() => {
-          setVisibleItems(prev => [...prev, index]);
-        }, index * 150); // 150ms delay between each item
+        const itemTimer = setTimeout(() => {
+          setVisibleItems(prev => (prev.includes(index) ? prev : [...prev, index]));
+        }, index * 150);
+
+        timeouts.push(itemTimer);
       });
-    }, 300); // 0.3s initial delay
+    }, 300);
 
-    return () => clearTimeout(timer);
-  }, [menuItems.length]);
+    return () => {
+      clearTimeout(startTimer);
+      timeouts.forEach(clearTimeout);
+      setVisibleItems([]);
+    };
+  }, [menuItems]);
 
+  useEffect(() => {
+    return () => {
+      closeTimeoutsRef.current.forEach(clearTimeout);
+      closeTimeoutsRef.current = [];
+    };
+  }, []);
 
   const handleClose = () => {
     setIsClosing(true);
-    
-    // First: hide menu items (they exit from left)
-    setTimeout(() => {
+
+    closeTimeoutsRef.current.forEach(clearTimeout);
+    closeTimeoutsRef.current = [];
+
+    const closeTimeout = setTimeout(() => {
       setVisibleItems([]);
     }, 50);
-    
-    // Second: after items animation, start background exit animation
-    setTimeout(() => {
+
+    const backgroundTimeout = setTimeout(() => {
       // Background image will exit from right via CSS
-    }, 400); // Wait for items to finish exiting
-    
-    // Finally: close menu after all animations complete
-    setTimeout(() => {
+    }, 400);
+
+    const finalTimeout = setTimeout(() => {
       onCloseMenu();
       setIsClosing(false);
-    }, 1200); // Total time: items (300ms) + background (800ms)
+    }, 1200);
+
+    closeTimeoutsRef.current.push(closeTimeout, backgroundTimeout, finalTimeout);
   };
 
   return (
     <nav className={`mobile-nav active ${isClosing ? 'closing' : ''}`}>
       {/* Background Image */}
       <div className="menu-background">
-        <img src="/images/pic1.png" alt="Menu Background" />
+        <Image
+          src="/images/pic1.png"
+          alt="Menu Background"
+          width={720}
+          height={1280}
+          className="menu-background-img"
+          priority
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
       </div>
       
       <ul>
@@ -58,9 +84,9 @@ export default function HamburgerMenu({ menuItems, onCloseMenu }: HamburgerMenuP
             key={index}
             className={`menu-item ${visibleItems.includes(index) ? 'visible' : 'hidden'}`}
           >
-            <a href={item.href} onClick={handleClose}>
+            <Link href={item.href} onClick={handleClose}>
               {item.name}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

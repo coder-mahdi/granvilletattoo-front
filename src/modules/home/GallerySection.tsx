@@ -1,12 +1,12 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { useHorizontalScrollHijack } from '@/hooks/useHorizontalScrollHijack';
 
 export default function GallerySection() {
   const sectionRef = useRef<HTMLElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
-  const [isInView, setIsInView] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   // Use custom hook for scroll hijacking logic
@@ -45,7 +45,14 @@ export default function GallerySection() {
       >
         {galleryImages.map((image) => (
           <div key={image.id} className="gallery-item">
-            <img src={image.src} alt={image.alt} draggable="false" />
+            <Image
+              src={image.src}
+              alt={image.alt}
+              width={360}
+              height={360}
+              draggable={false}
+              className="gallery-img"
+            />
           </div>
         ))}
       </div>

@@ -83,7 +83,7 @@ export async function submitBooking(payload: BookingRequestPayload): Promise<Boo
 async function safeParseJson(response: Response) {
   try {
     return await response.json();
-  } catch (error) {
+  } catch {
     return null;
   }
 }
