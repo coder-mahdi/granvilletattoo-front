@@ -1,0 +1,311 @@
+.consent-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgba(5, 5, 5, 0.95) 0%, rgba(18, 18, 18, 0.98) 100%);
+  color: $text-color;
+
+  .consent-hero {
+    padding: 5rem 0 $spacing-xl 0;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(25, 25, 25, 0.9) 100%);
+
+    .consent-title {
+      font-family: $primary-font;
+      font-size: 2.75rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: $primary-color;
+      margin-bottom: $spacing-md;
+
+      @include mobile {
+        font-size: 2.1rem;
+        letter-spacing: 2px;
+      }
+    }
+
+    .consent-subtitle {
+      max-width: 720px;
+      margin: 0 auto;
+      font-family: $paragraph-font;
+      font-size: 1.2rem;
+      color: rgba($text-color, 0.75);
+      line-height: 1.7;
+
+      @include mobile {
+        font-size: 1rem;
+        padding: 0 $spacing-md;
+      }
+    }
+  }
+
+  .consent-body {
+    padding: $spacing-xl 0;
+
+    .consent-content {
+      display: grid;
+      gap: $spacing-xl;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 $spacing-lg;
+
+      @include mobile {
+        padding: 0 $spacing-md;
+      }
+    }
+  }
+
+  .consent-panel {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: $spacing-xl;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+
+    @include mobile {
+      padding: $spacing-lg;
+      border-radius: 16px;
+    }
+
+    h2 {
+      font-family: $primary-font;
+      font-size: 1.9rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: $spacing-md;
+      color: lighten($primary-color, 5%);
+
+      @include mobile {
+        font-size: 1.4rem;
+      }
+    }
+
+    p {
+      font-family: $paragraph-font;
+      font-size: 1rem;
+      color: rgba($text-color, 0.8);
+      margin-bottom: $spacing-md;
+      line-height: 1.7;
+
+      @include mobile {
+        font-size: 0.95rem;
+      }
+    }
+
+    ul {
+      padding-left: $spacing-lg;
+      margin-bottom: $spacing-md;
+      font-family: $paragraph-font;
+      color: rgba($text-color, 0.8);
+      line-height: 1.6;
+
+      li {
+        margin-bottom: $spacing-sm;
+      }
+    }
+  }
+
+  .consent-form {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: $spacing-xl;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+
+    @include mobile {
+      padding: $spacing-lg;
+      border-radius: 18px;
+    }
+
+    .form-section {
+      margin-bottom: $spacing-xl;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      h3 {
+        font-family: $primary-font;
+        text-transform: uppercase;
+        font-size: 1.5rem;
+        letter-spacing: 1.6px;
+        margin-bottom: $spacing-md;
+        color: $primary-color;
+
+        @include mobile {
+          font-size: 1.25rem;
+        }
+      }
+    }
+
+    .form-grid {
+      display: grid;
+      gap: $spacing-md;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      @include mobile {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-xs;
+
+      label {
+        font-family: $primary-font;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba($text-color, 0.85);
+
+        @include mobile {
+          font-size: 0.85rem;
+        }
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: $spacing-md;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(10, 10, 10, 0.55);
+        color: $text-color;
+        font-family: $paragraph-font;
+        font-size: 1rem;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+        &::placeholder {
+          color: rgba($text-color, 0.55);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 18px rgba($primary-color, 0.3);
+        }
+      }
+
+      textarea {
+        min-height: 140px;
+        resize: vertical;
+      }
+    }
+
+    .question-list {
+      display: grid;
+      gap: $spacing-md;
+
+      .question-item {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        padding: $spacing-md;
+        border-radius: 16px;
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+
+        @include mobile {
+          padding: $spacing-sm;
+        }
+
+        .question-label {
+          font-family: $primary-font;
+          font-size: 1rem;
+          color: rgba($text-color, 0.9);
+
+          @include mobile {
+            font-size: 0.95rem;
+          }
+        }
+
+        .radio-group {
+          display: flex;
+          gap: $spacing-lg;
+          flex-wrap: wrap;
+
+          label {
+            display: inline-flex;
+            align-items: center;
+            gap: $spacing-sm;
+            font-family: $paragraph-font;
+            font-size: 0.95rem;
+            cursor: pointer;
+
+            input {
+              transform: scale(1.2);
+              accent-color: $primary-color;
+            }
+          }
+        }
+      }
+    }
+
+    .signature-grid {
+      display: grid;
+      gap: $spacing-md;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      @include mobile {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+      margin-top: $spacing-xl;
+
+      .submit-consent {
+        display: inline-block;
+        padding: $spacing-md $spacing-xl;
+        border-radius: 30px;
+        border: 2px solid transparent;
+        background: linear-gradient(45deg, #ff6b35, #f7931e);
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 1.6px;
+        font-family: $primary-font;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 12px 35px rgba(255, 107, 53, 0.35);
+
+        &:hover:not(:disabled) {
+          transform: translateY(-3px);
+          box-shadow: 0 18px 45px rgba(255, 107, 53, 0.45);
+          background: linear-gradient(45deg, #ff7a4a, #ffa726);
+          color: #000;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      .note {
+        font-family: $paragraph-font;
+        color: rgba($text-color, 0.65);
+        font-size: 0.9rem;
+
+        &.error {
+          color: #ff9b9b;
+        }
+
+        &.success {
+          color: lighten($primary-color, 25%);
+        }
+
+        @include mobile {
+          font-size: 0.85rem;
+        }
+      }
+    }
+  }
+}
+

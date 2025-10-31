@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_BOOKING_API_BASE?.replace(/\/$/, '')
+export const API_BASE = process.env.NEXT_PUBLIC_BOOKING_API_BASE?.replace(/\/$/, '')
   || 'https://mahdiroozbahani.com/granvilltattoo/cms/wp-json/granville/v1';
 
 export type AvailabilityArtist = {
@@ -25,6 +25,9 @@ export type BookingRequestPayload = {
   date: string;
   time: string;
   birthdate?: string;
+  artist_id?: number;
+  preferred_artist_name?: string;
+  preferred_artist_email?: string;
 };
 
 export type BookingResponse = {

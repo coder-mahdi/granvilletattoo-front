@@ -43,18 +43,18 @@ export default function HamburgerMenu({ menuItems, onCloseMenu }: HamburgerMenuP
 
   const handleClose = () => {
     setIsClosing(true);
-
+    
     closeTimeoutsRef.current.forEach(clearTimeout);
     closeTimeoutsRef.current = [];
 
     const closeTimeout = setTimeout(() => {
       setVisibleItems([]);
     }, 50);
-
+    
     const backgroundTimeout = setTimeout(() => {
       // Background image will exit from right via CSS
     }, 400);
-
+    
     const finalTimeout = setTimeout(() => {
       onCloseMenu();
       setIsClosing(false);

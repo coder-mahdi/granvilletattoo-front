@@ -11,7 +11,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('/images/hero.png') center/cover no-repeat;
+    background: url('#{$asset-prefix}/images/hero.png') center/cover no-repeat;
     opacity: 0.1;
     z-index: -1;
   }
@@ -93,7 +93,9 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.3s ease;
+        transform: scale(1.02);
+        filter: grayscale(80%);
+        transition: transform 0.35s ease, filter 0.35s ease;
       }
 
       .artist-overlay {
@@ -103,19 +105,22 @@
         right: 0;
         bottom: 0;
         background: linear-gradient(
-          135deg,
-          rgba(0, 0, 0, 0.7) 0%,
-          rgba(0, 0, 0, 0.3) 50%,
-          rgba(0, 0, 0, 0.8) 100%
+          140deg,
+          rgba(20, 20, 20, 0.9) 0%,
+          rgba(20, 20, 20, 0.3) 40%,
+          rgba(0, 0, 0, 0.85) 100%
         );
         display: flex;
         align-items: flex-end;
         padding: 2rem;
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        opacity: 0.9;
+        visibility: visible;
+        backdrop-filter: grayscale(85%);
+        transition: opacity 0.35s ease, backdrop-filter 0.35s ease;
 
         .artist-info {
           color: $text-color;
+          z-index: 1;
 
           .artist-name {
             font-family: $primary-font;
@@ -129,7 +134,7 @@
           .artist-specialty {
             font-family: $paragraph-font;
             font-size: 1.1rem;
-            color: $primary-color;
+            color: lighten($primary-color, 10%);
             margin-bottom: 0.3rem;
             font-weight: 600;
           }
@@ -137,19 +142,20 @@
           .artist-experience {
             font-family: $paragraph-font;
             font-size: 0.9rem;
-            color: $secondary-color;
-            opacity: 0.8;
+            color: rgba($text-color, 0.8);
           }
         }
       }
 
       &:hover {
         img {
-          transform: scale(1.1);
+          transform: scale(1.05);
+          filter: grayscale(0%);
         }
 
         .artist-overlay {
-          opacity: 1;
+          opacity: 0.35;
+          backdrop-filter: grayscale(0);
         }
       }
     }

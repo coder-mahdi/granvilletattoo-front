@@ -5,47 +5,72 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Container from '@/components/Container';
 
+interface ArtistCard {
+  id: number;
+  name: string;
+  specialty: string;
+  experience: string;
+  image: string;
+  description: string;
+  slug: string;
+}
+
+const ARTIST_CARDS: ArtistCard[] = [
+  {
+    id: 1,
+    name: 'Kian Mokhtari',
+    specialty: 'Realistic Portraits',
+    experience: '10+ years',
+    image: '/images/Kian/kian_hero.jpg',
+    description: 'Brings cinematic realism to every piece with precise shading and detail.',
+    slug: 'kian-mokhtari',
+  },
+  {
+    id: 2,
+    name: 'Masi Aghdam',
+    specialty: 'Fine Line & Script',
+    experience: '8 years',
+    image: '/images/Masi/Masi-Tattoo-6.webp',
+    description: 'Creates delicate fine-line pieces and custom lettering with absolute precision.',
+    slug: 'masi-aghdam',
+  },
+  {
+    id: 3,
+    name: 'Mina Khani',
+    specialty: 'Watercolor & Illustrative',
+    experience: '7 years',
+    image: '/images/Mina/Mina.jpg',
+    description: 'Transforms painterly concepts into vibrant, illustrative tattoos full of motion.',
+    slug: 'mina-khani',
+  },
+  {
+    id: 4,
+    name: 'Elena Martinez',
+    specialty: 'Fine Line & Geometric',
+    experience: '5 years',
+    image: '/images/pic1.png',
+    description: 'Specializing in delicate fine line work and intricate geometric patterns',
+    slug: 'elena-martinez',
+  },
+];
+
+function shuffleArtists(source: ArtistCard[]): ArtistCard[] {
+  const copy = [...source];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 export default function ArtistSection() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [displayArtists, setDisplayArtists] = useState<ArtistCard[]>(ARTIST_CARDS);
   const sectionRef = useRef<HTMLElement>(null);
-  const artists = [
-    {
-      id: 1,
-      name: 'John Doe',
-      specialty: 'Realistic Portraits',
-      experience: '10+ years',
-      image: '/images/hero.png',
-      description: 'Specialized in realistic portraits and black & grey work',
-      slug: 'john-doe'
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      specialty: 'Traditional Japanese',
-      experience: '8 years',
-      image: '/images/pic1.png',
-      description: 'Master of traditional Japanese tattoo art and cultural symbolism',
-      slug: 'jane-smith'
-    },
-    {
-      id: 3,
-      name: 'Alex Rodriguez',
-      specialty: 'Black & Grey',
-      experience: '6 years',
-      image: '/images/hero.png',
-      description: 'Expert in black and grey realism with incredible attention to detail',
-      slug: 'alex-rodriguez'
-    },
-    {
-      id: 4,
-      name: 'Elena Martinez',
-      specialty: 'Fine Line & Geometric',
-      experience: '5 years',
-      image: '/images/pic1.png',
-      description: 'Specializing in delicate fine line work and intricate geometric patterns',
-      slug: 'elena-martinez'
-    }
-  ];
+
+  useEffect(() => {
+    setDisplayArtists(shuffleArtists(ARTIST_CARDS));
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,7 +109,7 @@ export default function ArtistSection() {
     <section ref={sectionRef} className="artist-section">
       <Container>
         <div className="artist-header">
-          <h2 className="artist-title">Our Artists</h2>
+          <h2 id="our-artists" className="artist-title">Our Artists</h2>
           <p className="artist-subtitle">
             Meet our talented team of professional tattoo artists, each bringing their unique style and expertise to create the perfect piece for you.
           </p>
@@ -92,7 +117,7 @@ export default function ArtistSection() {
         
         <div className="artists-container">
           <div className="artists-grid">
-            {artists.map((artist, index) => {
+            {displayArtists.map((artist, index) => {
               const isLeftSide = index % 2 === 0;
               // Same progress for both left and right cards in each row
               const rowIndex = Math.floor(index / 2);

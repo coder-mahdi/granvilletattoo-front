@@ -37,7 +37,7 @@ export default function HeroSection() {
       <section ref={heroRef} className="hero-section">
         <Container className="hero-container">
           <div className="hero-logo">
-            <Image src="/images/logo.png" alt="Granville Tattoo" className="logo-img" width={160} height={64} priority />
+            <Image src="/images/logo.webp" alt="Granville Tattoo" className="logo-img" width={160} height={64} priority />
           </div>
           
           <div className="hero-content">
@@ -47,7 +47,8 @@ export default function HeroSection() {
             </p>
           </div>
           <div className="hero-side-nav">
-            <Link href="/artist" className="nav-link">Artists</Link>
+            <Link href="/#our-artists" className="nav-link">Artists</Link>
+            <Link href="/#about-granville-tattoo" className="nav-link">About Us</Link>
             <Link href="/gallery" className="nav-link">Gallery</Link>
             <Link href="/booking" className={`nav-link ${showStickyButton ? 'hidden' : ''}`}>Book Now</Link>
           </div>

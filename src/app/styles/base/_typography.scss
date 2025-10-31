@@ -4,7 +4,7 @@
 // BOYCOTT font face
 @font-face {
   font-family: 'BOYCOTT';
-  src: url('/fonts/BOYCOTT_.ttf') format('truetype');
+  src: url('#{$asset-prefix}/fonts/BOYCOTT_.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -15,6 +15,10 @@ body {
   font-family: $primary-font;
   line-height: 1.6;
   color: #333;
+
+  @include desktop {
+    font-size: 1.125rem;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -22,41 +26,78 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
   line-height: 1.2;
   margin: 0 0 1rem 0;
+
+  @include desktop {
+    margin-bottom: 1.25rem;
+  }
 }
 
 h1 {
   font-size: 2.5rem;
+
+  @include desktop {
+    font-size: 3rem;
+  }
 }
 
 h2 {
   font-size: 2rem;
+
+  @include desktop {
+    font-size: 2.5rem;
+  }
 }
 
 h3 {
   font-size: 1.75rem;
+
+  @include desktop {
+    font-size: 2.25rem;
+  }
 }
 
 h4 {
   font-size: 1.5rem;
+
+  @include desktop {
+    font-size: 2rem;
+  }
 }
 
 h5 {
   font-size: 1.25rem;
+
+  @include desktop {
+    font-size: 1.75rem;
+  }
 }
 
 h6 {
   font-size: 1rem;
+
+  @include desktop {
+    font-size: 1.5rem;
+  }
 }
 
 p {
   margin: 0 0 1rem 0;
   font-family: $paragraph-font;
+
+  @include desktop {
+    font-size: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
 }
 
 a {
   font-family: $primary-font;
   text-decoration: none;
   color: inherit;
+
+  @include desktop {
+    font-size: 1.1rem;
+  }
 }
 
 // Utility classes

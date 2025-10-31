@@ -16,18 +16,22 @@ export default function Header() {
   // Use single artist header for all pages except home
   const isSingleArtistPage = !isHomePage;
 
+  const aboutHref = isHomePage ? '#about-granville-tattoo' : '/#about-granville-tattoo';
+
   const menuItems = useMemo(() => (
     isSingleArtistPage
-      ? [
-          { name: 'Home', href: '/' },
-          { name: 'About Us', href: '/about' },
-          { name: 'Blogs', href: '/blogs' }
+    ? [
+        { name: 'Home', href: '/' },
+          { name: 'Artists', href: '/#our-artists' },
+          { name: 'About Us', href: aboutHref },
+        { name: 'Blogs', href: '/blogs' }
+      ]
+    : [
+          { name: 'Artists', href: '#our-artists' },
+          { name: 'About Us', href: aboutHref },
+        { name: 'Blogs', href: '/blogs' }
         ]
-      : [
-          { name: 'About Us', href: '/about' },
-          { name: 'Blogs', href: '/blogs' }
-        ]
-  ), [isSingleArtistPage]);
+  ), [aboutHref, isSingleArtistPage]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -52,7 +56,7 @@ export default function Header() {
         {isSingleArtistPage ? (
           <div className="header-logo">
             <Link href="/" className="logo-link">
-              <Image src="/images/logo.png" alt="Granville Tattoo" className="header-logo-img" width={120} height={48} />
+              <Image src="/images/logo.webp" alt="Granville Tattoo" className="header-logo-img" width={120} height={48} />
             </Link>
           </div>
         ) : (
