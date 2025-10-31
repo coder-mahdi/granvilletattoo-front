@@ -56,6 +56,28 @@
       padding: $spacing-lg;
       margin: $spacing-lg $spacing-md;
     }
+
+    .form-alert {
+      padding: $spacing-md;
+      border-radius: 12px;
+      font-family: $paragraph-font;
+      font-size: 1rem;
+      margin-bottom: $spacing-lg;
+      border: 1px solid transparent;
+      text-align: center;
+
+      &.error-alert {
+        background: rgba(255, 68, 68, 0.15);
+        border-color: rgba(255, 68, 68, 0.4);
+        color: #ff9b9b;
+      }
+
+      &.success-alert {
+        background: rgba($primary-color, 0.2);
+        border-color: rgba($primary-color, 0.5);
+        color: lighten($primary-color, 20%);
+      }
+    }
   }
   
   .form-group {
