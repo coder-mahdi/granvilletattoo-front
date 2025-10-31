@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import HamburgerMenu from './animations/HamburgerMenu';
 
@@ -14,16 +16,18 @@ export default function Header() {
   // Use single artist header for all pages except home
   const isSingleArtistPage = !isHomePage;
 
-  const menuItems = isSingleArtistPage
-    ? [
-        { name: 'Home', href: '/' },
-        { name: 'About Us', href: '/about' },
-        { name: 'Blogs', href: '/blogs' }
-      ]
-    : [
-        { name: 'About Us', href: '/about' },
-        { name: 'Blogs', href: '/blogs' }
-      ];
+  const menuItems = useMemo(() => (
+    isSingleArtistPage
+      ? [
+          { name: 'Home', href: '/' },
+          { name: 'About Us', href: '/about' },
+          { name: 'Blogs', href: '/blogs' }
+        ]
+      : [
+          { name: 'About Us', href: '/about' },
+          { name: 'Blogs', href: '/blogs' }
+        ]
+  ), [isSingleArtistPage]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -47,9 +51,9 @@ export default function Header() {
         {/* Contact Info or Logo */}
         {isSingleArtistPage ? (
           <div className="header-logo">
-            <a href="/" className="logo-link">
-              <img src="/images/logo.png" alt="Granville Tattoo" className="header-logo-img" />
-            </a>
+            <Link href="/" className="logo-link">
+              <Image src="/images/logo.png" alt="Granville Tattoo" className="header-logo-img" width={120} height={48} />
+            </Link>
           </div>
         ) : (
           <div className="contact-info">
@@ -68,7 +72,7 @@ export default function Header() {
           <ul>
             {menuItems.map((item, index) => (
               <li key={index}>
-                <a href={item.href}>{item.name}</a>
+                <Link href={item.href}>{item.name}</Link>
               </li>
             ))}
           </ul>

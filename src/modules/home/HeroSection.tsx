@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import Container from '@/components/Container';
 
 export default function HeroSection() {
@@ -35,19 +37,19 @@ export default function HeroSection() {
       <section ref={heroRef} className="hero-section">
         <Container className="hero-container">
           <div className="hero-logo">
-            <img src="/images/logo.png" alt="Granville Tattoo" className="logo-img" />
+            <Image src="/images/logo.png" alt="Granville Tattoo" className="logo-img" width={160} height={64} priority />
           </div>
           
           <div className="hero-content">
             <h1 className="hero-title">Granville Tattoo</h1>
             <p className="hero-description">
-              Where tattoos and piercings meet art Vancouver's premier studio for bold designs, expert artists, and an unforgettable experience
+              Where tattoos and piercings meet art Vancouver&apos;s premier studio for bold designs, expert artists, and an unforgettable experience
             </p>
           </div>
           <div className="hero-side-nav">
-            <a href="/artist" className="nav-link">Artists</a>
-            <a href="/gallery" className="nav-link">Gallery</a>
-            <a href="/booking" className={`nav-link ${showStickyButton ? 'hidden' : ''}`}>Book Now</a>
+            <Link href="/artist" className="nav-link">Artists</Link>
+            <Link href="/gallery" className="nav-link">Gallery</Link>
+            <Link href="/booking" className={`nav-link ${showStickyButton ? 'hidden' : ''}`}>Book Now</Link>
           </div>
           
           <div className="hero-social">
@@ -68,9 +70,9 @@ export default function HeroSection() {
       {/* Sticky Book Now Button */}
       {showStickyButton && (
         <div className="sticky-book-button">
-          <a href="/booking" className="sticky-btn">
+          <Link href="/booking" className="sticky-btn">
             Book Now
-          </a>
+          </Link>
         </div>
       )}
     </div>

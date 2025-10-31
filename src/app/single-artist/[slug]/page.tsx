@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Container from '@/components/Container';
 // // import LoadingAnimation from '@/components/animations/LoadingAnimation';
@@ -191,10 +193,12 @@ const mockArtists = {
   }
 };
 
+type Artist = (typeof mockArtists)[keyof typeof mockArtists];
+
 export default function ArtistPage() {
   const params = useParams();
   // const [showContent, setShowContent] = useState(false);
-  const [artist, setArtist] = useState<any>(null);
+  const [artist, setArtist] = useState<Artist | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -235,8 +239,8 @@ export default function ArtistPage() {
         <Container>
           <div className="not-found-content">
             <h1>Artist Not Found</h1>
-            <p>The artist you're looking for doesn't exist.</p>
-            <a href="/" className="back-home-btn">Back to Home</a>
+            <p>The artist you&apos;re looking for doesn&apos;t exist.</p>
+            <Link href="/" className="back-home-btn">Back to Home</Link>
           </div>
         </Container>
       </div>
@@ -275,15 +279,21 @@ export default function ArtistPage() {
                 </div>
 
                 <div className="artist-actions">
-                  <a href="/booking" className="book-btn">
+                  <Link href="/booking" className="book-btn">
                     {artist.availability.status === 'Available' ? 'Book Now' : 'Join Waitlist'}
-                  </a>
-                
+                  </Link>
                 </div>
               </div>
               
               <div className="artist-image">
-                <img src="/images/hero.png" alt={artist.name} />
+                <Image
+                  src="/images/hero.png"
+                  alt={artist.name}
+                  width={600}
+                  height={600}
+                  className="artist-photo"
+                  priority
+                />
               </div>
             </div>
           </Container>
@@ -294,7 +304,7 @@ export default function ArtistPage() {
           <Container>
             <h3>Specialties</h3>
             <div className="specialties-grid">
-              {artist.specialties.map((specialty: string, index: number) => (
+              {artist.specialties.map((specialty, index) => (
                 <div key={index} className="specialty-item">
                   {specialty}
                 </div>
@@ -308,10 +318,16 @@ export default function ArtistPage() {
           <Container>
             <h3>Portfolio</h3>
             <div className="portfolio-grid">
-              {artist.portfolio.map((work: any) => (
+              {artist.portfolio.map((work) => (
                 <div key={work.id} className="portfolio-item">
                   <div className="portfolio-image">
-                    <img src={work.image} alt={work.title} />
+                    <Image
+                      src={work.image}
+                      alt={work.title}
+                      width={480}
+                      height={480}
+                      className="portfolio-img"
+                    />
                     <div className="portfolio-overlay">
                       <h4>{work.title}</h4>
                       <p>{work.category} • {work.year}</p>

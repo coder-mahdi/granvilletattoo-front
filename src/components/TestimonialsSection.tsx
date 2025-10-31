@@ -59,7 +59,7 @@ export default function TestimonialsSection() {
             {testimonials.map((testimonial, index) => (
               <div key={index} className="testimonial-slide">
                 <div className="testimonial-content">
-                  <p className="testimonial-text">"{testimonial.text}"</p>
+                  <p className="testimonial-text">&ldquo;{testimonial.text}&rdquo;</p>
                   <div className="testimonial-author">
                     <h4 className="author-name">{testimonial.name}</h4>
                     <p className="author-design">{testimonial.design}</p>
