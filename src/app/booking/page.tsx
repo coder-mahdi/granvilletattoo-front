@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Container from '@/components/Container';
 import FAQSection from '@/components/FAQSection';
+import { fetchAvailability, submitBooking } from '@/lib/bookingApi';
 
 export default function BookingPage() {
   const [formData, setFormData] = useState({
@@ -21,11 +22,13 @@ export default function BookingPage() {
 
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const services = [
-    'Tattoo',
-    'Piercing'
-  ];
+  const services = useMemo(() => ([
+    { label: 'Tattoo', value: 'tattoo' },
+    { label: 'Piercing', value: 'piercing' }
+  ]), []);
 
   const timeSlots = [
     '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
@@ -70,11 +73,15 @@ export default function BookingPage() {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+    if (apiError) setApiError(null);
+    if (successMessage) setSuccessMessage(null);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setFormData(prev => ({ ...prev, designUpload: file }));
+    if (apiError) setApiError(null);
+    if (successMessage) setSuccessMessage(null);
   };
 
   const validateForm = () => {
@@ -106,14 +113,38 @@ export default function BookingPage() {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+    setApiError(null);
+    setSuccessMessage(null);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      alert('Booking request submitted successfully! We will contact you soon.');
-      
-      // Reset form
+      const time24h = convertTo24Hour(formData.time);
+      const availability = await fetchAvailability(formData.date, time24h);
+
+      if (!availability.available_artists.length) {
+        setApiError('No artists are available for the selected date and time. Please choose another slot.');
+        return;
+      }
+
+      const bookingResponse = await submitBooking({
+        service: formData.service.toLowerCase(),
+        name: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        design: formData.designUpload ? `Uploaded file: ${formData.designUpload.name}` : undefined,
+        notes: formData.additionalExplanation.trim() || undefined,
+        date: formData.date,
+        time: time24h,
+        birthdate: formData.birthDate,
+      });
+
+      const assignedName = bookingResponse.assigned_artist?.name;
+      setSuccessMessage(
+        assignedName
+          ? `Booking request submitted successfully! Assigned artist: ${assignedName}.`
+          : 'Booking request submitted successfully! We will contact you soon.'
+      );
+
+      setErrors({});
       setFormData({
         service: '',
         fullName: '',
@@ -128,10 +159,27 @@ export default function BookingPage() {
         consentForm: false
       });
     } catch (error) {
-      alert('Something went wrong. Please try again.');
+      const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+      setApiError(message);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const convertTo24Hour = (time: string) => {
+    if (!time) return '';
+    const [timePart, modifier] = time.split(' ');
+    const [rawHours, minutes] = timePart.split(':');
+    let hours = parseInt(rawHours, 10);
+
+    if (modifier === 'PM' && hours < 12) {
+      hours += 12;
+    }
+    if (modifier === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return `${hours.toString().padStart(2, '0')}:${minutes}`;
   };
 
   return (
@@ -149,6 +197,16 @@ export default function BookingPage() {
       
       <Container>
         <form onSubmit={handleSubmit} className="booking-form">
+          {apiError && (
+            <div className="form-alert error-alert">
+              {apiError}
+            </div>
+          )}
+          {successMessage && (
+            <div className="form-alert success-alert">
+              {successMessage}
+            </div>
+          )}
           {/* Service Selection */}
           <div className="form-group">
             <label htmlFor="service" className="form-label">
@@ -163,7 +221,7 @@ export default function BookingPage() {
             >
               <option value="">Select a service</option>
               {services.map(service => (
-                <option key={service} value={service}>{service}</option>
+                <option key={service.value} value={service.value}>{service.label}</option>
               ))}
             </select>
             {errors.service && <span className="error-message">{errors.service}</span>}
