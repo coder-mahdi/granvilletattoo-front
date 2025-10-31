@@ -1,12 +1,20 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import Container from '@/components/Container';
 import FAQSection from '@/components/FAQSection';
-import { fetchAvailability, submitBooking } from '@/lib/bookingApi';
+import { AvailabilityArtist, fetchAvailability, submitBooking } from '@/lib/bookingApi';
+
+const ARTIST_SLUG_MAP: Record<string, string> = {
+  'kian mokhtari': 'kian-mokhtari',
+  'masi aghdam': 'masi-aghdam',
+  'mina khani': 'mina-khani',
+  'elena martinez': 'elena-martinez',
+};
 
 export default function BookingPage() {
-  const [formData, setFormData] = useState({
+  const initialFormState = {
     service: '',
     fullName: '',
     email: '',
@@ -18,23 +26,48 @@ export default function BookingPage() {
     birthDate: '',
     readTerms: false,
     consentForm: false
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormState);
 
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
+  const [availableArtists, setAvailableArtists] = useState<AvailabilityArtist[]>([]);
+  const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
+  const [suggestedArtistId, setSuggestedArtistId] = useState<number | null>(null);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+  const [successDetails, setSuccessDetails] = useState<{
+    message: string;
+    artistName?: string;
+    artistEmail?: string;
+    appointmentDate?: string;
+    appointmentTime?: string;
+  } | null>(null);
 
   const services = useMemo(() => ([
     { label: 'Tattoo', value: 'tattoo' },
     { label: 'Piercing', value: 'piercing' }
   ]), []);
 
-  const timeSlots = [
-    '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-    '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM',
-    '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM'
-  ];
+  const timeSlots = useMemo(() => {
+    const slots: string[] = [];
+    const startMinutes = 12 * 60; // 12:00 PM
+    const endMinutes = 23 * 60 + 30; // 11:30 PM
+
+    for (let minutes = startMinutes; minutes <= endMinutes; minutes += 30) {
+      const hours24 = Math.floor(minutes / 60);
+      const minutesPart = minutes % 60;
+      const isPM = hours24 >= 12;
+      const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+      const minuteLabel = minutesPart === 0 ? '00' : '30';
+      slots.push(`${hours12}:${minuteLabel} ${isPM ? 'PM' : 'AM'}`);
+    }
+
+    return slots;
+  }, []);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -67,6 +100,20 @@ export default function BookingPage() {
       setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
+    }
+
+    if (name === 'service' && value !== 'tattoo') {
+      setAvailableArtists(prev => (prev.length ? [] : prev));
+      setSelectedArtistId(prev => (prev !== null ? null : prev));
+      setSuggestedArtistId(prev => (prev !== null ? null : prev));
+      setAvailabilityError(null);
+      setIsCheckingAvailability(false);
+      setErrors(prev => {
+        if (!prev.selectedArtist) return prev;
+        const nextErrors = { ...prev };
+        delete nextErrors.selectedArtist;
+        return nextErrors;
+      });
     }
 
     // Clear error when user starts typing
@@ -102,9 +149,133 @@ export default function BookingPage() {
     }
     if (!formData.readTerms) newErrors.readTerms = 'You must read and accept the terms and conditions';
     if (!formData.consentForm) newErrors.consentForm = 'You must consent to the form';
+    if (formData.service === 'tattoo') {
+      if (availabilityError) {
+        newErrors.selectedArtist = availabilityError;
+      } else if (!selectedArtistId) {
+        newErrors.selectedArtist = 'Please select an artist';
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  useEffect(() => {
+    if (formData.service !== 'tattoo') {
+      setAvailableArtists(prev => (prev.length ? [] : prev));
+      setSelectedArtistId(prev => (prev !== null ? null : prev));
+      setSuggestedArtistId(prev => (prev !== null ? null : prev));
+      setAvailabilityError(null);
+      setIsCheckingAvailability(false);
+      return;
+    }
+
+    if (!formData.date || !formData.time) {
+      setAvailableArtists(prev => (prev.length ? [] : prev));
+      setSelectedArtistId(prev => (prev !== null ? null : prev));
+      setSuggestedArtistId(prev => (prev !== null ? null : prev));
+      setAvailabilityError(null);
+      setIsCheckingAvailability(false);
+      return;
+    }
+
+    let isActive = true;
+    const loadAvailability = async () => {
+      setIsCheckingAvailability(true);
+      setAvailabilityError(null);
+
+      try {
+        const time24h = convertTo24Hour(formData.time);
+        const availability = await fetchAvailability(formData.date, time24h);
+        if (!isActive) return;
+
+        if (!availability.available_artists.length) {
+          setAvailableArtists([]);
+          setSelectedArtistId(null);
+          setSuggestedArtistId(null);
+          setAvailabilityError('No artists are available for the selected date and time. Please choose another slot.');
+          return;
+        }
+
+        setAvailableArtists(availability.available_artists);
+        setSuggestedArtistId(availability.suggested_artist?.id ?? null);
+        setSelectedArtistId(prev => {
+          if (prev && availability.available_artists.some(artist => artist.id === prev)) {
+            return prev;
+          }
+          const suggestedId = availability.suggested_artist?.id;
+          if (suggestedId && availability.available_artists.some(artist => artist.id === suggestedId)) {
+            return suggestedId;
+          }
+          return availability.available_artists[0]?.id ?? null;
+        });
+        setErrors(prev => {
+          if (!prev.selectedArtist) return prev;
+          const nextErrors = { ...prev };
+          delete nextErrors.selectedArtist;
+          return nextErrors;
+        });
+      } catch (error) {
+        if (!isActive) return;
+        const message = error instanceof Error ? error.message : 'Unable to check availability right now.';
+        setAvailableArtists([]);
+        setSelectedArtistId(null);
+        setSuggestedArtistId(null);
+        setAvailabilityError(message);
+      } finally {
+        if (isActive) {
+          setIsCheckingAvailability(false);
+        }
+      }
+    };
+
+    loadAvailability();
+
+    return () => {
+      isActive = false;
+    };
+  }, [formData.service, formData.date, formData.time]);
+
+  const handleArtistSelect = (artistId: number) => {
+    setSelectedArtistId(artistId);
+    setErrors(prev => ({ ...prev, selectedArtist: '' }));
+    if (apiError) setApiError(null);
+  };
+
+  const getArtistSlug = (name: string) => {
+    const normalized = name.toLowerCase().trim();
+    if (ARTIST_SLUG_MAP[normalized]) {
+      return ARTIST_SLUG_MAP[normalized];
+    }
+
+    return normalized
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
+  const formatDisplayDate = (date: string | undefined) => {
+    if (!date) return null;
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.getTime())) return date;
+    return parsed.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  const handleNewBooking = () => {
+    setSuccessDetails(null);
+    setSuccessMessage(null);
+    setApiError(null);
+    setErrors({});
+    setFormData({ ...initialFormState });
+    setAvailableArtists([]);
+    setSelectedArtistId(null);
+    setSuggestedArtistId(null);
+    setAvailabilityError(null);
+    setIsCheckingAvailability(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -121,9 +292,41 @@ export default function BookingPage() {
       const availability = await fetchAvailability(formData.date, time24h);
 
       if (!availability.available_artists.length) {
+        setAvailableArtists([]);
+        setSelectedArtistId(null);
+        setSuggestedArtistId(null);
         setApiError('No artists are available for the selected date and time. Please choose another slot.');
         return;
       }
+
+      setAvailableArtists(availability.available_artists);
+      setSuggestedArtistId(availability.suggested_artist?.id ?? null);
+
+      let preferredArtist: AvailabilityArtist | undefined;
+      if (formData.service === 'tattoo') {
+        if (!selectedArtistId) {
+          setErrors(prev => ({ ...prev, selectedArtist: 'Please select an artist' }));
+          return;
+        }
+
+        preferredArtist = availability.available_artists.find(artist => artist.id === selectedArtistId);
+
+        if (!preferredArtist) {
+          setApiError('The selected artist is no longer available. Please choose another artist.');
+          setSelectedArtistId(availability.available_artists[0]?.id ?? null);
+          return;
+        }
+      }
+
+      const appointmentDate = formData.date;
+      const appointmentTime = formData.time;
+
+      const combinedNotes = [
+        formData.additionalExplanation.trim() || null,
+        preferredArtist ? `Preferred artist: ${preferredArtist.name}${preferredArtist.email ? ` (${preferredArtist.email})` : ''}` : null,
+      ]
+        .filter(Boolean)
+        .join('\n\n');
 
       const bookingResponse = await submitBooking({
         service: formData.service.toLowerCase(),
@@ -131,33 +334,38 @@ export default function BookingPage() {
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         design: formData.designUpload ? `Uploaded file: ${formData.designUpload.name}` : undefined,
-        notes: formData.additionalExplanation.trim() || undefined,
+        notes: combinedNotes || undefined,
         date: formData.date,
         time: time24h,
         birthdate: formData.birthDate,
+        artist_id: preferredArtist?.id,
+        preferred_artist_name: preferredArtist?.name,
+        preferred_artist_email: preferredArtist?.email,
       });
 
-      const assignedName = bookingResponse.assigned_artist?.name;
-      setSuccessMessage(
+      const assignedName = bookingResponse.assigned_artist?.name ?? preferredArtist?.name;
+      const assignedEmail = bookingResponse.assigned_artist?.email ?? preferredArtist?.email ?? availability.suggested_artist?.email;
+      const successText =
         assignedName
           ? `Booking request submitted successfully! Assigned artist: ${assignedName}.`
-          : 'Booking request submitted successfully! We will contact you soon.'
-      );
+          : 'Booking request submitted successfully! We will contact you soon.';
+
+      setSuccessMessage(successText);
+      setSuccessDetails({
+        message: successText,
+        artistName: assignedName ?? undefined,
+        artistEmail: assignedEmail ?? undefined,
+        appointmentDate,
+        appointmentTime,
+      });
 
       setErrors({});
-      setFormData({
-        service: '',
-        fullName: '',
-        email: '',
-        phone: '',
-        designUpload: null,
-        additionalExplanation: '',
-        time: '',
-        date: '',
-        birthDate: '',
-        readTerms: false,
-        consentForm: false
-      });
+      setFormData({ ...initialFormState });
+      setAvailableArtists([]);
+      setSelectedArtistId(null);
+      setSuggestedArtistId(null);
+      setAvailabilityError(null);
+      setIsCheckingAvailability(false);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
       setApiError(message);
@@ -196,17 +404,58 @@ export default function BookingPage() {
       </div>
       
       <Container>
-        <form onSubmit={handleSubmit} className="booking-form">
-          {apiError && (
-            <div className="form-alert error-alert">
-              {apiError}
+        {successDetails ? (
+          <div className="booking-success">
+            {successMessage && (
+              <div className="form-alert success-alert">
+                {successMessage}
+              </div>
+            )}
+            <div className="success-details">
+              {successDetails.appointmentDate && (
+                <p>
+                  <strong>Appointment:</strong>{' '}
+                  {formatDisplayDate(successDetails.appointmentDate)}
+                  {successDetails.appointmentTime ? ` at ${successDetails.appointmentTime}` : ''}
+                </p>
+              )}
+              {successDetails.artistName && (
+                <p>
+                  <strong>Your artist:</strong>{' '}
+                  {successDetails.artistName}
+                  {successDetails.artistEmail && (
+                    <>
+                      {' · '}
+                      <a href={`mailto:${successDetails.artistEmail}`} className="success-contact-link">
+                        {successDetails.artistEmail}
+                      </a>
+                    </>
+                  )}
+                </p>
+              )}
+              <p>
+                If you need to cancel or make changes, please contact your artist at least one hour before your appointment.
+                Their contact information has been emailed to you.
+              </p>
             </div>
-          )}
-          {successMessage && (
-            <div className="form-alert success-alert">
-              {successMessage}
+            <div className="success-actions">
+              <button type="button" className="new-booking-button" onClick={handleNewBooking}>
+                Book Another Appointment
+              </button>
             </div>
-          )}
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="booking-form">
+            {apiError && (
+              <div className="form-alert error-alert">
+                {apiError}
+              </div>
+            )}
+            {successMessage && (
+              <div className="form-alert success-alert">
+                {successMessage}
+              </div>
+            )}
           {/* Service Selection */}
           <div className="form-group">
             <label htmlFor="service" className="form-label">
@@ -348,6 +597,66 @@ export default function BookingPage() {
             </div>
           </div>
 
+          {/* Artist Selection */}
+          {formData.service === 'tattoo' && (
+            <div className="form-group artist-availability">
+              <label className="form-label">Choose Your Artist *</label>
+              {isCheckingAvailability && (
+                <p className="availability-status">Checking available artists...</p>
+              )}
+              {!isCheckingAvailability && availabilityError && (
+                <div className="form-alert error-alert">
+                  {availabilityError}
+                </div>
+              )}
+              {!isCheckingAvailability && !availabilityError && !availableArtists.length && (
+                <p className="availability-status">Select a date and time to view available artists.</p>
+              )}
+              {!isCheckingAvailability && !availabilityError && availableArtists.length > 0 && (
+                <div className="artist-options">
+                  {availableArtists.map(artist => {
+                    const slug = getArtistSlug(artist.name);
+                    const isSelected = selectedArtistId === artist.id;
+                    const isSuggested = suggestedArtistId === artist.id;
+
+                    return (
+                      <label
+                        key={artist.id}
+                        className={`artist-option ${isSelected ? 'selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="selectedArtist"
+                          value={artist.id}
+                          checked={isSelected}
+                          onChange={() => handleArtistSelect(artist.id)}
+                        />
+                        <div className="artist-option-details">
+                          <span className="artist-option-name">
+                            {artist.name}
+                            {isSuggested && <span className="artist-option-badge">Suggested</span>}
+                          </span>
+                          {artist.email && (
+                            <span className="artist-option-meta">{artist.email}</span>
+                          )}
+                        </div>
+                        <Link
+                          href={slug ? `/single-artist/${slug}` : '/single-artist'}
+                          className="artist-option-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View Profile
+                        </Link>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+              {errors.selectedArtist && <span className="error-message">{errors.selectedArtist}</span>}
+            </div>
+          )}
+
           {/* Birth Date */}
           <div className="form-group">
             <label htmlFor="birthDate" className="form-label">
@@ -413,10 +722,11 @@ export default function BookingPage() {
               className="submit-button"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Book Appointment'}
+              <span>{isSubmitting ? 'Submitting...' : 'Book Appointment'}</span>
             </button>
           </div>
         </form>
+        )}
 
         <FAQSection />
       </Container>

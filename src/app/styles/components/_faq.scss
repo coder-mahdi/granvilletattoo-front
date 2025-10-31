@@ -2,6 +2,7 @@
 
 .faq-section {
   margin-top: $spacing-xl;
+  margin-bottom: $spacing-xxl;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
@@ -20,16 +21,37 @@
   .faq-list {
     .faq-item {
       background: rgba(255, 255, 255, 0.05);
-      padding: $spacing-lg;
       margin-bottom: $spacing-md;
       border-radius: 15px;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.3s ease;
+      overflow: hidden;
       
-      &:hover {
-        background: rgba(255, 255, 255, 0.08);
-        transform: translateY(-2px);
+      &.open {
+        border-color: rgba($primary-color, 0.4);
+        box-shadow: 0 12px 35px rgba($primary-color, 0.2);
+      }
+      
+      .faq-toggle {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $spacing-md;
+        background: transparent;
+        border: none;
+        padding: $spacing-lg;
+        cursor: pointer;
+        text-align: left;
+        color: inherit;
+        transition: background 0.3s ease;
+        
+        &:hover,
+        &:focus-visible {
+          background: rgba(255, 255, 255, 0.08);
+          outline: none;
+        }
       }
       
       .faq-question {
@@ -37,14 +59,29 @@
         font-size: 1.2rem;
         font-weight: 600;
         color: $primary-color;
-        margin-bottom: $spacing-sm;
+      }
+      
+      .faq-icon {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: lighten($primary-color, 10%);
+        transition: color 0.3s ease;
       }
       
       .faq-answer {
-        font-family: $paragraph-font;
-        color: rgba($text-color, 0.8);
-        line-height: 1.6;
-        margin: 0;
+        display: none;
+        padding: 0 $spacing-lg $spacing-lg;
+        
+        p {
+          font-family: $paragraph-font;
+          color: rgba($text-color, 0.8);
+          line-height: 1.6;
+          margin: 0;
+        }
+      }
+      
+      &.open .faq-answer {
+        display: block;
       }
     }
   }

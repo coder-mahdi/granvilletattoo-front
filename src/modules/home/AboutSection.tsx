@@ -25,7 +25,7 @@ export default function AboutSection() {
       <Container>
         <div className="about-content">
           <div className="about-text">
-            <h2 className="about-title">About Granville Tattoo</h2>
+            <h2 id="about-granville-tattoo" className="about-title">About Granville Tattoo</h2>
             <p className="about-description">
               For over two decades, Granville Tattoo has been Vancouver&apos;s most trusted destination for exceptional tattoo art and piercing services. Our studio combines traditional craftsmanship with modern techniques to create stunning, personalized body art that tells your unique story.
             </p>

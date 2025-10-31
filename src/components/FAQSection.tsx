@@ -1,49 +1,66 @@
+import { useState } from 'react';
+
+type FAQItem = {
+  question: string;
+  answer: string;
+};
+
 export default function FAQSection() {
-  const faqs = [
+  const faqs: FAQItem[] = [
     {
-      question: "What should I bring to my appointment?",
-      answer: "Please bring a valid ID, any design references, and arrive 10 minutes early."
+      question: 'What should I bring to my appointment?',
+      answer: 'Please bring a valid ID, any design references, and arrive 15 minutes early so we can review your ideas together.'
     },
     {
-      question: "Can I reschedule my appointment?",
-      answer: "Yes, you can reschedule up to 24 hours before your appointment by calling us."
+      question: 'Can I reschedule my appointment?',
+      answer: 'You can reschedule by calling us up to 1 hour before your appointment. After that window we may not be able to accommodate changes.'
     },
     {
-      question: "What is your cancellation policy?",
-      answer: "Cancellations must be made at least 24 hours in advance to avoid any fees."
+      question: 'What is your cancellation policy?',
+      answer: 'Cancellations must be made at least 1 hour in advance. Late cancellations or no-shows may forfeit future bookings.'
     },
     {
-      question: "Do you require a deposit?",
-      answer: "Yes, we require a 50% deposit to secure your appointment, which will be applied to your final cost."
+      question: 'What forms of payment do you accept?',
+      answer: 'We accept cash, credit cards, and debit cards. Personal checks are not accepted.'
     },
     {
-      question: "What forms of payment do you accept?",
-      answer: "We accept cash, credit cards, and debit cards. We do not accept personal checks."
+      question: 'How long does a typical tattoo session take?',
+      answer: 'Session length depends entirely on the size and detail of your design. Send us your idea and we’ll help plan the timing with your artist.'
     },
     {
-      question: "How long does a typical tattoo session take?",
-      answer: "Session length varies depending on size and complexity, but most tattoos take 2-6 hours."
+      question: 'Is there an age requirement?',
+      answer: 'You must be at least 16 years old. We do not perform tattoos on anyone under 16, with or without parental consent.'
     },
     {
-      question: "Is there an age requirement?",
-      answer: "You must be at least 16 years old with parental consent, or 18+ without parental consent."
-    },
-    {
-      question: "Can I eat before my appointment?",
-      answer: "Yes, please eat a good meal before your appointment to help with the healing process."
+      question: 'How should I care for my tattoo afterwards?',
+      answer: 'Keep the bandage on for a few hours, then wash gently with fragrance-free soap. Pat dry, apply a thin layer of unscented moisturizer, and avoid sun, pools, and heavy workouts for about two weeks.'
     }
   ];
+
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const handleToggle = (index: number) => {
+    setOpenIndex(prev => (prev === index ? null : index));
+  };
 
   return (
     <div className="faq-section">
       <h2 className="faq-title">Frequently Asked Questions</h2>
       <div className="faq-list">
-        {faqs.map((faq, index) => (
-          <div key={index} className="faq-item">
-            <h3 className="faq-question">{faq.question}</h3>
-            <p className="faq-answer">{faq.answer}</p>
-          </div>
-        ))}
+        {faqs.map((faq, index) => {
+          const isOpen = openIndex === index;
+          return (
+            <div key={faq.question} className={`faq-item${isOpen ? ' open' : ''}`}>
+              <button type="button" className="faq-toggle" onClick={() => handleToggle(index)}>
+                <span className="faq-question">{faq.question}</span>
+                <span className="faq-icon" aria-hidden="true">{isOpen ? '−' : '+'}</span>
+              </button>
+              <div className="faq-answer" aria-hidden={!isOpen}>
+                <p>{faq.answer}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
