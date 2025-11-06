@@ -8,16 +8,31 @@
 html {
   font-size: 16px;
   line-height: 1.6;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   font-family: $primary-font;
   color: $text-color;
   background-color: $background-color;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  position: relative;
+  
+  @include mobile {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+  }
 }
 
 img {

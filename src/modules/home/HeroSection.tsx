@@ -47,8 +47,8 @@ export default function HeroSection() {
             </p>
           </div>
           <div className="hero-side-nav">
-            <Link href="/#our-artists" className="nav-link">Artists</Link>
-            <Link href="/#about-granville-tattoo" className="nav-link">About Us</Link>
+            <Link href="/#our-artists" className="nav-link mobile-hidden">Artists</Link>
+            <Link href="/#about-granville-tattoo" className="nav-link mobile-hidden">About Us</Link>
             <Link href="/gallery" className="nav-link">Gallery</Link>
             <Link href="/booking" className={`nav-link ${showStickyButton ? 'hidden' : ''}`}>Book Now</Link>
           </div>

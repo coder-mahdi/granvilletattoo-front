@@ -45,12 +45,12 @@ const ARTIST_CARDS: ArtistCard[] = [
   },
   {
     id: 4,
-    name: 'Elena Martinez',
+    name: 'Sami Amiri',
     specialty: 'Fine Line & Geometric',
     experience: '5 years',
     image: '/images/pic1.png',
     description: 'Specializing in delicate fine line work and intricate geometric patterns',
-    slug: 'elena-martinez',
+    slug: 'sami-amiri',
   },
 ];
 

@@ -18,6 +18,7 @@ export type ConsentFormPayload = {
   id_verification: string;
   artist_confirmation?: string;
   answers: ConsentAnswers;
+  recaptcha_token?: string;
 };
 
 export type ConsentFormResponse = {

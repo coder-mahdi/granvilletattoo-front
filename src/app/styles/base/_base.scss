@@ -1,3 +1,21 @@
 // Base styles - imports reset and typography
 @import 'reset';
 @import 'typography';
+
+// Global overflow fix for mobile
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  
+  @include mobile {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
