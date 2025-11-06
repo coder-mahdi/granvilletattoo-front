@@ -14,9 +14,9 @@ const mockArtists = {
     location: 'Vancouver, BC',
     heroImage: '/images/Kian/kian_hero.jpg',
     social: {
-      instagram: '@kianmokhtari.ink',
+      instagram: 'tattoo_kian',
       facebook: 'KianMokhtariTattoo',
-      website: 'kianmokhtari.com'
+      website: 'redtattoo.ca'
     },
     portfolio: [
       {
@@ -50,9 +50,9 @@ const mockArtists = {
     location: 'Vancouver, BC',
     heroImage: '/images/Masi/Masi-Tattoo-6.webp',
     social: {
-      instagram: '@masiaghdam.ink',
+      instagram: 'masiworldtattoo',
       facebook: 'MasiAghdamTattoo',
-      website: 'masiaghdam.com'
+      website: 'vansunstudio.com'
     },
     portfolio: [
       {
@@ -93,9 +93,9 @@ const mockArtists = {
     location: 'Vancouver, BC',
     heroImage: '/images/Mina/Mina.jpg',
     social: {
-      instagram: '@minakhani.ink',
+      instagram: 'minatattoominimal',
       facebook: 'MinaKhaniTattoo',
-      website: 'minakhani.com'
+      website: 'redtattoo.ca'
     },
     portfolio: [
       {
@@ -114,24 +114,24 @@ const mockArtists = {
       }
     ],
     availability: {
-      status: 'Booked',
-      nextAppointment: '2 weeks',
-      bookingLink: '#waitlist'
+      status: 'Available',
+      nextAppointment: 'This week',
+      bookingLink: '#book'
     }
   },
-  'elena-martinez': {
+  'sami-amiri': {
     id: 4,
-    name: 'Elena Martinez',
+    name: 'Sami Amiri',
     title: 'Fine Line Artist',
-    bio: 'Elena specializes in delicate fine line work and intricate geometric patterns. Her minimalist approach and precision have made her one of the most sought-after artists in Vancouver.',
+    bio: 'Sami specializes in delicate fine line work and intricate geometric patterns. His minimalist approach and precision have made him one of the most sought-after artists in Vancouver.',
     specialties: ['Fine Line', 'Geometric', 'Minimalist', 'Blackwork'],
     experience: '5+ Years',
     location: 'Vancouver, BC',
     heroImage: '/images/hero.png',
     social: {
-      instagram: '@elenamartinez_art',
-      facebook: 'ElenaMartinezTattoos',
-      website: 'elenamartinez.com'
+      instagram: '@sami_amiri_art',
+      facebook: 'SamiAmiriTattoos',
+      website: 'samiamiri.com'
     },
     portfolio: [
       {
@@ -158,18 +158,19 @@ const mockArtists = {
 } as const;
 
 type ArtistKey = keyof typeof mockArtists;
-type Artist = (typeof mockArtists)[ArtistKey];
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   return Object.keys(mockArtists).map((slug) => ({ slug }));
 }
 
 interface ArtistPageProps {
-  params: { slug: string };
+  params?: Promise<{ slug: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default function ArtistPage({ params }: ArtistPageProps) {
-  const slug = (params?.slug as string) ?? 'kian-mokhtari';
+export default async function ArtistPage({ params }: ArtistPageProps) {
+  const resolvedParams = params ? await params : undefined;
+  const slug = resolvedParams?.slug ?? 'kian-mokhtari';
   const artist = mockArtists[slug as ArtistKey];
 
   if (!artist) {

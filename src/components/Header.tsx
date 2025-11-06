@@ -99,7 +99,7 @@ export default function Header() {
       {/* Mobile Navigation */}
       {isMenuOpen && (
         <HamburgerMenu 
-          menuItems={menuItems} 
+          menuItems={menuItems || []} 
           onCloseMenu={() => setIsMenuOpen(false)} 
         />
       )}

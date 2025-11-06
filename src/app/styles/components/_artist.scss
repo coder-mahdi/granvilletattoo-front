@@ -88,11 +88,15 @@
       position: relative;
       height: 300px;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
+        object-position: center bottom;
         transform: scale(1.02);
         filter: grayscale(80%);
         transition: transform 0.35s ease, filter 0.35s ease;

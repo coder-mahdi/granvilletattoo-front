@@ -107,9 +107,9 @@ export default function TermsPage() {
         </section>
 
         <section className="policy-section">
-          <h2>"As Is" and "As Available" Disclaimer</h2>
+          <h2>&quot;As Is&quot; and &quot;As Available&quot; Disclaimer</h2>
           <p>
-            Our Service is provided on an “AS IS” and “AS AVAILABLE” basis without warranties of any kind,
+            Our Service is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis without warranties of any kind,
             express or implied. Granville Tattoo does not warrant that the Service will meet your
             expectations, be uninterrupted, secure, or error-free.
           </p>

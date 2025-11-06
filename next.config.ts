@@ -1,19 +1,21 @@
 import type { NextConfig } from "next";
 
-const isProd = process.env.NODE_ENV === "production";
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? (isProd ? "/granvilltattoo" : "");
+const rawBasePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim();
+const normalizedBasePath = rawBasePath && rawBasePath !== "/"
+  ? `/${rawBasePath.replace(/^\/+|\/+$/g, "")}`
+  : "";
 
 const nextConfig: NextConfig = {
   output: "export",
   images: { unoptimized: true },
   trailingSlash: true,
   sassOptions: {
-    additionalData: `$asset-prefix: "${basePath}";`,
+    additionalData: `$asset-prefix: "${normalizedBasePath}";`,
   },
-  ...(basePath
+  ...(normalizedBasePath
     ? {
-        basePath,
-        assetPrefix: `${basePath}/`,
+        basePath: normalizedBasePath,
+        assetPrefix: `${normalizedBasePath}/`,
       }
     : {}),
 };

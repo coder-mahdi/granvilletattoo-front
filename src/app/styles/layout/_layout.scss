@@ -7,4 +7,17 @@
   margin: 0 auto;
   padding: 0 $spacing-md;
   width: 100%;
+  box-sizing: border-box;
+  
+  @include mobile {
+    padding: 0 $spacing-sm;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-top: 6rem; // Add top margin to appear below header
+  }
+  
+  @include desktop {
+    margin-top: 6rem; // Add top margin to appear below header on desktop
+  }
 }

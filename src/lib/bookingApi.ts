@@ -1,5 +1,5 @@
 export const API_BASE = process.env.NEXT_PUBLIC_BOOKING_API_BASE?.replace(/\/$/, '')
-  || 'https://mahdiroozbahani.com/granvilltattoo/cms/wp-json/granville/v1';
+  || 'https://granvilletattoo.ca/cms/wp-json/granville/v1';
 
 export type AvailabilityArtist = {
   id: number;
@@ -28,6 +28,7 @@ export type BookingRequestPayload = {
   artist_id?: number;
   preferred_artist_name?: string;
   preferred_artist_email?: string;
+  recaptcha_token?: string;
 };
 
 export type BookingResponse = {

@@ -1,7 +1,8 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, useMemo, useState, useRef } from 'react';
 import Container from '@/components/Container';
+import ReCAPTCHA, { ReCAPTCHARef } from '@/components/ReCAPTCHA';
 import { ConsentAnswers, submitConsentForm } from '@/lib/consentApi';
 
 type ConsentFormValues = {
@@ -70,6 +71,8 @@ export default function ConsentFormForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHARef>(null);
 
   const unansweredQuestions = useMemo(
     () => yesNoQuestions.filter(question => answers[question.key] === '').map(question => question.label),
@@ -94,9 +97,23 @@ export default function ConsentFormForm() {
     setAnswers(initialYesNoState);
     setSubmitted(false);
     setSubmitError(null);
+    setRecaptchaError(null);
     if (!options?.keepSuccess) {
       setSubmitSuccess(null);
     }
+  };
+
+  const handleRecaptchaVerify = () => {
+    setRecaptchaError(null);
+  };
+
+  const handleRecaptchaError = () => {
+    setRecaptchaError('reCAPTCHA verification failed. Please try again.');
+  };
+
+  const handleNewForm = () => {
+    setSubmitSuccess(null);
+    resetForm();
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -114,7 +131,28 @@ export default function ConsentFormForm() {
       return;
     }
 
+    // Execute reCAPTCHA v3 and get token
+    setRecaptchaError(null);
+    let token: string | null = null;
+
+    if (recaptchaRef.current) {
+      try {
+        token = await recaptchaRef.current.execute();
+      } catch (error) {
+        console.error('reCAPTCHA execution error:', error);
+        setRecaptchaError('reCAPTCHA verification failed. Please try again.');
+        return;
+      }
+    }
+
+    // Validate reCAPTCHA token
+    if (!token) {
+      setRecaptchaError('Please complete the reCAPTCHA verification.');
+      return;
+    }
+
     setIsSubmitting(true);
+    setRecaptchaError(null);
 
     const payloadAnswers: ConsentAnswers = yesNoQuestions.reduce((acc, question) => {
       const value = answers[question.key];
@@ -141,11 +179,13 @@ export default function ConsentFormForm() {
         id_verification: formValues.idVerification,
         artist_confirmation: formValues.artistConfirmation || undefined,
         answers: payloadAnswers,
+        recaptcha_token: token || undefined,
       });
 
       setSubmitSuccess('Thank you! Your consent form has been recorded and will be reviewed by our team.');
       setSubmitError(null);
       setSubmitted(false);
+      setRecaptchaError(null);
       resetForm({ keepSuccess: true });
       console.info('Consent form submitted', response);
     } catch (error) {
@@ -171,28 +211,47 @@ export default function ConsentFormForm() {
       <div className="consent-body">
         <Container>
           <div className="consent-content">
-            <section className="consent-panel">
-              <h2>Agreement Summary</h2>
-              <p>
-                Granville St. Tattoo — Granville Street, Vancouver BC, V6Z 1M1, Canada — License No.11191386TQ
-              </p>
-              <p>
-                By completing this waiver you acknowledge that you have been fully informed of the procedure,
-                understand the risks involved, and consent to receiving a tattoo from a Granville St. Tattoo artist.
-              </p>
-              <p>
-                You accept responsibility for following aftercare instructions and agree that any touch-ups required due to
-                negligence will be at your own expense. You also release Granville St. Tattoo and its staff from liability
-                related to this tattoo, including potential variations in colour, design, or long-term appearance.
-              </p>
-              <p>
-                You declare that you are of legal age, competent to sign this agreement, and assume all risk of damage or
-                injury arising from receiving the tattoo. You consent to photographs for studio documentation or promotional use
-                and agree to reimburse the artist and studio for legal fees stemming from any action you might bring.
-              </p>
-            </section>
+            {submitSuccess ? (
+              <div className="consent-success">
+                <div className="success-message">
+                  <h2>Thank You!</h2>
+                  <p>{submitSuccess}</p>
+                  <p className="success-details">
+                    Your consent form has been recorded and will be reviewed by our team. We will follow up with next steps shortly.
+                  </p>
+                  <button
+                    type="button"
+                    className="submit-consent"
+                    onClick={handleNewForm}
+                  >
+                    Submit Another Consent Form
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <section className="consent-panel">
+                  <h2>Agreement Summary</h2>
+                  <p>
+                    Granville St. Tattoo — Granville Street, Vancouver BC, V6Z 1M1, Canada — License No.11191386TQ
+                  </p>
+                  <p>
+                    By completing this waiver you acknowledge that you have been fully informed of the procedure,
+                    understand the risks involved, and consent to receiving a tattoo from a Granville St. Tattoo artist.
+                  </p>
+                  <p>
+                    You accept responsibility for following aftercare instructions and agree that any touch-ups required due to
+                    negligence will be at your own expense. You also release Granville St. Tattoo and its staff from liability
+                    related to this tattoo, including potential variations in colour, design, or long-term appearance.
+                  </p>
+                  <p>
+                    You declare that you are of legal age, competent to sign this agreement, and assume all risk of damage or
+                    injury arising from receiving the tattoo. You consent to photographs for studio documentation or promotional use
+                    and agree to reimburse the artist and studio for legal fees stemming from any action you might bring.
+                  </p>
+                </section>
 
-            <form className="consent-form" onSubmit={handleSubmit}>
+                <form className="consent-form" onSubmit={handleSubmit}>
               <div className="form-section">
                 <h3>Client &amp; Artist Information</h3>
                 <div className="form-grid">
@@ -250,9 +309,25 @@ export default function ConsentFormForm() {
                       id="phone"
                       name="phone"
                       type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9+\-\s\(\)]+"
                       required
                       value={formValues.phone}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Only allow numbers, +, -, spaces, and parentheses
+                        if (/^[0-9+\-\s\(\)]*$/.test(value)) {
+                          handleInputChange(e);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        // Prevent typing letters and other characters
+                        const key = e.key;
+                        // Allow: numbers, +, -, space, (, ), backspace, delete, tab, arrow keys
+                        if (!/^[0-9+\-\s\(\)]$/.test(key) && !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key)) {
+                          e.preventDefault();
+                        }
+                      }}
                       placeholder="Primary contact number"
                     />
                   </div>
@@ -410,6 +485,19 @@ export default function ConsentFormForm() {
                 </div>
               </div>
 
+              {/* reCAPTCHA v3 - invisible, executes on submit */}
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                onVerify={handleRecaptchaVerify}
+                onError={handleRecaptchaError}
+                action="consent_submit"
+              />
+              {recaptchaError && (
+                <div className="form-group">
+                  <span className="error-message">{recaptchaError}</span>
+                </div>
+              )}
+
               <div className="form-actions">
                 <button type="submit" className="submit-consent" disabled={isSubmitting}>
                   Submit Consent
@@ -432,9 +520,10 @@ export default function ConsentFormForm() {
                     Please ensure every yes/no question is answered before final submission.
                   </p>
                 )}
-                {submitSuccess && <p className="note success">{submitSuccess}</p>}
               </div>
             </form>
+              </>
+            )}
           </div>
         </Container>
       </div>

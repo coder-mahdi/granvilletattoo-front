@@ -1,16 +1,17 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import Link from 'next/link';
 import Container from '@/components/Container';
 import FAQSection from '@/components/FAQSection';
+import ReCAPTCHA, { ReCAPTCHARef } from '@/components/ReCAPTCHA';
 import { AvailabilityArtist, fetchAvailability, submitBooking } from '@/lib/bookingApi';
 
 const ARTIST_SLUG_MAP: Record<string, string> = {
   'kian mokhtari': 'kian-mokhtari',
   'masi aghdam': 'masi-aghdam',
   'mina khani': 'mina-khani',
-  'elena martinez': 'elena-martinez',
+  'sami amiri': 'sami-amiri',
 };
 
 export default function BookingPage() {
@@ -24,8 +25,7 @@ export default function BookingPage() {
     time: '',
     date: '',
     birthDate: '',
-    readTerms: false,
-    consentForm: false
+    readTerms: false
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -39,6 +39,8 @@ export default function BookingPage() {
   const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
   const [suggestedArtistId, setSuggestedArtistId] = useState<number | null>(null);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+  const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHARef>(null);
   const [successDetails, setSuccessDetails] = useState<{
     message: string;
     artistName?: string;
@@ -52,12 +54,97 @@ export default function BookingPage() {
     { label: 'Piercing', value: 'piercing' }
   ]), []);
 
+  // State to force re-calculation of time slots when current time changes
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update current time every minute to refresh available time slots
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, []);
+
   const timeSlots = useMemo(() => {
     const slots: string[] = [];
     const startMinutes = 12 * 60; // 12:00 PM
     const endMinutes = 23 * 60 + 30; // 11:30 PM
 
+    // Get current time in Vancouver timezone (America/Vancouver)
+    // Use currentTime state to trigger recalculation when time changes
+    const now = currentTime;
+    
+    // Try to get Vancouver time, fallback to local time if timezone is not supported
+    let today: string;
+    let vancouverHour: number;
+    let vancouverMinute: number;
+    
+    try {
+      const dateFormatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Vancouver',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      });
+      
+      const timeFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Vancouver',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+      
+      // Get today's date in Vancouver timezone (YYYY-MM-DD format)
+      today = dateFormatter.format(now);
+      
+      // Get current time in Vancouver timezone
+      const timeParts = timeFormatter.formatToParts(now);
+      vancouverHour = parseInt(timeParts.find(p => p.type === 'hour')?.value || '0', 10);
+      vancouverMinute = parseInt(timeParts.find(p => p.type === 'minute')?.value || '0', 10);
+    } catch (error) {
+      // Fallback: use local time if Vancouver timezone is not available
+      console.warn('Vancouver timezone not available, using local time:', error);
+      const localDate = now.toISOString().split('T')[0];
+      today = localDate;
+      vancouverHour = now.getHours();
+      vancouverMinute = now.getMinutes();
+    }
+    
+    const selectedDate = formData.date;
+    
+    // Get today's date in local timezone for comparison (input date is in local timezone)
+    // Use local time, not UTC
+    const nowLocal = new Date();
+    const todayLocal = `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
+    
+    // Calculate minimum time (current time + 1 hour) if booking for today
+    // Compare using local date (since input date is in local timezone)
+    let minTimeMinutes: number | null = null;
+    const isToday = selectedDate && selectedDate === todayLocal;
+    
+    if (isToday) {
+      const currentMinutes = vancouverHour * 60 + vancouverMinute;
+      // Add 1 hour (60 minutes) and round up to next 30-minute slot
+      minTimeMinutes = currentMinutes + 60;
+      // Round up to next 30-minute interval
+      minTimeMinutes = Math.ceil(minTimeMinutes / 30) * 30;
+      // Ensure minimum is at least 12:00 PM (720 minutes)
+      if (minTimeMinutes < startMinutes) {
+        minTimeMinutes = startMinutes;
+      }
+      // If minimum time is after end time, no slots available
+      if (minTimeMinutes > endMinutes) {
+        return [];
+      }
+    }
+
     for (let minutes = startMinutes; minutes <= endMinutes; minutes += 30) {
+      // Skip times that are too early if booking for today
+      if (minTimeMinutes !== null && minutes < minTimeMinutes) {
+        continue;
+      }
+      
       const hours24 = Math.floor(minutes / 60);
       const minutesPart = minutes % 60;
       const isPM = hours24 >= 12;
@@ -67,7 +154,7 @@ export default function BookingPage() {
     }
 
     return slots;
-  }, []);
+  }, [formData.date, currentTime]);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -148,7 +235,6 @@ export default function BookingPage() {
       if (age < 16) newErrors.birthDate = 'You must be at least 16 years old to book an appointment';
     }
     if (!formData.readTerms) newErrors.readTerms = 'You must read and accept the terms and conditions';
-    if (!formData.consentForm) newErrors.consentForm = 'You must consent to the form';
     if (formData.service === 'tattoo') {
       if (availabilityError) {
         newErrors.selectedArtist = availabilityError;
@@ -275,13 +361,42 @@ export default function BookingPage() {
     setSelectedArtistId(null);
     setSuggestedArtistId(null);
     setAvailabilityError(null);
+    setRecaptchaError(null);
     setIsCheckingAvailability(false);
+  };
+
+  const handleRecaptchaVerify = () => {
+    setRecaptchaError(null);
+  };
+
+  const handleRecaptchaError = () => {
+    setRecaptchaError('reCAPTCHA verification failed. Please try again.');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
+
+    // Execute reCAPTCHA v3 and get token
+    setRecaptchaError(null);
+    let token: string | null = null;
+
+    if (recaptchaRef.current) {
+      try {
+        token = await recaptchaRef.current.execute();
+      } catch (error) {
+        console.error('reCAPTCHA execution error:', error);
+        setRecaptchaError('reCAPTCHA verification failed. Please try again.');
+        return;
+      }
+    }
+
+    // Validate reCAPTCHA token
+    if (!token) {
+      setRecaptchaError('Please complete the reCAPTCHA verification.');
+      return;
+    }
 
     setIsSubmitting(true);
     setApiError(null);
@@ -341,6 +456,7 @@ export default function BookingPage() {
         artist_id: preferredArtist?.id,
         preferred_artist_name: preferredArtist?.name,
         preferred_artist_email: preferredArtist?.email,
+        recaptcha_token: token || undefined,
       });
 
       const assignedName = bookingResponse.assigned_artist?.name ?? preferredArtist?.name;
@@ -365,6 +481,7 @@ export default function BookingPage() {
       setSelectedArtistId(null);
       setSuggestedArtistId(null);
       setAvailabilityError(null);
+      setRecaptchaError(null);
       setIsCheckingAvailability(false);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
@@ -519,8 +636,24 @@ export default function BookingPage() {
               type="tel"
               id="phone"
               name="phone"
+              inputMode="numeric"
+              pattern="[0-9+\-\s\(\)]+"
               value={formData.phone}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Only allow numbers, +, -, spaces, and parentheses
+                if (/^[0-9+\-\s\(\)]*$/.test(value)) {
+                  handleInputChange(e);
+                }
+              }}
+              onKeyDown={(e) => {
+                // Prevent typing letters and other characters
+                const key = e.key;
+                // Allow: numbers, +, -, space, (, ), backspace, delete, tab, arrow keys
+                if (!/^[0-9+\-\s\(\)]$/.test(key) && !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key)) {
+                  e.preventDefault();
+                }
+              }}
               className={`form-input ${errors.phone ? 'error' : ''}`}
               placeholder="Enter your phone number"
             />
@@ -572,7 +705,10 @@ export default function BookingPage() {
                 value={formData.date}
                 onChange={handleInputChange}
                 className={`form-input ${errors.date ? 'error' : ''}`}
-                min={new Date().toISOString().split('T')[0]}
+                min={(() => {
+                  const now = new Date();
+                  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                })()}
               />
               {errors.date && <span className="error-message">{errors.date}</span>}
             </div>
@@ -673,14 +809,18 @@ export default function BookingPage() {
             {errors.birthDate && <span className="error-message">{errors.birthDate}</span>}
           </div>
 
-          {/* reCAPTCHA */}
-          <div className="form-group">
-            <div className="recaptcha-container">
-              <div className="recaptcha-placeholder">
-                <p>reCAPTCHA verification will be implemented here</p>
-              </div>
+          {/* reCAPTCHA v3 - invisible, executes on submit */}
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            onVerify={handleRecaptchaVerify}
+            onError={handleRecaptchaError}
+            action="booking_submit"
+          />
+          {recaptchaError && (
+            <div className="form-group">
+              <span className="error-message">{recaptchaError}</span>
             </div>
-          </div>
+          )}
 
           {/* Checkboxes */}
           <div className="form-checkboxes">
@@ -697,21 +837,6 @@ export default function BookingPage() {
                 I have read and agree to the <a href="/terms" target="_blank" className="terms-link">Terms and Conditions</a> *
               </label>
               {errors.readTerms && <span className="error-message">{errors.readTerms}</span>}
-            </div>
-
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="consentForm"
-                name="consentForm"
-                checked={formData.consentForm}
-                onChange={handleInputChange}
-                className={`form-checkbox ${errors.consentForm ? 'error' : ''}`}
-              />
-              <label htmlFor="consentForm" className="checkbox-label">
-                I consent to the <a href="/consent-form" target="_blank" className="terms-link">Consent Form</a> *
-              </label>
-              {errors.consentForm && <span className="error-message">{errors.consentForm}</span>}
             </div>
           </div>
 
