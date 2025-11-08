@@ -414,8 +414,50 @@
       
       .form-checkbox {
         margin-right: $spacing-sm;
-        transform: scale(1.2);
-        accent-color: $primary-color;
+        appearance: none;
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        border-radius: 6px;
+        background: rgba(15, 15, 15, 0.8);
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: rgba(255, 255, 255, 0.9);
+          background: rgba(25, 25, 25, 0.9);
+        }
+
+        &:checked {
+          background: $primary-color;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.35);
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 7px;
+            height: 12px;
+            border: solid #000;
+            border-width: 0 3px 3px 0;
+            transform: translate(-50%, -60%) rotate(45deg);
+          }
+        }
+
+        @include mobile {
+          width: 26px;
+          height: 26px;
+          border-width: 2.5px;
+
+          &:checked::after {
+            width: 8px;
+            height: 14px;
+          }
+        }
       }
       
       .checkbox-label {

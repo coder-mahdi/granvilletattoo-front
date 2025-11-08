@@ -14,9 +14,6 @@ export type ConsentFormPayload = {
   additional_notes?: string;
   participant_signature: string;
   procedure_date: string;
-  employee_signature: string;
-  id_verification: string;
-  artist_confirmation?: string;
   answers: ConsentAnswers;
   recaptcha_token?: string;
 };

@@ -17,9 +17,6 @@ type ConsentFormValues = {
   additionalNotes: string;
   participantSignature: string;
   procedureDate: string;
-  employeeSignature: string;
-  idVerification: string;
-  artistConfirmation: string;
 };
 
 type YesNoAnswer = 'yes' | 'no' | '';
@@ -54,9 +51,6 @@ const initialFormValues: ConsentFormValues = {
   additionalNotes: '',
   participantSignature: '',
   procedureDate: '',
-  employeeSignature: '',
-  idVerification: '',
-  artistConfirmation: '',
 };
 
 const initialYesNoState: YesNoState = yesNoQuestions.reduce((acc, question) => {
@@ -175,9 +169,6 @@ export default function ConsentFormForm() {
         additional_notes: formValues.additionalNotes || undefined,
         participant_signature: formValues.participantSignature,
         procedure_date: formValues.procedureDate,
-        employee_signature: formValues.employeeSignature,
-        id_verification: formValues.idVerification,
-        artist_confirmation: formValues.artistConfirmation || undefined,
         answers: payloadAnswers,
         recaptcha_token: token || undefined,
       });
@@ -447,42 +438,7 @@ export default function ConsentFormForm() {
                   </div>
                 </div>
 
-                <div className="signature-grid">
-                  <div className="form-group">
-                    <label htmlFor="employeeSignature">Employee Signature *</label>
-                    <input
-                      id="employeeSignature"
-                      name="employeeSignature"
-                      type="text"
-                      required
-                      value={formValues.employeeSignature}
-                      onChange={handleInputChange}
-                      placeholder="For studio use"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="idVerification">ID Check *</label>
-                    <input
-                      id="idVerification"
-                      name="idVerification"
-                      type="text"
-                      required
-                      value={formValues.idVerification}
-                      onChange={handleInputChange}
-                      placeholder="Type of ID verified"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="artistConfirmation">Artist Confirmation</label>
-                    <textarea
-                      id="artistConfirmation"
-                      name="artistConfirmation"
-                      value={formValues.artistConfirmation}
-                      onChange={handleInputChange}
-                      placeholder="Internal notes for studio use"
-                    />
-                  </div>
-                </div>
+                {/* Removed internal-use signature fields */}
               </div>
 
               {/* reCAPTCHA v3 - invisible, executes on submit */}

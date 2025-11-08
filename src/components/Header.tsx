@@ -22,15 +22,15 @@ export default function Header() {
     isSingleArtistPage
     ? [
         { name: 'Home', href: '/' },
-          { name: 'Artists', href: '/#our-artists' },
-          { name: 'About Us', href: aboutHref },
+        { name: 'Artists', href: '/#our-artists' },
+        { name: 'About Us', href: aboutHref },
         { name: 'Blogs', href: '/blogs' }
       ]
     : [
-          { name: 'Artists', href: '#our-artists' },
-          { name: 'About Us', href: aboutHref },
+        { name: 'Artists', href: '#our-artists' },
+        { name: 'About Us', href: aboutHref },
         { name: 'Blogs', href: '/blogs' }
-        ]
+      ]
   ), [aboutHref, isSingleArtistPage]);
 
   const toggleMenu = () => {

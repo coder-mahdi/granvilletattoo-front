@@ -76,27 +76,16 @@ export default function BookingPage() {
     const now = currentTime;
     
     // Try to get Vancouver time, fallback to local time if timezone is not supported
-    let today: string;
     let vancouverHour: number;
     let vancouverMinute: number;
     
     try {
-      const dateFormatter = new Intl.DateTimeFormat('en-CA', {
-        timeZone: 'America/Vancouver',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      });
-      
       const timeFormatter = new Intl.DateTimeFormat('en-US', {
         timeZone: 'America/Vancouver',
         hour: '2-digit',
         minute: '2-digit',
         hour12: false,
       });
-      
-      // Get today's date in Vancouver timezone (YYYY-MM-DD format)
-      today = dateFormatter.format(now);
       
       // Get current time in Vancouver timezone
       const timeParts = timeFormatter.formatToParts(now);
@@ -105,8 +94,6 @@ export default function BookingPage() {
     } catch (error) {
       // Fallback: use local time if Vancouver timezone is not available
       console.warn('Vancouver timezone not available, using local time:', error);
-      const localDate = now.toISOString().split('T')[0];
-      today = localDate;
       vancouverHour = now.getHours();
       vancouverMinute = now.getMinutes();
     }
@@ -448,7 +435,8 @@ export default function BookingPage() {
         name: formData.fullName.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
-        design: formData.designUpload ? `Uploaded file: ${formData.designUpload.name}` : undefined,
+        design: formData.designUpload ? formData.designUpload.name : undefined,
+        designFile: formData.designUpload ?? undefined,
         notes: combinedNotes || undefined,
         date: formData.date,
         time: time24h,

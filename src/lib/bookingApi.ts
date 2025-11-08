@@ -21,6 +21,7 @@ export type BookingRequestPayload = {
   email: string;
   phone: string;
   design?: string;
+  designFile?: File | null;
   notes?: string;
   date: string;
   time: string;
@@ -67,13 +68,50 @@ export async function fetchAvailability(date: string, time: string): Promise<Ava
 }
 
 export async function submitBooking(payload: BookingRequestPayload): Promise<BookingResponse> {
+  const formData = new FormData();
+
+  formData.append('service', payload.service);
+  formData.append('name', payload.name);
+  formData.append('email', payload.email);
+  formData.append('phone', payload.phone);
+  formData.append('date', payload.date);
+  formData.append('time', payload.time);
+
+  if (payload.design) {
+    formData.append('design', payload.design);
+  }
+
+  if (payload.designFile) {
+    formData.append('design_file', payload.designFile);
+  }
+
+  if (payload.notes) {
+    formData.append('notes', payload.notes);
+  }
+
+  if (payload.birthdate) {
+    formData.append('birthdate', payload.birthdate);
+  }
+
+  if (payload.artist_id !== undefined && payload.artist_id !== null) {
+    formData.append('artist_id', String(payload.artist_id));
+  }
+
+  if (payload.preferred_artist_name) {
+    formData.append('preferred_artist_name', payload.preferred_artist_name);
+  }
+
+  if (payload.preferred_artist_email) {
+    formData.append('preferred_artist_email', payload.preferred_artist_email);
+  }
+
+  if (payload.recaptcha_token) {
+    formData.append('recaptcha_token', payload.recaptcha_token);
+  }
+
   const response = await fetch(buildUrl('/booking'), {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: JSON.stringify(payload),
+    body: formData,
   });
 
   if (!response.ok) {
