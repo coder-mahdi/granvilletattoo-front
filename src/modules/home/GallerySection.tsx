@@ -19,7 +19,6 @@ export default function GallerySection() {
 
   const generalGalleryImages = [
     'general-1.png',
-    'general-2.webp',
     'general-3.webp',
     '97992305-F07C-4910-B9A7-2BE771A9CB0B (1).webp',
     'BCBFE364-3E30-45A8-B6EF-725FCB9F0C49.webp',
@@ -32,17 +31,28 @@ export default function GallerySection() {
     'Mina-9.webp',
   ];
 
+  const artistLabelMap: Record<string, string> = {
+    'general-1.png': 'Kian',
+    'general-3.webp': 'Kian',
+    '97992305-F07C-4910-B9A7-2BE771A9CB0B (1).webp': 'Sami',
+    'BCBFE364-3E30-45A8-B6EF-725FCB9F0C49.webp': 'Sami',
+    'Kian-2.webp': 'Kian',
+    'Kian-3.webp': 'Kian',
+    'Masi-tattoo-7.webp': 'Masi',
+    'Masi-tattoo-11.webp': 'Masi',
+    'Mina-4.webp': 'Mina',
+    'Mina-8.webp': 'Mina',
+    'Mina-9.webp': 'Mina',
+  };
+
   const galleryImages = generalGalleryImages.map((fileName, index) => {
-    const altText = fileName
-      .replace(/\.[^/.]+$/, '')
-      .replace(/[-_]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .replace(/\b\w/g, (char) => char.toUpperCase());
+    const artistName = artistLabelMap[fileName] ?? 'Granville Tattoo';
 
     return {
       id: index + 1,
       src: `/images/general/${fileName}`,
-      alt: altText,
+      alt: `${artistName} tattoo artwork`,
+      artist: artistName,
     };
   });
 
@@ -59,14 +69,19 @@ export default function GallerySection() {
       >
         {galleryImages.map((image) => (
           <div key={image.id} className="gallery-item">
-            <Image
-              src={image.src}
-              alt={image.alt}
-              width={360}
-              height={360}
-              draggable={false}
-              className="gallery-img"
-            />
+            <div className="gallery-image-wrapper">
+              <Image
+                src={image.src}
+                alt={image.alt}
+                width={360}
+                height={360}
+                draggable={false}
+                className="gallery-img"
+              />
+              <div className="gallery-overlay">
+                <span className="gallery-overlay-text">{image.artist}</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>
