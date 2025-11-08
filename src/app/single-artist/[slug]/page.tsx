@@ -9,7 +9,7 @@ const mockArtists = {
     name: 'Kian Mokhtari',
     title: 'Realism & Portrait Specialist',
     bio: 'Kian crafts high-impact realism pieces with a cinematic touch, blending fine art training and tattoo craft. He loves transforming your references into hyper-detailed, story-driven tattoos.',
-    specialties: ['Realistic Portraits', 'Black & Grey', 'Fine Line'],
+    specialties: ['Realistic Portraits', 'Black & Grey', 'Fine Line', 'Color Realism'],
     experience: '10+ Years',
     location: 'Vancouver, BC',
     heroImage: '/images/Kian/kian_hero.jpg',
@@ -81,10 +81,10 @@ const mockArtists = {
     name: 'Masi Aghdam',
     title: 'Fine Line & Script Specialist',
     bio: 'Masi focuses on refined fine-line compositions, bespoke lettering, and meaningful micro-realism pieces. Her work blends elegance with clean execution for long-lasting detail.',
-    specialties: ['Fine Line', 'Script', 'Micro Realism'],
+    specialties: ['Fine Line', 'Script', 'Micro Realism', 'Color', 'Black & Grey'],
     experience: '8+ Years',
     location: 'Vancouver, BC',
-    heroImage: '/images/Masi/Masi-Tattoo-6.webp',
+    heroImage: '/images/Masi/Masi-1.jpg',
     social: {
       instagram: 'masiworldtattoo',
       facebook: 'MasiAghdamTattoo',
@@ -93,24 +93,94 @@ const mockArtists = {
     portfolio: [
       {
         id: 1,
-        title: 'Minimal Floral Script',
-        image: '/images/Masi/Masi-tattoo-7.webp',
+        title: 'Delicate Fine Line Rose',
+        image: '/images/Masi/Masi-tattoo.webp',
         category: 'Fine Line',
-        year: '2024'
+        year: '2025'
       },
       {
         id: 2,
-        title: 'Micro Realism Portrait',
-        image: '/images/Masi/Masi-tattoo-10.png',
+        title: 'Micro Realism Portrait Detail',
+        image: '/images/Masi/Masi-tattoo-7.webp',
         category: 'Micro Realism',
-        year: '2023'
+        year: '2025'
       },
       {
         id: 3,
-        title: 'Elegant Lettering',
+        title: 'Elegant Script Accent',
+        image: '/images/Masi/Masi-tattoo-8.webp',
+        category: 'Script',
+        year: '2024'
+      },
+      {
+        id: 4,
+        title: 'Color Bloom Panel',
+        image: '/images/Masi/Masi-tattoo-9.webp',
+        category: 'Color',
+        year: '2024'
+      },
+      {
+        id: 5,
+        title: 'Gradient Script Flow',
+        image: '/images/Masi/Masi-tattoo-10.png',
+        category: 'Color Script',
+        year: '2023'
+      },
+      {
+        id: 6,
+        title: 'Sculpted Script Panel',
         image: '/images/Masi/Masi-tattoo-11.png',
         category: 'Script',
         year: '2023'
+      },
+      {
+        id: 7,
+        title: 'Abstract Fine Line Bloom',
+        image: '/images/Masi/Masi-tattoo-13.webp',
+        category: 'Fine Line',
+        year: '2022'
+      },
+      {
+        id: 8,
+        title: 'Color Washed Florals',
+        image: '/images/Masi/Masi-tattoo-14.webp',
+        category: 'Color',
+        year: '2022'
+      },
+      {
+        id: 9,
+        title: 'Minimal Botanical Wrap',
+        image: '/images/Masi/Masi-tattoo-15.webp',
+        category: 'Fine Line',
+        year: '2022'
+      },
+      {
+        id: 10,
+        title: 'Chromatic Linear Flow',
+        image: '/images/Masi/Masi-tattoo-16.webp',
+        category: 'Color',
+        year: '2021'
+      },
+      {
+        id: 11,
+        title: 'Pastel Script Accent',
+        image: '/images/Masi/Masi-tattoo-18.webp',
+        category: 'Color Script',
+        year: '2021'
+      },
+      {
+        id: 12,
+        title: 'Watercolor Bloom',
+        image: '/images/Masi/Masi-Tattoo-6.webp',
+        category: 'Watercolor',
+        year: '2020'
+      },
+      {
+        id: 13,
+        title: 'Soft Gradient Floral',
+        image: '/images/Masi/21.webp',
+        category: 'Color',
+        year: '2020'
       }
     ],
     availability: {
@@ -122,12 +192,12 @@ const mockArtists = {
   'mina-khani': {
     id: 3,
     name: 'Mina Khani',
-    title: 'Watercolor & Illustrative Artist',
-    bio: 'Mina blends fluid watercolor techniques with crisp illustrative lines, creating pieces that feel in motion and full of emotion.',
-    specialties: ['Watercolor', 'Illustrative', 'Fine Line'],
-    experience: '7+ Years',
+    title: 'Fine Line, Minimalist & Color Artist',
+    bio: 'Mina combines fluid watercolor gradients with precision line work, layering minimalist structure over emotive color to keep every piece vibrant and full of motion.',
+    specialties: ['Fine Line', 'Minimalist', 'Color', 'Black & Grey', 'Watercolor'],
+    experience: '8+ Years',
     location: 'Vancouver, BC',
-    heroImage: '/images/Mina/Mina.jpg',
+    heroImage: '/images/Mina/Mina-1.webp',
     social: {
       instagram: 'minatattoominimal',
       facebook: 'MinaKhaniTattoo',
@@ -136,17 +206,73 @@ const mockArtists = {
     portfolio: [
       {
         id: 1,
-        title: 'Blooming Water Hues',
-        image: '/images/Mina/Mina.jpg',
-        category: 'Watercolor',
+        title: 'Pastel Bloom Flow',
+        image: '/images/Mina/Mina-2.webp',
+        category: 'Color',
         year: '2024'
       },
       {
         id: 2,
-        title: 'Motion Study',
-        image: '/images/Mina/Mina.jpg',
-        category: 'Illustrative',
+        title: 'Minimal Botanical Accent',
+        image: '/images/Mina/Mina-3.webp',
+        category: 'Fine Line',
+        year: '2024'
+      },
+      {
+        id: 3,
+        title: 'Chromatic Feather Detail',
+        image: '/images/Mina/Mina-4.webp',
+        category: 'Color Realism',
         year: '2023'
+      },
+      {
+        id: 4,
+        title: 'Monochrome Floral Wrap',
+        image: '/images/Mina/Mina-5.webp',
+        category: 'Black & Grey',
+        year: '2023'
+      },
+      {
+        id: 5,
+        title: 'Geometric Line Harmony',
+        image: '/images/Mina/Mina-6.webp',
+        category: 'Minimalist',
+        year: '2024'
+      },
+      {
+        id: 6,
+        title: 'Iridescent Script Accent',
+        image: '/images/Mina/Mina-7.webp',
+        category: 'Color',
+        year: '2024'
+      },
+      {
+        id: 7,
+        title: 'Soft Gradient Bloom',
+        image: '/images/Mina/Mina-8.webp',
+        category: 'Watercolor',
+        year: '2023'
+      },
+      {
+        id: 8,
+        title: 'Delicate Micro Realism',
+        image: '/images/Mina/Mina-9.webp',
+        category: 'Micro Realism',
+        year: '2023'
+      },
+      {
+        id: 9,
+        title: 'Blackwork Leaf Composition',
+        image: '/images/Mina/Mina-10.webp',
+        category: 'Black & Grey',
+        year: '2022'
+      },
+      {
+        id: 10,
+        title: 'Luminous Color Panel',
+        image: '/images/Mina/Mina-11.webp',
+        category: 'Color',
+        year: '2022'
       }
     ],
     availability: {
@@ -158,12 +284,12 @@ const mockArtists = {
   'sami-amiri': {
     id: 4,
     name: 'Sami Amiri',
-    title: 'Fine Line Artist',
-    bio: 'Sami specializes in delicate fine line work and intricate geometric patterns. His minimalist approach and precision have made him one of the most sought-after artists in Vancouver.',
-    specialties: ['Fine Line', 'Geometric', 'Minimalist', 'Blackwork'],
-    experience: '5+ Years',
+    title: 'Fine Line, Color & Realism Artist',
+    bio: 'Sami specializes in refined fine line work, bold color gradients, and realistic storytelling. Her minimalist approach channels depth without sacrificing emotion.',
+    specialties: ['Fine Line', 'Minimalist', 'Blackwork', 'Color', 'Realism'],
+    experience: '8+ Years',
     location: 'Vancouver, BC',
-    heroImage: '/images/hero.png',
+    heroImage: '/images/Sami/IMG_2615.webp',
     social: {
       instagram: '@sami_amiri_art',
       facebook: 'SamiAmiriTattoos',
@@ -172,17 +298,59 @@ const mockArtists = {
     portfolio: [
       {
         id: 1,
-        title: 'Fine Line Mandala',
-        image: '/images/pic1.png',
+        title: 'Fine Line Mandala Accent',
+        image: '/images/Sami/IMG_2654.webp',
+        category: 'Fine Line',
+        year: '2024'
+      },
+      {
+        id: 2,
+        title: 'Geometric Pattern Flow',
+        image: '/images/Sami/IMG_3041.webp',
+        category: 'Geometric',
+        year: '2023'
+      },
+      {
+        id: 3,
+        title: 'Color Gradient Script',
+        image: '/images/Sami/20250803_162655 (1).webp',
+        category: 'Color',
+        year: '2024'
+      },
+      {
+        id: 4,
+        title: 'Realistic Floral Panel',
+        image: '/images/Sami/IMG_3636.JPG',
+        category: 'Realism',
+        year: '2022'
+      },
+      {
+        id: 6,
+        title: 'Bold Blackwork Contrast',
+        image: '/images/Sami/IMG_4056.JPG',
+        category: 'Blackwork',
+        year: '2023'
+      },
+      {
+        id: 7,
+        title: 'Fine Script Accent',
+        image: '/images/Sami/IMG_4765.JPG',
         category: 'Fine Line',
         year: '2023'
       },
       {
-        id: 2,
-        title: 'Geometric Pattern',
-        image: '/images/hero.png',
-        category: 'Geometric',
-        year: '2023'
+        id: 8,
+        title: 'Textured Mythical Study',
+        image: '/images/Sami/97992305-F07C-4910-B9A7-2BE771A9CB0B (1).webp',
+        category: 'Realism',
+        year: '2021'
+      },
+      {
+        id: 9,
+        title: 'Detailed Texture Panel',
+        image: '/images/Sami/BCBFE364-3E30-45A8-B6EF-725FCB9F0C49.webp',
+        category: 'Realism',
+        year: '2021'
       }
     ],
     availability: {
