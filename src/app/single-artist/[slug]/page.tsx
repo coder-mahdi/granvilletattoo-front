@@ -32,7 +32,43 @@ const mockArtists = {
         image: '/images/Kian/kian_gallery-2.jpg',
         category: 'Black & Grey',
         year: '2023'
-      }
+      },
+      {
+        id: 3,
+        title: 'Textured Realism Composition',
+        image: '/images/general/general-1.png',
+        category: 'Black & Grey',
+        year: '2024'
+      },
+      {
+        id: 4,
+        title: 'Mythic Guardian Detail',
+        image: '/images/general/general-2.webp',
+        category: 'Realism',
+        year: '2024'
+      },
+      {
+        id: 5,
+        title: 'High-Contrast Character Profile',
+        image: '/images/general/general-3.webp',
+        category: 'Portrait',
+        year: '2024'
+      },
+      {
+        id: 6,
+        title: 'Cinematic Knight Portrait',
+        image: '/images/general/Kian-2.webp',
+        category: 'Black & Grey',
+        year: '2024'
+      },
+      {
+        id: 7,
+        title: 'Story-Driven Sleeve Segment',
+        image: '/images/general/Kian-3.webp',
+        category: 'Realism',
+        year: '2024'
+      },
+    
     ],
     availability: {
       status: 'Available',

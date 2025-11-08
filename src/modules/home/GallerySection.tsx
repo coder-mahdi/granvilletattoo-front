@@ -17,20 +17,34 @@ export default function GallerySection() {
     enabled: true
   });
 
-  const galleryImages = [
-    { id: 1, src: '/images/pic1.png', alt: 'Tattoo 1' },
-    { id: 2, src: '/images/hero.png', alt: 'Tattoo 2' },
-    { id: 3, src: '/images/pic1.png', alt: 'Tattoo 3' },
-    { id: 4, src: '/images/hero.png', alt: 'Tattoo 4' },
-    { id: 5, src: '/images/pic1.png', alt: 'Tattoo 5' },
-    { id: 6, src: '/images/hero.png', alt: 'Tattoo 6' },
-    { id: 7, src: '/images/pic1.png', alt: 'Tattoo 7' },
-    { id: 8, src: '/images/hero.png', alt: 'Tattoo 8' },
-    { id: 9, src: '/images/pic1.png', alt: 'Tattoo 9' },
-    { id: 10, src: '/images/hero.png', alt: 'Tattoo 10' },
-    { id: 11, src: '/images/pic1.png', alt: 'Tattoo 11' },
-    { id: 12, src: '/images/hero.png', alt: 'Tattoo 12' },
+  const generalGalleryImages = [
+    'general-1.png',
+    'general-2.webp',
+    'general-3.webp',
+    '97992305-F07C-4910-B9A7-2BE771A9CB0B (1).webp',
+    'BCBFE364-3E30-45A8-B6EF-725FCB9F0C49.webp',
+    'Kian-2.webp',
+    'Kian-3.webp',
+    'Masi-tattoo-7.webp',
+    'Masi-tattoo-11.webp',
+    'Mina-4.webp',
+    'Mina-8.webp',
+    'Mina-9.webp',
   ];
+
+  const galleryImages = generalGalleryImages.map((fileName, index) => {
+    const altText = fileName
+      .replace(/\.[^/.]+$/, '')
+      .replace(/[-_]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+
+    return {
+      id: index + 1,
+      src: `/images/general/${fileName}`,
+      alt: altText,
+    };
+  });
 
   return (
     <section ref={sectionRef} className="gallery-section">
