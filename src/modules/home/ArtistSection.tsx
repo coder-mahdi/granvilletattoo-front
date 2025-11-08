@@ -48,7 +48,7 @@ const ARTIST_CARDS: ArtistCard[] = [
     name: 'Sami Amiri',
     specialty: 'Fine Line, Color & Realism',
     experience: '8 years',
-    image: '/images/Sami/IMG_2615.webp',
+    image: '/images/sami/IMG_2615.webp',
     description: 'Blends precise fine line work with bold color gradients and realism-driven storytelling.',
     slug: 'sami-amiri',
   },

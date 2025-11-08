@@ -7,7 +7,9 @@ import Container from '@/components/Container';
 
 export default function HeroSection() {
   const [showStickyButton, setShowStickyButton] = useState(false);
+  const [isGalleryMenuOpen, setIsGalleryMenuOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +34,20 @@ export default function HeroSection() {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!dropdownRef.current) return;
+      if (!dropdownRef.current.contains(event.target as Node)) {
+        setIsGalleryMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div>
       <section ref={heroRef} className="hero-section">
@@ -49,7 +65,28 @@ export default function HeroSection() {
           <div className="hero-side-nav">
             <Link href="/#our-artists" className="nav-link mobile-hidden">Artists</Link>
             <Link href="/#about-granville-tattoo" className="nav-link mobile-hidden">About Us</Link>
-            <Link href="/gallery" className="nav-link">Gallery</Link>
+            <div
+               className={`hero-dropdown ${isGalleryMenuOpen ? 'open' : ''}`}
+               ref={dropdownRef}
+             >
+              <button
+                type="button"
+                className="nav-link gallery-toggle"
+                onClick={() => setIsGalleryMenuOpen(prev => !prev)}
+                aria-haspopup="true"
+                aria-expanded={isGalleryMenuOpen}
+              >
+                Gallery
+              </button>
+              <div className="dropdown-menu">
+                <Link href="/gallery?category=tattoo" onClick={() => setIsGalleryMenuOpen(false)}>
+                  Tattoo Gallery
+                </Link>
+                <Link href="/gallery?category=piercing" onClick={() => setIsGalleryMenuOpen(false)}>
+                  Piercing Gallery
+                </Link>
+              </div>
+            </div>
             <Link href="/booking" className={`nav-link ${showStickyButton ? 'hidden' : ''}`}>Book Now</Link>
           </div>
           

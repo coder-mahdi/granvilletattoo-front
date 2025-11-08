@@ -126,7 +126,9 @@
       text-decoration: none;
       transition: color 0.3s ease;
       font-weight: 500;
-      
+    }
+ 
+    a {
       &:hover {
         color: $primary-color;
       }

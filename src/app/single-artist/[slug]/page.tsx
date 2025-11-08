@@ -289,7 +289,7 @@ const mockArtists = {
     specialties: ['Fine Line', 'Minimalist', 'Blackwork', 'Color', 'Realism'],
     experience: '8+ Years',
     location: 'Vancouver, BC',
-    heroImage: '/images/Sami/IMG_2615.webp',
+    heroImage: '/images/sami/IMG_2615.webp',
     social: {
       instagram: '@sami_amiri_art',
       facebook: 'SamiAmiriTattoos',
@@ -299,56 +299,56 @@ const mockArtists = {
       {
         id: 1,
         title: 'Fine Line Mandala Accent',
-        image: '/images/Sami/IMG_2654.webp',
+        image: '/images/sami/IMG_2654.webp',
         category: 'Fine Line',
         year: '2024'
       },
       {
         id: 2,
         title: 'Geometric Pattern Flow',
-        image: '/images/Sami/IMG_3041.webp',
+        image: '/images/sami/IMG_3041.webp',
         category: 'Geometric',
         year: '2023'
       },
       {
         id: 3,
         title: 'Color Gradient Script',
-        image: '/images/Sami/20250803_162655 (1).webp',
+        image: '/images/sami/20250803_162655 (1).webp',
         category: 'Color',
         year: '2024'
       },
       {
         id: 4,
         title: 'Realistic Floral Panel',
-        image: '/images/Sami/IMG_3636.JPG',
+        image: '/images/sami/IMG_3636.JPG',
         category: 'Realism',
         year: '2022'
       },
       {
         id: 6,
         title: 'Bold Blackwork Contrast',
-        image: '/images/Sami/IMG_4056.JPG',
+        image: '/images/sami/IMG_4056.JPG',
         category: 'Blackwork',
         year: '2023'
       },
       {
         id: 7,
         title: 'Fine Script Accent',
-        image: '/images/Sami/IMG_4765.JPG',
+        image: '/images/sami/IMG_4765.JPG',
         category: 'Fine Line',
         year: '2023'
       },
       {
         id: 8,
         title: 'Textured Mythical Study',
-        image: '/images/Sami/97992305-F07C-4910-B9A7-2BE771A9CB0B (1).webp',
+        image: '/images/sami/97992305-F07C-4910-B9A7-2BE771A9CB0B (1).webp',
         category: 'Realism',
         year: '2021'
       },
       {
         id: 9,
         title: 'Detailed Texture Panel',
-        image: '/images/Sami/BCBFE364-3E30-45A8-B6EF-725FCB9F0C49.webp',
+        image: '/images/sami/BCBFE364-3E30-45A8-B6EF-725FCB9F0C49.webp',
         category: 'Realism',
         year: '2021'
       }
