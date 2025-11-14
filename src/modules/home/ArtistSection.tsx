@@ -36,12 +36,12 @@ const ARTIST_CARDS: ArtistCard[] = [
   },
   {
     id: 3,
-    name: 'Mina Khani',
+    name: 'Mina Khanian',
     specialty: 'Fine Line & Color',
     experience: '8 years',
     image: '/images/Mina/Mina-1.webp',
     description: 'Layers minimalist line work with watercolor blends for pieces that feel alive and in motion.',
-    slug: 'mina-khani',
+    slug: 'mina-khanian',
   },
   {
     id: 4,

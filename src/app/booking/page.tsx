@@ -10,7 +10,8 @@ import { AvailabilityArtist, fetchAvailability, submitBooking } from '@/lib/book
 const ARTIST_SLUG_MAP: Record<string, string> = {
   'kian mokhtari': 'kian-mokhtari',
   'masi aghdam': 'masi-aghdam',
-  'mina khani': 'mina-khani',
+  'mina khani': 'mina-khanian',
+  'mina khanian': 'mina-khanian',
   'sami amiri': 'sami-amiri',
 };
 
@@ -550,7 +551,7 @@ export default function BookingPage() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="booking-form">
+        <form onSubmit={handleSubmit} className="booking-form">
             {apiError && (
               <div className="form-alert error-alert">
                 {apiError}
@@ -805,7 +806,7 @@ export default function BookingPage() {
             action="booking_submit"
           />
           {recaptchaError && (
-            <div className="form-group">
+          <div className="form-group">
               <span className="error-message">{recaptchaError}</span>
             </div>
           )}

@@ -189,18 +189,18 @@ const mockArtists = {
       bookingLink: '#book'
     }
   },
-  'mina-khani': {
+  'mina-khanian': {
     id: 3,
-    name: 'Mina Khani',
-    title: 'Fine Line, Minimalist & Color Artist',
-    bio: 'Mina combines fluid watercolor gradients with precision line work, layering minimalist structure over emotive color to keep every piece vibrant and full of motion.',
+    name: 'Mina Khanian',
+    title: 'Watercolor & Illustrative Artist',
+    bio: 'Mina Khanian combines fluid watercolor gradients with precision line work, layering minimalist structure over emotive color to keep every piece vibrant and full of motion.',
     specialties: ['Fine Line', 'Minimalist', 'Color', 'Black & Grey', 'Watercolor'],
     experience: '8+ Years',
     location: 'Vancouver, BC',
     heroImage: '/images/Mina/Mina-1.webp',
     social: {
       instagram: 'minatattoominimal',
-      facebook: 'MinaKhaniTattoo',
+      facebook: 'MinaKhanianTattoo',
       website: 'redtattoo.ca'
     },
     portfolio: [
@@ -237,47 +237,139 @@ const mockArtists = {
         title: 'Geometric Line Harmony',
         image: '/images/Mina/Mina-6.webp',
         category: 'Minimalist',
-        year: '2024'
+        year: '2022'
       },
       {
         id: 6,
-        title: 'Iridescent Script Accent',
+        title: 'Watercolor Flow Sleeve',
         image: '/images/Mina/Mina-7.webp',
-        category: 'Color',
-        year: '2024'
+        category: 'Watercolor',
+        year: '2022'
       },
       {
         id: 7,
-        title: 'Soft Gradient Bloom',
+        title: 'Minimal Flower Cluster',
         image: '/images/Mina/Mina-8.webp',
-        category: 'Watercolor',
-        year: '2023'
+        category: 'Fine Line',
+        year: '2021'
       },
       {
         id: 8,
-        title: 'Delicate Micro Realism',
+        title: 'Color Burst Bouquet',
         image: '/images/Mina/Mina-9.webp',
-        category: 'Micro Realism',
-        year: '2023'
+        category: 'Color',
+        year: '2021'
       },
       {
         id: 9,
-        title: 'Blackwork Leaf Composition',
+        title: 'Chromatic Feather',
         image: '/images/Mina/Mina-10.webp',
-        category: 'Black & Grey',
-        year: '2022'
+        category: 'Color',
+        year: '2021'
       },
       {
         id: 10,
-        title: 'Luminous Color Panel',
+        title: 'Pastel Floral Cascade',
         image: '/images/Mina/Mina-11.webp',
-        category: 'Color',
-        year: '2022'
+        category: 'Watercolor',
+        year: '2020'
       }
     ],
     availability: {
       status: 'Available',
-      nextAppointment: 'This week',
+      nextAppointment: 'This month',
+      bookingLink: '#book'
+    }
+  },
+  'mina-khani': {
+    id: 3,
+    name: 'Mina Khanian',
+    title: 'Watercolor & Illustrative Artist',
+    bio: 'Mina Khanian combines fluid watercolor gradients with precision line work, layering minimalist structure over emotive color to keep every piece vibrant and full of motion.',
+    specialties: ['Fine Line', 'Minimalist', 'Color', 'Black & Grey', 'Watercolor'],
+    experience: '8+ Years',
+    location: 'Vancouver, BC',
+    heroImage: '/images/Mina/Mina-1.webp',
+    social: {
+      instagram: 'minatattoominimal',
+      facebook: 'MinaKhanianTattoo',
+      website: 'redtattoo.ca'
+    },
+    portfolio: [
+      {
+        id: 1,
+        title: 'Pastel Bloom Flow',
+        image: '/images/Mina/Mina-2.webp',
+        category: 'Color',
+        year: '2024'
+      },
+      {
+        id: 2,
+        title: 'Minimal Botanical Accent',
+        image: '/images/Mina/Mina-3.webp',
+        category: 'Fine Line',
+        year: '2024'
+      },
+      {
+        id: 3,
+        title: 'Chromatic Feather Detail',
+        image: '/images/Mina/Mina-4.webp',
+        category: 'Color Realism',
+        year: '2023'
+      },
+      {
+        id: 4,
+        title: 'Monochrome Floral Wrap',
+        image: '/images/Mina/Mina-5.webp',
+        category: 'Black & Grey',
+        year: '2023'
+      },
+      {
+        id: 5,
+        title: 'Geometric Line Harmony',
+        image: '/images/Mina/Mina-6.webp',
+        category: 'Minimalist',
+        year: '2022'
+      },
+      {
+        id: 6,
+        title: 'Watercolor Flow Sleeve',
+        image: '/images/Mina/Mina-7.webp',
+        category: 'Watercolor',
+        year: '2022'
+      },
+      {
+        id: 7,
+        title: 'Minimal Flower Cluster',
+        image: '/images/Mina/Mina-8.webp',
+        category: 'Fine Line',
+        year: '2021'
+      },
+      {
+        id: 8,
+        title: 'Color Burst Bouquet',
+        image: '/images/Mina/Mina-9.webp',
+        category: 'Color',
+        year: '2021'
+      },
+      {
+        id: 9,
+        title: 'Chromatic Feather',
+        image: '/images/Mina/Mina-10.webp',
+        category: 'Color',
+        year: '2021'
+      },
+      {
+        id: 10,
+        title: 'Pastel Floral Cascade',
+        image: '/images/Mina/Mina-11.webp',
+        category: 'Watercolor',
+        year: '2020'
+      }
+    ],
+    availability: {
+      status: 'Available',
+      nextAppointment: 'This month',
       bookingLink: '#book'
     }
   },

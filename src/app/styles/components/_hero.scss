@@ -136,6 +136,22 @@
       }
     }
 
+    .hero-subtitle {
+      font-family: $paragraph-font;
+      font-size: 1.3rem;
+      color: rgba($text-color, 0.9);
+      margin-top: 1.5rem;
+      max-width: 600px;
+
+      @include mobile {
+        font-size: 1.1rem;
+        padding: 0 10px;
+        text-align: center;
+        margin: 1rem auto 0 auto;
+        max-width: 100%;
+      }
+    }
+
   }
 
   .hero-side-nav {
