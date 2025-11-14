@@ -17,6 +17,7 @@ type ConsentFormValues = {
   additionalNotes: string;
   participantSignature: string;
   procedureDate: string;
+  procedureType: 'tattoo' | 'piercing';
 };
 
 type YesNoAnswer = 'yes' | 'no' | '';
@@ -51,6 +52,7 @@ const initialFormValues: ConsentFormValues = {
   additionalNotes: '',
   participantSignature: '',
   procedureDate: '',
+  procedureType: 'tattoo',
 };
 
 const initialYesNoState: YesNoState = yesNoQuestions.reduce((acc, question) => {
@@ -73,7 +75,7 @@ export default function ConsentFormForm() {
     [answers]
   );
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
     setFormValues(prev => ({ ...prev, [name]: value }));
     if (submitted) setSubmitted(false);
@@ -169,6 +171,7 @@ export default function ConsentFormForm() {
         additional_notes: formValues.additionalNotes || undefined,
         participant_signature: formValues.participantSignature,
         procedure_date: formValues.procedureDate,
+        procedure_type: formValues.procedureType,
         answers: payloadAnswers,
         recaptcha_token: token || undefined,
       });
@@ -212,7 +215,7 @@ export default function ConsentFormForm() {
                   </p>
                   <button
                     type="button"
-                    className="submit-consent"
+                    className="submit-consent submit-consent--secondary"
                     onClick={handleNewForm}
                   >
                     Submit Another Consent Form
@@ -435,6 +438,19 @@ export default function ConsentFormForm() {
                       value={formValues.procedureDate}
                       onChange={handleInputChange}
                     />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="procedureType">Procedure Type *</label>
+                    <select
+                      id="procedureType"
+                      name="procedureType"
+                      required
+                      value={formValues.procedureType}
+                      onChange={handleInputChange}
+                    >
+                      <option value="tattoo">Tattoo</option>
+                      <option value="piercing">Piercing</option>
+                    </select>
                   </div>
                 </div>
 

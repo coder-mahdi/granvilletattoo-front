@@ -14,6 +14,7 @@ export type ConsentFormPayload = {
   additional_notes?: string;
   participant_signature: string;
   procedure_date: string;
+  procedure_type: 'tattoo' | 'piercing';
   answers: ConsentAnswers;
   recaptcha_token?: string;
 };

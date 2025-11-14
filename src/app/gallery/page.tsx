@@ -64,7 +64,7 @@ const tattooImages: GalleryImage[] = [
     '/images/Mina/Mina-9.webp',
     '/images/Mina/Mina-10.webp',
     '/images/Mina/Mina-11.webp',
-  ], 'Mina', 'mina-khani'),
+  ], 'Mina', 'mina-khanian'),
   ...createTattooImages([
     '/images/sami/IMG_2615.webp',
     '/images/sami/IMG_2654.webp',

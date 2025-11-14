@@ -482,6 +482,30 @@
       .submit-consent {
         margin-top: $spacing-lg;
       }
+
+      .submit-consent--secondary {
+        margin-top: $spacing-md;
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.45);
+        color: #ffffff;
+        box-shadow: none;
+        font-size: 0.95rem;
+        letter-spacing: 1.4px;
+        padding: $spacing-sm $spacing-lg;
+        transition: all 0.25s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.12);
+          color: #ffffff;
+          transform: translateY(-2px);
+          border-color: rgba(255, 255, 255, 0.75);
+        }
+
+        @include mobile {
+          width: 100%;
+          font-size: 1.05rem;
+        }
+      }
     }
   }
 }

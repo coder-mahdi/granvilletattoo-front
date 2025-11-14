@@ -1,0 +1,430 @@
+.blog-page {
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.96) 0%, rgba(12, 12, 12, 0.98) 100%);
+  color: $text-color;
+  min-height: 100vh;
+
+  .container {
+    @media (min-width: 1024px) {
+      margin-top: 0;
+    }
+  }
+
+  .blog-hero {
+    padding: 8rem 0 2rem;
+    text-align: center;
+
+    @include mobile {
+      padding: 6rem 0 1.5rem;
+    }
+
+    &__content {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    &__eyebrow {
+      display: inline-block;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba($primary-color, 0.8);
+      margin-bottom: $spacing-sm;
+    }
+
+    &__title {
+      font-family: $primary-font;
+      font-size: clamp(2.5rem, 3vw, 3.5rem);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: $spacing-sm;
+    }
+
+    &__subtitle {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: rgba($text-color, 0.75);
+
+      @include mobile {
+        font-size: 1.05rem;
+        padding: 0 $spacing-md;
+      }
+    }
+  }
+
+  .blog-filters {
+    padding-bottom: $spacing-md;
+
+    &__inner {
+      display: flex;
+      gap: $spacing-sm;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+
+  .blog-filter__button {
+    padding: $spacing-xs $spacing-lg;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(0, 0, 0, 0.45);
+    color: rgba($text-color, 0.85);
+    font-size: 0.95rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:hover,
+    &.is-active {
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.15);
+      color: #fff;
+      box-shadow: 0 8px 22px rgba($primary-color, 0.25);
+    }
+  }
+
+  .blog-grid-section {
+    padding-bottom: 6rem;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 320px));
+    justify-content: center;
+    gap: $spacing-xl;
+  }
+
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 50px rgba($primary-color, 0.3);
+    }
+
+    &__image {
+      display: block;
+      position: relative;
+      img {
+        width: 100%;
+        height: auto;
+        max-height: 280px;
+        object-fit: cover;
+      }
+    }
+
+    &__body {
+      padding: $spacing-lg;
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-md;
+      flex: 1;
+    }
+
+    &__meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: $spacing-sm;
+      font-size: 0.85rem;
+      color: rgba($text-color, 0.65);
+    }
+
+    &__date {
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    &__categories {
+      display: flex;
+      gap: $spacing-xs;
+      flex-wrap: wrap;
+    }
+
+    &__category {
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: rgba($primary-color, 0.2);
+      color: $text-color;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    &__title {
+      font-family: $primary-font;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    &__excerpt {
+      color: rgba($text-color, 0.75);
+      line-height: 1.6;
+    }
+
+    &__cta {
+      margin-top: auto;
+      align-self: flex-start;
+      padding: $spacing-xs $spacing-md;
+      border-radius: 999px;
+      border: 1px solid $primary-color;
+      color: $primary-color;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $primary-color;
+        color: #000;
+        box-shadow: 0 10px 24px rgba($primary-color, 0.35);
+      }
+    }
+  }
+
+  .blog-empty {
+    text-align: center;
+    padding: $spacing-xl;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.35);
+
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: $spacing-sm;
+    }
+
+    p {
+      color: rgba($text-color, 0.7);
+    }
+  }
+}
+
+.blog-single {
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.96) 0%, rgba(12, 12, 12, 0.98) 100%);
+  color: $text-color;
+  min-height: 100vh;
+
+  &__hero {
+    position: relative;
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    padding: 6rem 0 4rem;
+
+    @include mobile {
+      min-height: 320px;
+      padding: 5rem 0 3rem;
+    }
+  }
+
+  &__hero-image {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+
+    img {
+      object-fit: cover;
+    }
+  }
+
+  &__hero-img {
+    object-fit: cover;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.55));
+  }
+
+  &__hero-content {
+    position: relative;
+    max-width: 820px;
+    z-index: 2;
+
+    @include mobile {
+      text-align: center;
+    }
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__title {
+    font-family: $primary-font;
+    font-size: clamp(2.2rem, 3vw, 3.5rem);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: $spacing-md;
+  }
+
+  &__excerpt {
+    max-width: 620px;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: rgba(#fff, 0.85);
+
+    @include mobile {
+      margin: 0 auto;
+    }
+  }
+
+  &__content {
+    padding: 4rem 0 6rem;
+
+    @include mobile {
+      padding: 3rem 0 5rem;
+    }
+  }
+
+  &__article {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: rgba($text-color, 0.85);
+
+    h2,
+    h3,
+    h4 {
+      font-family: $primary-font;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin: $spacing-lg 0 $spacing-md;
+      color: #fff;
+    }
+
+    p {
+      margin-bottom: $spacing-md;
+    }
+
+    ul,
+    ol {
+      margin-bottom: $spacing-md;
+      padding-left: $spacing-lg;
+    }
+
+    strong {
+      color: #fff;
+    }
+    
+    a {
+      color: $primary-color;
+      text-decoration: underline;
+    }
+  }
+
+  &__tags {
+    margin-top: $spacing-xl;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    flex-wrap: wrap;
+  }
+
+  &__tags-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  &__tags-list {
+    display: flex;
+    gap: $spacing-xs;
+    flex-wrap: wrap;
+  }
+
+  &__back {
+    margin-top: $spacing-xl;
+
+    .blog-single__back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: $spacing-xs;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: $primary-color;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 4px;
+      transition: border-color 0.2s ease;
+
+      &:hover {
+        border-color: $primary-color;
+      }
+    }
+  }
+}
+
+.blog-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 0.8rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+
+  &--date {
+    background: rgba($primary-color, 0.9);
+    color: #000;
+  }
+
+  &--tag {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba($text-color, 0.85);
+  }
+}
+
+.blog-gallery {
+  margin-top: $spacing-xl;
+
+  &__title {
+    font-family: $primary-font;
+    font-size: 1.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: $spacing-md;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: $spacing-lg;
+  }
+
+  &__item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.4);
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    figcaption {
+      padding: $spacing-sm $spacing-md;
+      font-size: 0.9rem;
+      color: rgba($text-color, 0.7);
+    }
+  }
+}

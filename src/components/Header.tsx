@@ -22,14 +22,12 @@ export default function Header() {
     isSingleArtistPage
     ? [
         { name: 'Home', href: '/' },
-        { name: 'Artists', href: '/#our-artists' },
         { name: 'About Us', href: aboutHref },
-        { name: 'Blogs', href: '/blogs' }
+        { name: 'Blogs', href: '/blog' }
       ]
     : [
-        { name: 'Artists', href: '#our-artists' },
         { name: 'About Us', href: aboutHref },
-        { name: 'Blogs', href: '/blogs' }
+        { name: 'Blogs', href: '/blog' }
       ]
   ), [aboutHref, isSingleArtistPage]);
 

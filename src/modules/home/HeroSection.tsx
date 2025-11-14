@@ -61,10 +61,10 @@ export default function HeroSection() {
             <p className="hero-description">
               Where tattoos and piercings meet art Vancouver&apos;s premier studio for bold designs, expert artists, and an unforgettable experience
             </p>
+            <p className="hero-subtitle">Walk in, always welcome</p>
           </div>
           <div className="hero-side-nav">
             <Link href="/#our-artists" className="nav-link mobile-hidden">Artists</Link>
-            <Link href="/#about-granville-tattoo" className="nav-link mobile-hidden">About Us</Link>
             <div
                className={`hero-dropdown ${isGalleryMenuOpen ? 'open' : ''}`}
                ref={dropdownRef}
