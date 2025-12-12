@@ -35,7 +35,7 @@ const yesNoQuestions = [
   { key: 'transplants', label: 'Are you a recipient of bone marrow or organ transplants?' },
   { key: 'mrsa', label: 'Have you contracted MRSA or VRSA infection within the last year?' },
   { key: 'communicable', label: 'Do you have communicable diseases (e.g., hepatitis or HIV)?' },
-  { key: 'ofAge', label: 'Are you 16 or over?' },
+  { key: 'ofAge', label: 'Are you of legal age?' },
 ] as const;
 
 type YesNoState = Record<(typeof yesNoQuestions)[number]['key'], YesNoAnswer>;
@@ -279,11 +279,11 @@ export default function ConsentFormForm() {
                       id="age"
                       name="age"
                       type="number"
-                      min="16"
+                      min={formValues.procedureType === 'tattoo' ? '18' : '16'}
                       required
                       value={formValues.age}
                       onChange={handleInputChange}
-                      placeholder="Must be 16 or older"
+                      placeholder={formValues.procedureType === 'tattoo' ? 'Must be 18 or older for tattoos' : 'Must be 16 or older for piercings'}
                     />
                   </div>
                   <div className="form-group">
@@ -379,7 +379,13 @@ export default function ConsentFormForm() {
                 <div className="question-list">
                   {yesNoQuestions.map(question => (
                     <div key={question.key} className="question-item">
-                      <span className="question-label">{question.label}</span>
+                      <span className="question-label">
+                        {question.key === 'ofAge' 
+                          ? (formValues.procedureType === 'tattoo' 
+                              ? 'Are you 18 or over?' 
+                              : 'Are you 16 or over?')
+                          : question.label}
+                      </span>
                       <div className="radio-group">
                         <label>
                           <input
@@ -446,10 +452,20 @@ export default function ConsentFormForm() {
                       name="procedureType"
                       required
                       value={formValues.procedureType}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        handleInputChange(e);
+                        // Reset age if switching from tattoo to piercing or vice versa to ensure validation
+                        if (formValues.age) {
+                          const currentAge = Number(formValues.age);
+                          const newMinAge = e.target.value === 'tattoo' ? 18 : 16;
+                          if (currentAge < newMinAge) {
+                            setFormValues(prev => ({ ...prev, age: '' }));
+                          }
+                        }
+                      }}
                     >
-                      <option value="tattoo">Tattoo</option>
-                      <option value="piercing">Piercing</option>
+                      <option value="tattoo">Tattoo (Minimum age: 18)</option>
+                      <option value="piercing">Piercing (Minimum age: 16)</option>
                     </select>
                   </div>
                 </div>
