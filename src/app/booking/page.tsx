@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Container from '@/components/Container';
 import FAQSection from '@/components/FAQSection';
 import ReCAPTCHA, { ReCAPTCHARef } from '@/components/ReCAPTCHA';
-import { AvailabilityArtist, fetchAvailability, submitBooking } from '@/lib/bookingApi';
+import { AvailabilityArtist, AvailabilityResponse, fetchAvailability, submitBooking } from '@/lib/bookingApi';
 
 const ARTIST_SLUG_MAP: Record<string, string> = {
   'kian mokhtari': 'kian-mokhtari',
@@ -15,9 +15,11 @@ const ARTIST_SLUG_MAP: Record<string, string> = {
   'sami amiri': 'sami-amiri',
 };
 
+type ServiceType = 'tattoo' | 'piercing' | '';
+
 export default function BookingPage() {
   const initialFormState = {
-    service: '',
+    service: '' as ServiceType,
     fullName: '',
     email: '',
     phone: '',
@@ -38,7 +40,6 @@ export default function BookingPage() {
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const [availableArtists, setAvailableArtists] = useState<AvailabilityArtist[]>([]);
   const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
-  const [suggestedArtistId, setSuggestedArtistId] = useState<number | null>(null);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
   const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
   const recaptchaRef = useRef<ReCAPTCHARef>(null);
@@ -180,7 +181,6 @@ export default function BookingPage() {
     if (name === 'service' && value !== 'tattoo') {
       setAvailableArtists(prev => (prev.length ? [] : prev));
       setSelectedArtistId(prev => (prev !== null ? null : prev));
-      setSuggestedArtistId(prev => (prev !== null ? null : prev));
       setAvailabilityError(null);
       setIsCheckingAvailability(false);
       setErrors(prev => {
@@ -239,7 +239,6 @@ export default function BookingPage() {
     if (formData.service !== 'tattoo') {
       setAvailableArtists(prev => (prev.length ? [] : prev));
       setSelectedArtistId(prev => (prev !== null ? null : prev));
-      setSuggestedArtistId(prev => (prev !== null ? null : prev));
       setAvailabilityError(null);
       setIsCheckingAvailability(false);
       return;
@@ -248,7 +247,6 @@ export default function BookingPage() {
     if (!formData.date || !formData.time) {
       setAvailableArtists(prev => (prev.length ? [] : prev));
       setSelectedArtistId(prev => (prev !== null ? null : prev));
-      setSuggestedArtistId(prev => (prev !== null ? null : prev));
       setAvailabilityError(null);
       setIsCheckingAvailability(false);
       return;
@@ -256,6 +254,15 @@ export default function BookingPage() {
 
     let isActive = true;
     const loadAvailability = async () => {
+      // For piercing, don't check availability - Masi will be assigned automatically
+      if (formData.service === 'piercing') {
+        setAvailableArtists([]);
+        setSelectedArtistId(null);
+        setIsCheckingAvailability(false);
+        return;
+      }
+
+      // For tattoo, check availability
       setIsCheckingAvailability(true);
       setAvailabilityError(null);
 
@@ -267,21 +274,17 @@ export default function BookingPage() {
         if (!availability.available_artists.length) {
           setAvailableArtists([]);
           setSelectedArtistId(null);
-          setSuggestedArtistId(null);
           setAvailabilityError('No artists are available for the selected date and time. Please choose another slot.');
           return;
         }
 
         setAvailableArtists(availability.available_artists);
-        setSuggestedArtistId(availability.suggested_artist?.id ?? null);
+        // Don't set suggested artist - no "Suggested" badge for tattoo bookings
         setSelectedArtistId(prev => {
           if (prev && availability.available_artists.some(artist => artist.id === prev)) {
             return prev;
           }
-          const suggestedId = availability.suggested_artist?.id;
-          if (suggestedId && availability.available_artists.some(artist => artist.id === suggestedId)) {
-            return suggestedId;
-          }
+          // Auto-select first available artist, but don't mark as suggested
           return availability.available_artists[0]?.id ?? null;
         });
         setErrors(prev => {
@@ -295,7 +298,6 @@ export default function BookingPage() {
         const message = error instanceof Error ? error.message : 'Unable to check availability right now.';
         setAvailableArtists([]);
         setSelectedArtistId(null);
-        setSuggestedArtistId(null);
         setAvailabilityError(message);
       } finally {
         if (isActive) {
@@ -330,13 +332,51 @@ export default function BookingPage() {
 
   const formatDisplayDate = (date: string | undefined) => {
     if (!date) return null;
-    const parsed = new Date(date);
+    // Parse date string (YYYY-MM-DD) and format it using Vancouver timezone
+    // Use noon time (12:00) to avoid timezone shift issues when parsing dates
+    // This ensures the date is interpreted correctly in Vancouver timezone
+    const parts = date.split('-');
+    if (parts.length !== 3) {
+      // Fallback to original parsing if format is unexpected
+      const parsed = new Date(date);
+      if (Number.isNaN(parsed.getTime())) return date;
+      try {
+        return new Intl.DateTimeFormat('en-US', {
+          timeZone: 'America/Vancouver',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }).format(parsed);
+      } catch {
+        return parsed.toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+      }
+    }
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+    const day = parseInt(parts[2], 10);
+    // Create date at noon in local time to avoid timezone shift issues
+    // Then format it using Vancouver timezone
+    const parsed = new Date(year, month, day, 12, 0, 0);
     if (Number.isNaN(parsed.getTime())) return date;
-    return parsed.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    try {
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Vancouver',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }).format(parsed);
+    } catch {
+      // Fallback if Vancouver timezone is not available
+      return parsed.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    }
   };
 
   const handleNewBooking = () => {
@@ -347,7 +387,6 @@ export default function BookingPage() {
     setFormData({ ...initialFormState });
     setAvailableArtists([]);
     setSelectedArtistId(null);
-    setSuggestedArtistId(null);
     setAvailabilityError(null);
     setRecaptchaError(null);
     setIsCheckingAvailability(false);
@@ -392,31 +431,38 @@ export default function BookingPage() {
     
     try {
       const time24h = convertTo24Hour(formData.time);
-      const availability = await fetchAvailability(formData.date, time24h);
-
-      if (!availability.available_artists.length) {
-        setAvailableArtists([]);
-        setSelectedArtistId(null);
-        setSuggestedArtistId(null);
-        setApiError('No artists are available for the selected date and time. Please choose another slot.');
-        return;
-      }
-
-      setAvailableArtists(availability.available_artists);
-      setSuggestedArtistId(availability.suggested_artist?.id ?? null);
-
       let preferredArtist: AvailabilityArtist | undefined;
-      if (formData.service === 'tattoo') {
-        if (!selectedArtistId) {
-          setErrors(prev => ({ ...prev, selectedArtist: 'Please select an artist' }));
+      let availability: AvailabilityResponse | null = null;
+
+      // For piercing, skip availability check - Masi will be assigned automatically
+      if (formData.service === 'piercing') {
+        // No need to check availability for piercing - backend will assign to Masi
+      } else {
+        // For tattoo, check availability and validate artist selection
+        availability = await fetchAvailability(formData.date, time24h);
+
+        if (!availability.available_artists.length) {
+          setAvailableArtists([]);
+          setSelectedArtistId(null);
+          setApiError('No artists are available for the selected date and time. Please choose another slot.');
+          setIsSubmitting(false);
           return;
         }
 
-        preferredArtist = availability.available_artists.find(artist => artist.id === selectedArtistId);
+        setAvailableArtists(availability.available_artists);
+
+        if (!selectedArtistId) {
+          setErrors(prev => ({ ...prev, selectedArtist: 'Please select an artist' }));
+          setIsSubmitting(false);
+          return;
+        }
+
+        preferredArtist = availability.available_artists.find((artist: AvailabilityArtist) => artist.id === selectedArtistId);
 
         if (!preferredArtist) {
           setApiError('The selected artist is no longer available. Please choose another artist.');
           setSelectedArtistId(availability.available_artists[0]?.id ?? null);
+          setIsSubmitting(false);
           return;
         }
       }
@@ -449,7 +495,7 @@ export default function BookingPage() {
       });
 
       const assignedName = bookingResponse.assigned_artist?.name ?? preferredArtist?.name;
-      const assignedEmail = bookingResponse.assigned_artist?.email ?? preferredArtist?.email ?? availability.suggested_artist?.email;
+      const assignedEmail = bookingResponse.assigned_artist?.email ?? preferredArtist?.email;
       const successText =
         assignedName
           ? `Booking request submitted successfully! Assigned artist: ${assignedName}.`
@@ -468,7 +514,6 @@ export default function BookingPage() {
       setFormData({ ...initialFormState });
       setAvailableArtists([]);
       setSelectedArtistId(null);
-      setSuggestedArtistId(null);
       setAvailabilityError(null);
       setRecaptchaError(null);
       setIsCheckingAvailability(false);
@@ -737,12 +782,11 @@ export default function BookingPage() {
               {!isCheckingAvailability && !availabilityError && !availableArtists.length && (
                 <p className="availability-status">Select a date and time to view available artists.</p>
               )}
-              {!isCheckingAvailability && !availabilityError && availableArtists.length > 0 && (
+              {!isCheckingAvailability && !availabilityError && availableArtists.length > 0 && formData.service === 'tattoo' && (
                 <div className="artist-options">
                   {availableArtists.map(artist => {
                     const slug = getArtistSlug(artist.name);
                     const isSelected = selectedArtistId === artist.id;
-                    const isSuggested = suggestedArtistId === artist.id;
 
                     return (
                       <label
@@ -759,7 +803,6 @@ export default function BookingPage() {
                         <div className="artist-option-details">
                           <span className="artist-option-name">
                             {artist.name}
-                            {isSuggested && <span className="artist-option-badge">Suggested</span>}
                           </span>
                           {artist.email && (
                             <span className="artist-option-meta">{artist.email}</span>
@@ -776,6 +819,11 @@ export default function BookingPage() {
                       </label>
                     );
                   })}
+                </div>
+              )}
+              {formData.service !== 'tattoo' && formData.service !== '' && formData.date && formData.time && (
+                <div className="form-info">
+                  <p>Your piercing appointment will be assigned to Masi Aghdam.</p>
                 </div>
               )}
               {errors.selectedArtist && <span className="error-message">{errors.selectedArtist}</span>}

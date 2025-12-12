@@ -4,6 +4,10 @@
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
   position: relative;
   
+  @include mobile {
+    padding: $spacing-lg 0;
+  }
+  
   &::before {
     content: '';
     position: absolute;
@@ -20,20 +24,25 @@
     text-align: center;
     margin-bottom: 5rem;
     
-    .artist-title {
-      font-family: $primary-font;
-      font-size: 3.5rem;
-      font-weight: bold;
-      color: $text-color;
-      margin-bottom: 1.5rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-
-      @include mobile {
-        font-size: 2.5rem;
-        letter-spacing: 1px;
-      }
+    @include mobile {
+      margin-bottom: $spacing-xl;
     }
+    
+      .artist-title {
+        font-family: $primary-font;
+        font-size: 3.5rem;
+        font-weight: bold;
+        color: $text-color;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+
+        @include mobile {
+          font-size: 2.5rem;
+          letter-spacing: 1px;
+          margin-bottom: $spacing-md;
+        }
+      }
 
     .artist-subtitle {
       font-family: $paragraph-font;
@@ -63,7 +72,8 @@
 
     @include mobile {
       grid-template-columns: 1fr;
-      gap: 2rem;
+      gap: $spacing-lg;
+      margin-bottom: $spacing-xl;
     }
   }
 
@@ -91,6 +101,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      
+      @include mobile {
+        height: 250px;
+      }
 
       img {
         width: 100%;
@@ -121,6 +135,10 @@
         visibility: visible;
         backdrop-filter: grayscale(85%);
         transition: opacity 0.35s ease, backdrop-filter 0.35s ease;
+        
+        @include mobile {
+          padding: $spacing-md;
+        }
 
         .artist-info {
           color: $text-color;
@@ -166,6 +184,10 @@
 
     .artist-details {
       padding: 2rem;
+      
+      @include mobile {
+        padding: $spacing-lg;
+      }
 
       .artist-description {
         font-family: $paragraph-font;
@@ -173,6 +195,11 @@
         color: $secondary-color;
         line-height: 1.6;
         margin-bottom: 1.5rem;
+        
+        @include mobile {
+          font-size: 0.9rem;
+          margin-bottom: $spacing-md;
+        }
       }
 
       .artist-button {
@@ -189,6 +216,11 @@
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-block;
+        
+        @include mobile {
+          padding: 0.6rem 1.5rem;
+          font-size: 0.9rem;
+        }
 
         &:hover {
           background: $primary-color;
@@ -207,6 +239,10 @@
     border-radius: 15px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    @include mobile {
+      padding: $spacing-lg;
+    }
 
     .cta-text {
       font-family: $paragraph-font;
@@ -214,6 +250,11 @@
       color: $text-color;
       margin-bottom: 2rem;
       font-weight: 500;
+      
+      @include mobile {
+        font-size: 1.1rem;
+        margin-bottom: $spacing-lg;
+      }
     }
 
     .cta-button {
@@ -229,6 +270,11 @@
       letter-spacing: 2px;
       transition: all 0.3s ease;
       box-shadow: 0 10px 30px rgba($primary-color, 0.3);
+      
+      @include mobile {
+        padding: 0.8rem 2rem;
+        font-size: 0.9rem;
+      }
 
       &:hover {
         color: #000;
