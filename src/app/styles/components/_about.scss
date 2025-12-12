@@ -4,6 +4,10 @@
   background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
   position: relative;
   
+  @include mobile {
+    padding-top: 1rem;
+  }
+  
   &::before {
     content: '';
     position: absolute;
