@@ -18,6 +18,7 @@ const BASE_GALLERY_IMAGES: OurWorkImage[] = [
   { src: '/images/general/Kian-2.webp', artist: 'Kian', alt: 'Kian tattoo artwork' },
   { src: '/images/general/Kian-3.webp', artist: 'Kian', alt: 'Kian tattoo artwork' },
   { src: '/images/general/Masi-tattoo-7.webp', artist: 'Masi', alt: 'Masi tattoo artwork' },
+  { src: '/images/general/Masi-tattoo-8.webp', artist: 'Masi', alt: 'Masi tattoo artwork' },
   { src: '/images/general/Masi-tattoo-11.webp', artist: 'Masi', alt: 'Masi tattoo artwork' },
   { src: '/images/general/Mina-4.webp', artist: 'Mina', alt: 'Mina tattoo artwork' },
   { src: '/images/general/Mina-8.webp', artist: 'Mina', alt: 'Mina tattoo artwork' },

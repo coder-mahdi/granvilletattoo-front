@@ -41,6 +41,7 @@ const tattooImages: GalleryImage[] = [
     '/images/Masi/Masi-tattoo.webp',
     '/images/Masi/Masi-tattoo-7.webp',
     '/images/Masi/Masi-tattoo-8.webp',
+    '/images/general/Masi-tattoo-8.webp',
     '/images/Masi/Masi-tattoo-9.webp',
     '/images/Masi/Masi-tattoo-10.webp',
     '/images/Masi/Masi-tattoo-10.png',

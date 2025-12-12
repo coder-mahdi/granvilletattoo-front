@@ -181,6 +181,13 @@ const mockArtists = {
         image: '/images/Masi/21.webp',
         category: 'Color',
         year: '2020'
+      },
+      {
+        id: 14,
+        title: 'Elegant Script Detail',
+        image: '/images/general/Masi-tattoo-8.webp',
+        category: 'Script',
+        year: '2024'
       }
     ],
     availability: {
@@ -381,7 +388,7 @@ const mockArtists = {
     specialties: ['Fine Line', 'Minimalist', 'Blackwork', 'Color', 'Realism'],
     experience: '8+ Years',
     location: 'Vancouver, BC',
-    heroImage: '/images/sami/IMG_2615.webp',
+    heroImage: '/images/sami/hero-sami.webp',
     social: {
       instagram: '@sami_amiri_art',
       facebook: 'SamiAmiriTattoos',
