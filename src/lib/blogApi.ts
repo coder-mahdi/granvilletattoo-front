@@ -83,19 +83,21 @@ export async function fetchBlogPosts(
   fetchOptions: FetchOptions = {},
 ): Promise<BlogListResponse> {
   const { category, tag, perPage, page } = params;
+  // Add timestamp to bypass cache during build
+  const buildTime = process.env.BUILD_TIME || Date.now().toString();
   const url = buildUrl('/blog', {
     category,
     tag,
     per_page: perPage,
     page,
+    _t: buildTime, // Cache buster - unique URL on each build
   });
 
-  const { headers: customHeaders, cache, next, ...restOptions } = fetchOptions;
+  const { headers: customHeaders, cache, ...restOptions } = fetchOptions;
   const headers = createHeaders(customHeaders);
 
   const response = await fetch(url, {
-    cache: cache ?? (process.env.NODE_ENV === 'development' ? 'no-store' : 'force-cache'),
-    next,
+    cache: 'force-cache', // Use force-cache for static export, timestamp in URL ensures fresh data
     headers,
     ...restOptions,
     method: 'GET',
@@ -112,14 +114,17 @@ export async function fetchBlogPostBySlug(
   slug: string,
   fetchOptions: FetchOptions = {},
 ): Promise<BlogPost> {
-  const url = buildUrl(`/blog/${slug}`);
+  // Add timestamp to bypass cache during build
+  const buildTime = process.env.BUILD_TIME || Date.now().toString();
+  const url = buildUrl(`/blog/${slug}`, {
+    _t: buildTime, // Cache buster - unique URL on each build
+  });
 
-  const { headers: customHeaders, cache, next, ...restOptions } = fetchOptions;
+  const { headers: customHeaders, cache, ...restOptions } = fetchOptions;
   const headers = createHeaders(customHeaders);
 
   const response = await fetch(url, {
-    cache: cache ?? (process.env.NODE_ENV === 'development' ? 'no-store' : 'force-cache'),
-    next,
+    cache: 'force-cache', // Use force-cache for static export, timestamp in URL ensures fresh data
     headers,
     ...restOptions,
     method: 'GET',
