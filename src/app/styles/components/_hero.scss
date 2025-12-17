@@ -236,6 +236,38 @@
         visibility: hidden;
         transform: translateX(20px);
       }
+
+      &.gift-card-link {
+        background: linear-gradient(45deg, #ff6b35, #f7931e);
+        color: #000;
+        font-weight: 700;
+        padding: 0.75rem 1.5rem;
+        border-radius: 30px;
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        border: 2px solid transparent;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 1.3rem;
+        animation: giftCardPulse 2s ease-in-out infinite;
+
+        &::after {
+          display: none;
+        }
+
+        &:hover {
+          background: linear-gradient(45deg, #ff7a4a, #ffa726);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 35px rgba(255, 107, 53, 0.6);
+          color: #000;
+        }
+
+        @include mobile {
+          font-size: 0.9rem;
+          padding: 0.6rem 1.2rem;
+          background: linear-gradient(45deg, #ff6b35, #f7931e);
+          box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+      }
     }
 
     .hero-dropdown {
@@ -528,5 +560,14 @@
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes giftCardPulse {
+  0%, 100% {
+    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 35px rgba(255, 107, 53, 0.7);
   }
 }

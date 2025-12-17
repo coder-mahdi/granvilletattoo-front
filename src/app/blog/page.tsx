@@ -9,9 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const fetchOptions =
-    process.env.NODE_ENV === 'development' ? ({ cache: 'no-store' } as const) : undefined;
-  const blogResponse = await fetchBlogPosts({ perPage: 50 }, fetchOptions);
+  const blogResponse = await fetchBlogPosts({ perPage: 50 }, {});
   const posts = blogResponse.items ?? [];
 
   return <BlogList posts={posts} initialCategory="all" />;

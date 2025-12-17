@@ -11,7 +11,7 @@ type BlogPageParams = { slug: string };
 
 export async function generateStaticParams(): Promise<BlogPageParams[]> {
   try {
-    const { items = [] } = await fetchBlogPosts({ perPage: 100 }, { cache: 'force-cache' });
+    const { items = [] } = await fetchBlogPosts({ perPage: 100 }, {});
     if (items.length === 0) {
       return [];
     }
@@ -58,7 +58,7 @@ export default async function BlogPostPage(
   const { slug } = params as BlogPageParams;
   let post;
   try {
-    post = await fetchBlogPostBySlug(slug);
+    post = await fetchBlogPostBySlug(slug, {});
   } catch {
     return notFound();
   }

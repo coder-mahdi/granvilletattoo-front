@@ -88,6 +88,7 @@ export default function HeroSection() {
               </div>
             </div>
             <Link href="/booking" className={`nav-link ${showStickyButton ? 'hidden' : ''}`}>Book Now</Link>
+            <Link href="/gift-card" className="nav-link gift-card-link">Buy Gift Card</Link>
           </div>
           
           <div className="hero-social">
