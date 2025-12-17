@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Container from '@/components/Container';
+import ReCAPTCHA, { ReCAPTCHARef } from '@/components/ReCAPTCHA';
+import { submitGiftCard } from '@/lib/giftCardApi';
 
-type GiftCardType = 'silver-100' | 'silver-150' | 'gold' | 'custom';
+type GiftCardType = 'silver' | 'gold';
 
 interface GiftCardOption {
   id: GiftCardType;
@@ -15,18 +17,11 @@ interface GiftCardOption {
 
 const GIFT_CARD_OPTIONS: GiftCardOption[] = [
   {
-    id: 'silver-100',
-    name: 'Silver',
-    value: 100,
-    price: 100,
-    description: '$100 Gift Card'
-  },
-  {
-    id: 'silver-150',
+    id: 'silver',
     name: 'Silver',
     value: 150,
-    price: 150,
-    description: '$150 Gift Card'
+    price: 100,
+    description: '$150 Gift Card (Pay $100)'
   },
   {
     id: 'gold',
@@ -39,7 +34,11 @@ const GIFT_CARD_OPTIONS: GiftCardOption[] = [
 
 export default function GiftCardPage() {
   const [selectedCard, setSelectedCard] = useState<GiftCardType | null>(null);
-  const [customAmount, setCustomAmount] = useState<string>('');
+  const [senderData, setSenderData] = useState({
+    name: '',
+    phone: '',
+    email: ''
+  });
   const [recipientData, setRecipientData] = useState({
     name: '',
     phone: '',
@@ -47,6 +46,10 @@ export default function GiftCardPage() {
     details: ''
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showPaymentButton, setShowPaymentButton] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHARef>(null);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,44 +62,29 @@ export default function GiftCardPage() {
   };
 
   const calculateGiftCardValue = (): number => {
-    if (selectedCard === 'custom') {
-      const amount = parseFloat(customAmount);
-      if (isNaN(amount) || amount <= 0) return 0;
-      // Christmas/Boxing Day discount: For every $100, get $150 gift card
-      const hundreds = Math.floor(amount / 100);
-      const remainder = amount % 100;
-      return (hundreds * 150) + remainder;
-    }
-    
     const option = GIFT_CARD_OPTIONS.find(opt => opt.id === selectedCard);
     return option ? option.value : 0;
   };
 
   const calculatePrice = (): number => {
-    if (selectedCard === 'custom') {
-      const amount = parseFloat(customAmount);
-      return isNaN(amount) || amount <= 0 ? 0 : amount;
-    }
-    
     const option = GIFT_CARD_OPTIONS.find(opt => opt.id === selectedCard);
     return option ? option.price : 0;
   };
 
   const handleCardSelect = (cardId: GiftCardType) => {
     setSelectedCard(cardId);
-    if (cardId !== 'custom') {
-      setCustomAmount('');
-    }
     setErrors({});
   };
 
-  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow numbers and decimal point
-    if (/^\d*\.?\d*$/.test(value)) {
-      setCustomAmount(value);
-      setSelectedCard('custom');
-      setErrors(prev => ({ ...prev, customAmount: '' }));
+  const handleSenderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSenderData(prev => ({ ...prev, [name]: value }));
+    if (errors[`sender_${name}`]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[`sender_${name}`];
+        return newErrors;
+      });
     }
   };
 
@@ -108,6 +96,14 @@ export default function GiftCardPage() {
     }
   };
 
+  const handleRecaptchaVerify = () => {
+    setRecaptchaError(null);
+  };
+
+  const handleRecaptchaError = () => {
+    setRecaptchaError('reCAPTCHA verification failed. Please try again.');
+  };
+
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
 
@@ -115,29 +111,36 @@ export default function GiftCardPage() {
       newErrors.selectedCard = 'Please select a gift card option';
     }
 
-    if (selectedCard === 'custom') {
-      const amount = parseFloat(customAmount);
-      if (!customAmount.trim()) {
-        newErrors.customAmount = 'Please enter a custom amount';
-      } else if (isNaN(amount) || amount <= 0) {
-        newErrors.customAmount = 'Please enter a valid amount greater than 0';
-      } else if (amount < 10) {
-        newErrors.customAmount = 'Minimum amount is $10';
-      }
+    // Validate sender data
+    if (!senderData.name.trim()) {
+      newErrors.sender_name = 'Sender name is required';
     }
 
+    if (!senderData.email.trim()) {
+      newErrors.sender_email = 'Sender email is required';
+    } else if (!validateEmail(senderData.email)) {
+      newErrors.sender_email = 'Please enter a valid email';
+    }
+
+    if (!senderData.phone.trim()) {
+      newErrors.sender_phone = 'Sender phone number is required';
+    } else if (!validatePhone(senderData.phone)) {
+      newErrors.sender_phone = 'Please enter a valid phone number';
+    }
+
+    // Validate recipient data
     if (!recipientData.name.trim()) {
       newErrors.name = 'Recipient name is required';
     }
 
     if (!recipientData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Recipient email is required';
     } else if (!validateEmail(recipientData.email)) {
       newErrors.email = 'Please enter a valid email';
     }
 
     if (!recipientData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = 'Recipient phone number is required';
     } else if (!validatePhone(recipientData.phone)) {
       newErrors.phone = 'Please enter a valid phone number';
     }
@@ -146,35 +149,79 @@ export default function GiftCardPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
 
-    // TODO: Integrate with payment API
-    const paymentData = {
-      giftCardType: selectedCard,
-      giftCardValue: calculateGiftCardValue(),
-      price: calculatePrice(),
-      recipient: recipientData
-    };
+    // Execute reCAPTCHA v3 and get token
+    setRecaptchaError(null);
+    let token: string | null = null;
 
-    console.log('Payment data:', paymentData);
-    // Placeholder for payment link
-    alert('Payment integration will be added here. Gift card value: $' + calculateGiftCardValue() + ', Price: $' + calculatePrice());
+    if (recaptchaRef.current) {
+      try {
+        token = await recaptchaRef.current.execute();
+      } catch (error) {
+        console.error('reCAPTCHA execution error:', error);
+        setRecaptchaError('reCAPTCHA verification failed. Please try again.');
+        return;
+      }
+    }
+
+    // Validate reCAPTCHA token
+    if (!token) {
+      setRecaptchaError('Please complete the reCAPTCHA verification.');
+      return;
+    }
+
+    // Submit gift card data to backend
+    try {
+      console.log('Submitting gift card with payload:', {
+        giftCardType: selectedCard!,
+        giftCardValue: calculateGiftCardValue(),
+        price: calculatePrice(),
+        sender: senderData,
+        recipient: recipientData,
+        recaptcha_token: token ? 'present' : 'missing'
+      });
+      
+      const response = await submitGiftCard({
+        giftCardType: selectedCard!,
+        giftCardValue: calculateGiftCardValue(),
+        price: calculatePrice(),
+        sender: senderData,
+        recipient: recipientData,
+        recaptcha_token: token
+      });
+
+      console.log('Gift card created:', response);
+      
+      // Show success message first
+      setShowSuccessMessage(true);
+      
+      // After 2 seconds, show payment button
+      setTimeout(() => {
+        setShowPaymentButton(true);
+      }, 2000);
+    } catch (error) {
+      console.error('Error creating gift card:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create gift card. Please try again.';
+      setErrors({ apiError: errorMessage });
+      setShowSuccessMessage(false);
+      setShowPaymentButton(false);
+    }
   };
 
   const giftCardValue = calculateGiftCardValue();
   const price = calculatePrice();
-  const discount = selectedCard === 'custom' && price >= 100 
-    ? Math.floor(price / 100) * 50 
-    : selectedCard === 'gold' 
-    ? 70 
+  // Discount = Gift Card Value - Price Paid
+  const discount = selectedCard && price > 0 && giftCardValue > 0
+    ? Math.round((giftCardValue - price) * 100) / 100 // Round to 2 decimal places
     : 0;
 
   return (
     <div className="gift-card-page">
-      <div className="gift-card-hero">
+      <div className={`gift-card-hero ${showSuccessMessage ? 'hero-active' : ''}`}>
         <Container>
           <div className="gift-card-header">
             <h1 className="gift-card-title">Gift Card</h1>
@@ -193,12 +240,116 @@ export default function GiftCardPage() {
       </div>
 
       <Container>
-        <form onSubmit={handleSubmit} className="gift-card-form">
+        {/* Success Message - Outside form to always show */}
+        {showSuccessMessage && (
+          <div className="success-message-container">
+            <div className="success-message-box">
+              <div className="success-message-content">
+                <span>Your gift card request has been successfully registered!</span>
+                <span>After payment through the link below, your gift card will be sent to <strong>{recipientData.name}</strong></span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Payment Button - Outside form to always show */}
+        {showPaymentButton && (
+          <div className="payment-button-wrapper">
+            <div className="payment-button-container" style={{ position: 'relative', zIndex: 10000 }}>
+              {selectedCard === 'silver' && (
+                <div 
+                  className="square-payment-button"
+                  style={{
+                    overflow: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    width: '259px',
+                    background: '#FFFFFF',
+                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                    boxShadow: '-2px 10px 5px rgba(0, 0, 0, 0)',
+                    borderRadius: '10px',
+                    fontFamily: 'SQ Market, SQ Market, Helvetica, Arial, sans-serif',
+                    margin: '0 auto'
+                  }}
+                >
+                  <div style={{ padding: '20px' }}>
+                    <a 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      href="https://square.link/u/QE6WYwJl?src=embed" 
+                      style={{
+                        display: 'inline-block',
+                        fontSize: '18px',
+                        lineHeight: '48px',
+                        height: '48px',
+                        color: '#ffffff',
+                        minWidth: '212px',
+                        backgroundColor: '#006aff',
+                        textAlign: 'center',
+                        boxShadow: '0 0 0 1px rgba(0,0,0,.1) inset',
+                        borderRadius: '6px',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      Buy now
+                    </a>
+                  </div>
+                </div>
+              )}
+              {selectedCard === 'gold' && (
+                <div 
+                  className="square-payment-button"
+                  style={{
+                    overflow: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    width: '259px',
+                    background: '#FFFFFF',
+                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                    boxShadow: '-2px 10px 5px rgba(0, 0, 0, 0)',
+                    borderRadius: '10px',
+                    fontFamily: 'SQ Market, SQ Market, Helvetica, Arial, sans-serif',
+                    margin: '0 auto'
+                  }}
+                >
+                  <div style={{ padding: '20px' }}>
+                    <a 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      href="https://square.link/u/Oqr4LApj?src=embed" 
+                      style={{
+                        display: 'inline-block',
+                        fontSize: '18px',
+                        lineHeight: '48px',
+                        height: '48px',
+                        color: '#ffffff',
+                        minWidth: '212px',
+                        backgroundColor: '#006aff',
+                        textAlign: 'center',
+                        boxShadow: '0 0 0 1px rgba(0,0,0,.1) inset',
+                        borderRadius: '6px',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      Buy now
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className={`gift-card-form ${showSuccessMessage ? 'form-hidden' : ''}`}>
           {/* Gift Card Selection */}
           <div className="form-section">
             <h2 className="section-title">Choose Your Gift Card</h2>
             <p className="section-description">
-              Select a pre-designed gift card or enter a custom amount
+              Select a gift card option
             </p>
 
             <div className="gift-card-options">
@@ -211,41 +362,18 @@ export default function GiftCardPage() {
                   <div className="card-badge">{option.name}</div>
                   <div className="card-value">${option.value}</div>
                   <div className="card-price">${option.price}</div>
+                  {option.id === 'silver' && (
+                    <div className="card-discount">Save $50</div>
+                  )}
                   {option.id === 'gold' && (
                     <div className="card-discount">Save $70</div>
                   )}
                 </div>
               ))}
-              
-              <div
-                className={`gift-card-option custom ${selectedCard === 'custom' ? 'selected' : ''}`}
-                onClick={() => handleCardSelect('custom')}
-              >
-                <div className="card-badge">Custom</div>
-                <div className="custom-input-wrapper">
-                  <span className="currency">$</span>
-                  <input
-                    type="text"
-                    className="custom-amount-input"
-                    placeholder="Enter amount"
-                    value={customAmount}
-                    onChange={handleCustomAmountChange}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </div>
-                {customAmount && !errors.customAmount && (
-                  <div className="card-preview">
-                    Pay: ${parseFloat(customAmount) || 0} → Get: ${giftCardValue}
-                  </div>
-                )}
-              </div>
             </div>
 
             {errors.selectedCard && (
               <span className="error-message">{errors.selectedCard}</span>
-            )}
-            {errors.customAmount && (
-              <span className="error-message">{errors.customAmount}</span>
             )}
 
             {selectedCard && (
@@ -276,19 +404,89 @@ export default function GiftCardPage() {
                 <span className="benefit-icon">✓</span>
                 Valid for both tattoos and piercings
               </li>
+              {selectedCard === 'gold' && (
+                <li>
+                  <span className="benefit-icon">✓</span>
+                  If used for a tattoo, get a free piercing service (jewelry not included)
+                </li>
+              )}
               <li>
                 <span className="benefit-icon">✓</span>
-                If used for a tattoo, get a free piercing service (jewelry not included)
-              </li>
-              <li>
-                <span className="benefit-icon">✓</span>
-                Never expires
+                Valid from the date of purchase
               </li>
               <li>
                 <span className="benefit-icon">✓</span>
                 Perfect gift for any occasion
               </li>
             </ul>
+          </div>
+
+          {/* Sender Information */}
+          <div className="form-section">
+            <h2 className="section-title">Sender Information</h2>
+            <p className="section-description">
+              Enter your details (payment and sender information must be the same)
+            </p>
+            <div className="info-note">
+              <span className="note-icon">ℹ️</span>
+              <span className="note-text">Note: Payment information must match sender information</span>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="sender_name" className="form-label">
+                Full Name *
+              </label>
+              <input
+                type="text"
+                id="sender_name"
+                name="name"
+                value={senderData.name}
+                onChange={handleSenderChange}
+                className={`form-input ${errors.sender_name ? 'error' : ''}`}
+                placeholder="Enter your full name"
+              />
+              {errors.sender_name && <span className="error-message">{errors.sender_name}</span>}
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="sender_email" className="form-label">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  id="sender_email"
+                  name="email"
+                  value={senderData.email}
+                  onChange={handleSenderChange}
+                  className={`form-input ${errors.sender_email ? 'error' : ''}`}
+                  placeholder="Enter your email"
+                />
+                {errors.sender_email && <span className="error-message">{errors.sender_email}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="sender_phone" className="form-label">
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  id="sender_phone"
+                  name="phone"
+                  value={senderData.phone}
+                  onChange={handleSenderChange}
+                  className={`form-input ${errors.sender_phone ? 'error' : ''}`}
+                  placeholder="Enter your phone"
+                  onKeyDown={(e) => {
+                    const key = e.key;
+                    if (!/^[0-9+\-\s\(\)]$/.test(key) && !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                />
+                {errors.sender_phone && <span className="error-message">{errors.sender_phone}</span>}
+              </div>
+            </div>
           </div>
 
           {/* Recipient Information */}
@@ -365,24 +563,45 @@ export default function GiftCardPage() {
                 onChange={handleRecipientChange}
                 className="form-textarea"
                 rows={4}
-                placeholder="Any additional information about the recipient..."
+                placeholder="If you want to send a special message to the recipient, write it here"
               />
             </div>
           </div>
 
+          {/* reCAPTCHA v3 - invisible, executes on submit */}
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            onVerify={handleRecaptchaVerify}
+            onError={handleRecaptchaError}
+            action="gift_card_submit"
+          />
+          {recaptchaError && (
+            <div className="form-group">
+              <span className="error-message">{recaptchaError}</span>
+            </div>
+          )}
+
+          {errors.apiError && (
+            <div className="form-alert error-alert">
+              <span>{errors.apiError}</span>
+            </div>
+          )}
+
           {/* Submit Button */}
-          <div className="form-submit">
-            <button
-              type="submit"
-              className="submit-button"
-              disabled={!selectedCard || (selectedCard === 'custom' && !customAmount)}
-            >
-              <span>Proceed to Payment</span>
-              {selectedCard && (
-                <span className="button-price">${price}</span>
-              )}
-            </button>
-          </div>
+          {!showSuccessMessage && (
+            <div className="form-submit">
+              <button
+                type="submit"
+                className="submit-button"
+                disabled={!selectedCard}
+              >
+                <span>Proceed to Payment</span>
+                {selectedCard && (
+                  <span className="button-price">${price}</span>
+                )}
+              </button>
+            </div>
+          )}
         </form>
       </Container>
     </div>
