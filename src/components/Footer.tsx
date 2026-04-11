@@ -35,7 +35,7 @@ export default function Footer() {
             <h4>Contact</h4>
             <p>📍 1007 Granville St, Vancouver, BC</p>
             <p>📞 (604) 685-9800</p>
-            <p>✉️ info@granvilletattoo.com</p>
+            <p>✉️ info@granvilletattoo.ca</p>
           </div>
           
           <div className="footer-section">
