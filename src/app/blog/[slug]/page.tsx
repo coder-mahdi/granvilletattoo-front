@@ -7,6 +7,9 @@ import { fetchBlogPostBySlug, fetchBlogPosts } from '@/lib/blogApi';
 
 const DEFAULT_IMAGE = '/images/general/general-1.webp';
 
+/** ISR: refresh single post from WordPress every 5 minutes on Vercel. */
+export const revalidate = 300;
+
 type BlogPageParams = { slug: string };
 
 export async function generateStaticParams(): Promise<BlogPageParams[]> {

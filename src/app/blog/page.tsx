@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { fetchBlogPosts } from '@/lib/blogApi';
 import BlogList from '@/modules/blog/BlogList';
 
+/** ISR: refresh blog index from WordPress every 5 minutes on Vercel. */
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: 'Studio Blog | Granville Tattoo',
   description:

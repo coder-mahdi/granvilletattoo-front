@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Granville Tattoo — Front (Next.js)
 
-## Getting Started
+## Blog & booking API
 
-First, run the development server:
+Blog posts, booking, and gift-card requests talk to the **WordPress custom REST** namespace `granville/v1` on the studio CMS.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Base URL:** `NEXT_PUBLIC_BOOKING_API_BASE` (optional).  
+  If unset, the app uses: `https://granvilletattoo.ca/cms/wp-json/granville/v1`
+- **Blog list:** `GET {API_BASE}/blog`
+- **Single post:** `GET {API_BASE}/blog/{slug}`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Implementation: `src/lib/bookingApi.ts` (`API_BASE`) and `src/lib/blogApi.ts`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env.local` for local dev. On **Vercel**, add the same keys under Project → Settings → Environment Variables.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_BOOKING_API_BASE` | CMS REST root (no trailing slash). Omit to use production default above. |
+| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | reCAPTCHA for booking & gift card forms. |
+| `NEXT_PUBLIC_BASE_PATH` | Only if the app is mounted under a subpath (rare on a root domain). |
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Connect this repo to Vercel; framework **Next.js** is auto-detected.
+2. Set env vars (at least `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` if forms are used).
+3. Ensure the WordPress site allows requests from your Vercel domain (CORS / firewall) if the API is locked down.
+4. Blog routes use **ISR** (`revalidate = 300` seconds): new or edited posts appear after the next revalidation window without a full redeploy.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Local dev: `npm run dev` → [http://localhost:3000](http://localhost:3000).

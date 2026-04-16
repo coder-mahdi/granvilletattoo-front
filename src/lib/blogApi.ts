@@ -1,5 +1,8 @@
 import { API_BASE } from './bookingApi';
 
+/** Seconds — blog list & posts revalidate on Vercel (ISR). */
+const BLOG_REVALIDATE_SECONDS = 300;
+
 export type BlogImage = {
   id: number;
   url: string;
@@ -65,7 +68,6 @@ type NextFetchOptions = {
 
 type FetchOptions = Omit<RequestInit, 'headers' | 'cache' | 'next'> & {
   headers?: HeadersInit;
-  cache?: RequestCache;
   next?: NextFetchOptions;
 };
 
@@ -83,24 +85,24 @@ export async function fetchBlogPosts(
   fetchOptions: FetchOptions = {},
 ): Promise<BlogListResponse> {
   const { category, tag, perPage, page } = params;
-  // Add timestamp to bypass cache during build
-  const buildTime = process.env.BUILD_TIME || Date.now().toString();
   const url = buildUrl('/blog', {
     category,
     tag,
     per_page: perPage,
     page,
-    _t: buildTime, // Cache buster - unique URL on each build
   });
 
-  const { headers: customHeaders, cache, ...restOptions } = fetchOptions;
+  const { headers: customHeaders, next: nextOptions, ...restOptions } = fetchOptions;
   const headers = createHeaders(customHeaders);
 
   const response = await fetch(url, {
-    cache: 'force-cache', // Use force-cache for static export, timestamp in URL ensures fresh data
     headers,
     ...restOptions,
     method: 'GET',
+    next: {
+      revalidate: BLOG_REVALIDATE_SECONDS,
+      ...nextOptions,
+    },
   });
 
   if (!response.ok) {
@@ -114,20 +116,19 @@ export async function fetchBlogPostBySlug(
   slug: string,
   fetchOptions: FetchOptions = {},
 ): Promise<BlogPost> {
-  // Add timestamp to bypass cache during build
-  const buildTime = process.env.BUILD_TIME || Date.now().toString();
-  const url = buildUrl(`/blog/${slug}`, {
-    _t: buildTime, // Cache buster - unique URL on each build
-  });
+  const url = buildUrl(`/blog/${slug}`, {});
 
-  const { headers: customHeaders, cache, ...restOptions } = fetchOptions;
+  const { headers: customHeaders, next: nextOptions, ...restOptions } = fetchOptions;
   const headers = createHeaders(customHeaders);
 
   const response = await fetch(url, {
-    cache: 'force-cache', // Use force-cache for static export, timestamp in URL ensures fresh data
     headers,
     ...restOptions,
     method: 'GET',
+    next: {
+      revalidate: BLOG_REVALIDATE_SECONDS,
+      ...nextOptions,
+    },
   });
 
   if (response.status === 404) {
