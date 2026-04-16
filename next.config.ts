@@ -6,7 +6,6 @@ const normalizedBasePath = rawBasePath && rawBasePath !== "/"
   : "";
 
 const nextConfig: NextConfig = {
-  output: "export",
   images: { unoptimized: true },
   trailingSlash: true,
   sassOptions: {
