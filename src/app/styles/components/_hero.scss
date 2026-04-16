@@ -30,7 +30,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('#{$asset-prefix}/images/hero.png') center/cover no-repeat;
+    background: url('#{$asset-prefix}/images/hero.webp') center/cover no-repeat;
     z-index: -2;
   }
 
@@ -62,23 +62,18 @@
       position: absolute;
       top: -8rem;
       left: 8rem;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 1s ease-out 3.5s forwards;
+      opacity: 1;
+      transform: translateY(0);
       z-index: 10;
       
       @include mobile {
         top: 13rem;
         left: 5rem;
-        transform: translateY(0);
-        animation: fadeInUp 1s ease-out 3.5s forwards;
       }
       
       .logo-img {
         height: 130px;
         width: auto;
-        animation: logoShake 5s ease-in-out infinite;
-        animation-delay: 4.5s;
         
         @include mobile {
           height: 80px;
@@ -91,12 +86,13 @@
       top: 5rem;
       left: 0;
       right: 0;
-      opacity: 0;
-      animation: fadeInUp 1s ease-out 3.8s forwards;
+      opacity: 1;
       
       @include mobile {
         text-align: center;
         top: 50%;
+        left: 50%;
+        right: auto;
         transform: translate(-50%, -50%);
         max-width: 95%;
         width: 100%;
@@ -158,12 +154,11 @@
     position: absolute;
     top: 5%;
     right: $spacing-md;
-    transform: translateY(-50%) translateX(30px);
+    transform: translateY(-50%) translateX(0);
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    opacity: 0;
-    animation: fadeInRight 1s ease-out 5s forwards;
+    opacity: 1;
     z-index: 1500;
 
     @include mobile {
@@ -174,8 +169,6 @@
       flex-direction: row;
       justify-content: center;
       gap: 0.5rem;
-      opacity: 1;
-      animation: none;
       top: auto;
       right: auto;
     }
@@ -241,13 +234,13 @@
         background: linear-gradient(45deg, #ff6b35, #f7931e);
         color: #000;
         font-weight: 700;
-        padding: 0.75rem 1.5rem;
-        border-radius: 30px;
-        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        padding: 0.55rem 1.2rem;
+        border-radius: 26px;
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.38);
         border: 2px solid transparent;
         text-transform: uppercase;
-        letter-spacing: 2px;
-        font-size: 1.3rem;
+        letter-spacing: 1.5px;
+        font-size: 1.05rem;
         animation: giftCardPulse 2s ease-in-out infinite;
 
         &::after {
@@ -451,7 +444,6 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  animation: slideInUp 0.5s ease-out;
   
   .sticky-btn {
     display: inline-block;
@@ -491,75 +483,6 @@
       white-space: nowrap;
       font-size: 0.9rem;
     }
-  }
-}
-
-// Hero Animation Keyframes
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateY(-50%) translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
-  }
-}
-
-@keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateY(-50%) translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
-  }
-}
-
-@keyframes logoShake {
-  0%, 90% {
-    transform: scale(1);
-  }
-  92% {
-    transform: scale(1.3);
-  }
-  93%, 95%, 97%, 99% {
-    transform: scale(1.3) translateX(0);
-  }
-  94% {
-    transform: scale(1.3) translateX(-3px);
-  }
-  96% {
-    transform: scale(1.3) translateX(3px);
-  }
-  98% {
-    transform: scale(1.3) translateX(-2px);
-  }
-  100% {
-    transform: scale(1.3) translateX(2px);
-  }
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(100px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
   }
 }
 

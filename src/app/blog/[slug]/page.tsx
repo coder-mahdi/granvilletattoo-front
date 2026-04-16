@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Container from '@/components/Container';
 import { fetchBlogPostBySlug, fetchBlogPosts } from '@/lib/blogApi';
 
-const DEFAULT_IMAGE = '/images/general/general-1.png';
+const DEFAULT_IMAGE = '/images/general/general-1.webp';
 
 type BlogPageParams = { slug: string };
 

@@ -11,7 +11,7 @@ type OurWorkImage = {
 };
 
 const BASE_GALLERY_IMAGES: OurWorkImage[] = [
-  { src: '/images/general/general-1.png', artist: 'Kian', alt: 'Kian tattoo artwork' },
+  { src: '/images/general/general-1.webp', artist: 'Kian', alt: 'Kian tattoo artwork' },
   { src: '/images/general/general-3.webp', artist: 'Kian', alt: 'Kian tattoo artwork' },
   { src: '/images/general/97992305-F07C-4910-B9A7-2BE771A9CB0B (1).webp', artist: 'Sami', alt: 'Sami tattoo artwork' },
   { src: '/images/general/BCBFE364-3E30-45A8-B6EF-725FCB9F0C49.webp', artist: 'Sami', alt: 'Sami tattoo artwork' },

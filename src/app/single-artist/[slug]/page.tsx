@@ -12,7 +12,7 @@ const mockArtists = {
     specialties: ['Realistic Portraits', 'Black & Grey', 'Fine Line', 'Color Realism'],
     experience: '10+ Years',
     location: 'Vancouver, BC',
-    heroImage: '/images/Kian/kian_hero.jpg',
+    heroImage: '/images/Kian/kian_hero.webp',
     social: {
       instagram: 'tattoo_kian',
       facebook: 'KianMokhtariTattoo',
@@ -22,21 +22,21 @@ const mockArtists = {
       {
         id: 1,
         title: 'Monochrome Character Study',
-        image: '/images/Kian/kian_gallery-1.jpg',
+        image: '/images/Kian/kian_gallery-1.webp',
         category: 'Portrait',
         year: '2024'
       },
       {
         id: 2,
         title: 'Cinematic Narrative Sleeve',
-        image: '/images/Kian/kian_gallery-2.jpg',
+        image: '/images/Kian/kian_gallery-2.webp',
         category: 'Black & Grey',
         year: '2023'
       },
       {
         id: 3,
         title: 'Textured Realism Composition',
-        image: '/images/general/general-1.png',
+        image: '/images/general/general-1.webp',
         category: 'Black & Grey',
         year: '2024'
       },
@@ -84,7 +84,7 @@ const mockArtists = {
     specialties: ['Fine Line', 'Script', 'Micro Realism', 'Color', 'Black & Grey'],
     experience: '8+ Years',
     location: 'Vancouver, BC',
-    heroImage: '/images/Masi/Masi-1.jpg',
+    heroImage: '/images/Masi/Masi-1.webp',
     social: {
       instagram: 'masiworldtattoo',
       facebook: 'MasiAghdamTattoo',
@@ -122,14 +122,14 @@ const mockArtists = {
       {
         id: 5,
         title: 'Gradient Script Flow',
-        image: '/images/Masi/Masi-tattoo-10.png',
+        image: '/images/Masi/Masi-tattoo-10.webp',
         category: 'Color Script',
         year: '2023'
       },
       {
         id: 6,
         title: 'Sculpted Script Panel',
-        image: '/images/Masi/Masi-tattoo-11.png',
+        image: '/images/Masi/Masi-tattoo-11.webp',
         category: 'Script',
         year: '2023'
       },
@@ -419,21 +419,21 @@ const mockArtists = {
       {
         id: 4,
         title: 'Realistic Floral Panel',
-        image: '/images/sami/IMG_3636.JPG',
+        image: '/images/sami/IMG_3636.webp',
         category: 'Realism',
         year: '2022'
       },
       {
         id: 6,
         title: 'Bold Blackwork Contrast',
-        image: '/images/sami/IMG_4056.JPG',
+        image: '/images/sami/IMG_4056.webp',
         category: 'Blackwork',
         year: '2023'
       },
       {
         id: 7,
         title: 'Fine Script Accent',
-        image: '/images/sami/IMG_4765.JPG',
+        image: '/images/sami/IMG_4765.webp',
         category: 'Fine Line',
         year: '2023'
       },
@@ -518,7 +518,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
               
               <div className="artist-image">
                 <Image
-                  src={artist.heroImage ?? '/images/hero.png'}
+                  src={artist.heroImage ?? '/images/hero.webp'}
                   alt={artist.name}
                   width={600}
                   height={600}

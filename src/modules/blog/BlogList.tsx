@@ -16,7 +16,7 @@ type FilterOption = {
   value: string;
 };
 
-const DEFAULT_IMAGE = '/images/general/general-1.png';
+const DEFAULT_IMAGE = '/images/general/general-1.webp';
 
 export default function BlogList({ posts, initialCategory = 'all' }: BlogListProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
