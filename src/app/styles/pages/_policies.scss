@@ -1,0 +1,83 @@
+.policy-page {
+  padding: $spacing-xxl 0;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(30, 30, 30, 0.98) 100%);
+  color: $text-color;
+
+  .policy-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 8rem $spacing-lg;
+
+    @include mobile {
+      padding: 0 $spacing-md;
+    }
+  }
+
+  .policy-header {
+    text-align: center;
+    margin-bottom: $spacing-xxl;
+
+    h1 {
+      font-family: $primary-font;
+      font-size: 2.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: $primary-color;
+
+      @include mobile {
+        font-size: 2.1rem;
+      }
+    }
+
+    p {
+      font-family: $paragraph-font;
+      color: rgba($text-color, 0.75);
+      margin-top: $spacing-sm;
+    }
+  }
+
+  .policy-section {
+    margin-bottom: $spacing-xl;
+
+    h2 {
+      font-family: $primary-font;
+      font-size: 1.8rem;
+      margin-bottom: $spacing-md;
+      color: lighten($primary-color, 8%);
+    }
+
+    h3 {
+      font-family: $primary-font;
+      font-size: 1.3rem;
+      margin-top: $spacing-lg;
+      margin-bottom: $spacing-sm;
+      color: $primary-color;
+    }
+
+    p,
+    li {
+      font-family: $paragraph-font;
+      color: rgba($text-color, 0.8);
+      line-height: 1.7;
+    }
+
+    ul {
+      padding-left: $spacing-lg;
+      margin-bottom: $spacing-md;
+
+      li {
+        margin-bottom: $spacing-xs;
+      }
+    }
+
+    a {
+      color: lighten($primary-color, 15%);
+      text-decoration: underline;
+
+      &:hover {
+        color: lighten($primary-color, 25%);
+      }
+    }
+  }
+}
+

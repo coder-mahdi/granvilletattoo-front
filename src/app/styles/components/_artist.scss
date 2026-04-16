@@ -1,0 +1,286 @@
+// Artist Section Styles
+.artist-section {
+  padding: 8rem 0;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  position: relative;
+  
+  @include mobile {
+    padding: $spacing-lg 0;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('#{$asset-prefix}/images/hero.png') center/cover no-repeat;
+    opacity: 0.1;
+    z-index: -1;
+  }
+
+  .artist-header {
+    text-align: center;
+    margin-bottom: 5rem;
+    
+    @include mobile {
+      margin-bottom: $spacing-xl;
+    }
+    
+      .artist-title {
+        font-family: $primary-font;
+        font-size: 3.5rem;
+        font-weight: bold;
+        color: $text-color;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+
+        @include mobile {
+          font-size: 2.5rem;
+          letter-spacing: 1px;
+          margin-bottom: $spacing-md;
+        }
+      }
+
+    .artist-subtitle {
+      font-family: $paragraph-font;
+      font-size: 1.2rem;
+      color: $secondary-color;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.8;
+
+      @include mobile {
+        font-size: 1rem;
+        padding: 0 1rem;
+      }
+    }
+  }
+
+  .artists-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .artists-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+    margin-bottom: 5rem;
+
+    @include mobile {
+      grid-template-columns: 1fr;
+      gap: $spacing-lg;
+      margin-bottom: $spacing-xl;
+    }
+  }
+
+  .artist-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    // Initial state - cards start hidden and off-screen with more distance
+    transform: translateX(-300px);
+    opacity: 0;
+
+    &:hover {
+      transform: translateY(-10px) !important;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border-color: $primary-color;
+    }
+
+    .artist-image {
+      position: relative;
+      height: 300px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      @include mobile {
+        height: 250px;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center bottom;
+        transform: scale(1.02);
+        filter: grayscale(80%);
+        transition: transform 0.35s ease, filter 0.35s ease;
+      }
+
+      .artist-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          140deg,
+          rgba(20, 20, 20, 0.9) 0%,
+          rgba(20, 20, 20, 0.3) 40%,
+          rgba(0, 0, 0, 0.85) 100%
+        );
+        display: flex;
+        align-items: flex-end;
+        padding: 2rem;
+        opacity: 0.9;
+        visibility: visible;
+        backdrop-filter: grayscale(85%);
+        transition: opacity 0.35s ease, backdrop-filter 0.35s ease;
+        
+        @include mobile {
+          padding: $spacing-md;
+        }
+
+        .artist-info {
+          color: $text-color;
+          z-index: 1;
+
+          .artist-name {
+            font-family: $primary-font;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+
+          .artist-specialty {
+            font-family: $paragraph-font;
+            font-size: 1.1rem;
+            color: lighten($primary-color, 10%);
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+          }
+
+          .artist-experience {
+            font-family: $paragraph-font;
+            font-size: 0.9rem;
+            color: rgba($text-color, 0.8);
+          }
+        }
+      }
+
+      &:hover {
+        img {
+          transform: scale(1.05);
+          filter: grayscale(0%);
+        }
+
+        .artist-overlay {
+          opacity: 0.35;
+          backdrop-filter: grayscale(0);
+        }
+      }
+    }
+
+    .artist-details {
+      padding: 2rem;
+      
+      @include mobile {
+        padding: $spacing-lg;
+      }
+
+      .artist-description {
+        font-family: $paragraph-font;
+        font-size: 1rem;
+        color: $secondary-color;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        
+        @include mobile {
+          font-size: 0.9rem;
+          margin-bottom: $spacing-md;
+        }
+      }
+
+      .artist-button {
+        background: transparent;
+        border: 2px solid $primary-color;
+        color: $primary-color;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        font-family: $primary-font;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        
+        @include mobile {
+          padding: 0.6rem 1.5rem;
+          font-size: 0.9rem;
+        }
+
+        &:hover {
+          background: $primary-color;
+          color: $text-color;
+        }
+        
+        @include button-hover-primary;
+      }
+    }
+  }
+
+  .artist-cta {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    @include mobile {
+      padding: $spacing-lg;
+    }
+
+    .cta-text {
+      font-family: $paragraph-font;
+      font-size: 1.3rem;
+      color: $text-color;
+      margin-bottom: 2rem;
+      font-weight: 500;
+      
+      @include mobile {
+        font-size: 1.1rem;
+        margin-bottom: $spacing-lg;
+      }
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(45deg, $primary-color, darken($primary-color, 10%));
+      color: $text-color;
+      padding: 1rem 3rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-family: $primary-font;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba($primary-color, 0.3);
+      
+      @include mobile {
+        padding: 0.8rem 2rem;
+        font-size: 0.9rem;
+      }
+
+      &:hover {
+        color: #000;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba($primary-color, 0.4);
+      }
+    }
+  }
+}

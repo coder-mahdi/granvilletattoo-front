@@ -1,0 +1,300 @@
+@import '../abstracts/abstracts';
+
+.testimonials-section {
+  padding: $spacing-xl 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(20, 20, 20, 0.95) 100%);
+  color: $text-color;
+  position: relative;
+  overflow: hidden;
+  
+  @include mobile {
+    padding: $spacing-md 0;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('#{$asset-prefix}/images/hero.png') center/cover;
+    opacity: 0.1;
+    z-index: 0;
+  }
+  
+  .testimonials-title {
+    font-family: $primary-font;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: $spacing-lg;
+    color: $primary-color;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+    
+    @include mobile {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: $spacing-md;
+    }
+  }
+  
+  .testimonials-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 $spacing-lg;
+    position: relative;
+    z-index: 1;
+    
+    @include mobile {
+      padding: 0 $spacing-md;
+      max-width: 100%;
+    }
+  }
+  
+  .testimonials-layout {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: $spacing-xl;
+    align-items: stretch;
+    
+    @include mobile {
+      display: flex;
+      flex-direction: column;
+      grid-template-columns: 1fr;
+      gap: $spacing-md;
+    }
+  }
+  
+  .testimonials-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(139, 90, 43, 0.15) 0%,
+        rgba(101, 67, 33, 0.2) 50%,
+        rgba(139, 90, 43, 0.15) 100%
+      );
+      z-index: 1;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+    
+    @include mobile {
+      min-height: 580px;
+      max-height: 580px;
+      height: 580px;
+      order: 1;
+      width: 100%;
+      margin-bottom: $spacing-md;
+    }
+    
+    .testimonial-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+      filter: sepia(20%) contrast(1.1) brightness(0.95) saturate(0.9);
+      transition: filter 0.3s ease;
+      
+      @include mobile {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        filter: sepia(20%) contrast(1.1) brightness(0.95) saturate(0.9);
+      }
+    }
+  }
+  
+  .testimonials-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-lg;
+    
+    @include mobile {
+      order: 2;
+      align-items: stretch;
+      width: 100%;
+    }
+  }
+  
+  .testimonials-slider {
+    overflow: hidden;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    
+    @include mobile {
+      width: 100%;
+      overflow: visible;
+    }
+  }
+  
+  .testimonials-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+    
+    @include mobile {
+      width: 100%;
+    }
+  }
+  
+  .testimonial-slide {
+    min-width: 100%;
+    padding: $spacing-xl;
+    flex-shrink: 0;
+    
+    @include mobile {
+      padding: $spacing-lg;
+      min-width: 100%;
+      width: 100%;
+    }
+  }
+  
+  .testimonial-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .testimonial-text {
+    font-family: $paragraph-font;
+    font-size: 1.3rem;
+    line-height: 1.8;
+    margin-bottom: $spacing-lg;
+    color: $text-color;
+    font-style: italic;
+    
+    @include mobile {
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+  }
+  
+  .testimonial-author {
+    .author-name {
+      font-family: $primary-font;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: $primary-color;
+      margin-bottom: $spacing-xs;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .author-design {
+      font-family: $paragraph-font;
+      font-size: 1rem;
+      color: rgba($text-color, 0.7);
+      margin: 0;
+    }
+  }
+  
+  .testimonials-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-lg;
+    
+    @include mobile {
+      gap: $spacing-md;
+    }
+  }
+  
+  .testimonial-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: $text-color;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    
+    &:hover {
+      background: $primary-color;
+      color: #000;
+      border-color: $primary-color;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba($primary-color, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(-1px);
+    }
+    
+    svg {
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover svg {
+      transform: scale(1.1);
+    }
+    
+    @include mobile {
+      width: 45px;
+      height: 45px;
+      
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+  
+  .testimonials-dots {
+    display: flex;
+    gap: $spacing-sm;
+  }
+  
+  .testimonial-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &.active {
+      background: $primary-color;
+      transform: scale(1.2);
+    }
+    
+    &:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.6);
+      transform: scale(1.1);
+    }
+    
+    @include mobile {
+      width: 10px;
+      height: 10px;
+    }
+  }
+}

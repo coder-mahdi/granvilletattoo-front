@@ -1,0 +1,86 @@
+@mixin desktop {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+// Mixins
+
+// Responsive breakpoints
+@mixin mobile {
+  @media (max-width: #{$mobile - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$tablet}) and (max-width: #{$desktop - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$desktop}) {
+    @content;
+  }
+}
+
+// Flexbox mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// Typography mixins
+@mixin heading-style {
+  font-family: $primary-font;
+  font-weight: normal;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+}
+
+@mixin paragraph-style {
+  font-family: $paragraph-font;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+}
+
+// Button hover mixins
+@mixin button-hover-primary {
+  &:hover {
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba($primary-color, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+@mixin button-hover-gradient {
+  &:hover {
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+  }
+}
+
+@mixin button-hover-lift {
+  &:hover {
+    color: #000;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba($primary-color, 0.3);
+  }
+}

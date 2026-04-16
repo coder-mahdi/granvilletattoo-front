@@ -1,0 +1,268 @@
+// Home page styles
+.home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  .main-content {
+    opacity: 1;
+  }
+  
+  .hero {
+    background: $background-color;
+    color: $text-color;
+    padding: $spacing-xl 0;
+    text-align: center;
+    
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 $spacing-md;
+    }
+    
+    h1 {
+      font-size: 3rem;
+      margin-bottom: $spacing-md;
+      
+      @include mobile {
+        font-size: 2rem;
+      }
+    }
+    
+    p {
+      font-size: 1.2rem;
+      margin-bottom: $spacing-lg;
+      opacity: 0.9;
+    }
+  }
+  
+  .content {
+    flex: 1;
+    padding: $spacing-xl 0;
+    
+    .content-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 $spacing-md;
+    }
+  }
+}
+
+// Gallery Section Styles
+.gallery-section {
+  min-height: 100vh;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  
+  @include mobile {
+    height: auto;
+    min-height: 100vh;
+    padding: 2rem 0;
+    margin-top: 0;
+    padding-top: 0;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('#{$asset-prefix}/images/hero.png') center/cover no-repeat;
+    opacity: 0.1;
+    z-index: -1;
+  }
+  
+  .gallery-title {
+    font-family: $primary-font;
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: $text-color;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+    
+    @include mobile {
+      font-size: 2.5rem;
+      margin-bottom: 0.25rem;
+    }
+  }
+  
+  .gallery-description {
+    font-family: $paragraph-font;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+    
+    @include mobile {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 0 1rem;
+    }
+  }
+  
+  .gallery-horizontal {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 2rem;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    white-space: nowrap;
+    height: fit-content;
+    align-items: center;
+    overscroll-behavior: auto; // Allow natural scroll behavior
+    
+    // Hide scrollbar
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    
+    @include mobile {
+      gap: 1.5rem;
+      padding: 0 1rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      
+      // Add padding to see first/last items properly
+      &::before,
+      &::after {
+        content: '';
+        flex: 0 0 0.5rem;
+        flex-shrink: 0;
+      }
+    }
+  }
+  
+  .gallery-item {
+    flex: 0 0 350px; // Fixed width for proper snap
+    flex-shrink: 0; // Prevent shrinking
+    height: 450px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    
+    .gallery-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      
+      .gallery-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.02);
+        filter: grayscale(85%);
+        transition: transform 0.4s ease, filter 0.4s ease;
+        pointer-events: none;
+        user-select: none;
+      }
+      
+      .gallery-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: flex-end;
+        padding: 1.5rem;
+        background: linear-gradient(150deg, rgba(20, 20, 20, 0.9) 0%, rgba(20, 20, 20, 0.25) 45%, rgba(0, 0, 0, 0.9) 100%);
+        color: #ffffff;
+        opacity: 0.85;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+      }
+      
+      .gallery-overlay-text {
+        font-family: $primary-font;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+    }
+    
+    @include mobile {
+      flex: 0 0 280px; // Fixed width for mobile
+      flex-shrink: 0; // Prevent shrinking on mobile
+      height: 350px;
+      .gallery-image-wrapper {
+        .gallery-img {
+          pointer-events: none;
+          user-select: none;
+          -webkit-user-drag: none;
+        }
+      }
+    }
+    
+    &:hover {
+      .gallery-img {
+        transform: scale(1.06);
+        filter: grayscale(0%);
+      }
+      
+      .gallery-overlay {
+        opacity: 0.35;
+      }
+    }
+  }
+  
+  .gallery-scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    z-index: 10;
+    
+    .scroll-progress {
+      height: 100%;
+      background: linear-gradient(90deg, $primary-color, lighten($primary-color, 20%));
+      border-radius: 2px;
+      transition: width 0.1s ease-out;
+      will-change: width;
+    }
+    
+    @include mobile {
+      width: 200px;
+      bottom: 1rem;
+    }
+  }
+}

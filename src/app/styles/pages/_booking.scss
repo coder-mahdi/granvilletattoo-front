@@ -1,0 +1,524 @@
+@import '../abstracts/abstracts';
+
+.booking-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(20, 20, 20, 0.95) 100%);
+  color: $text-color;
+  position: relative;
+  z-index: 1; // Lower than mobile menu
+  
+  .booking-hero {
+    padding: 6rem 0 $spacing-xl 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(20, 20, 20, 0.9) 100%);
+    position: relative;
+    
+    @include mobile {
+      padding: 5rem 0 $spacing-lg 0;
+    }
+    
+    .booking-header {
+      text-align: center;
+      
+      .booking-title {
+        font-family: $primary-font;
+        font-size: 3rem;
+        font-weight: bold;
+        color: $primary-color;
+        margin-bottom: $spacing-md;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        
+        @include mobile {
+          font-size: 2.5rem;
+        }
+        @include desktop {
+          font-size: 3.5rem;
+        }
+      }
+      
+      .booking-subtitle {
+        font-family: $paragraph-font;
+        font-size: 1.2rem;
+        color: rgba($text-color, 0.8);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+        @include desktop {
+          font-size: 1.45rem;
+        }
+      }
+    }
+  }
+  
+  .booking-form {
+    max-width: 800px;
+    margin: $spacing-xl auto;
+    background: rgba(255, 255, 255, 0.05);
+    padding: $spacing-xl;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    
+    @include mobile {
+      padding: $spacing-lg;
+      margin: $spacing-lg $spacing-md;
+    }
+
+    .form-alert {
+      padding: $spacing-md;
+      border-radius: 12px;
+      font-family: $paragraph-font;
+      font-size: 1rem;
+      margin-bottom: $spacing-lg;
+      border: 1px solid transparent;
+      text-align: center;
+
+      &.error-alert {
+        background: rgba(255, 68, 68, 0.15);
+        border-color: rgba(255, 68, 68, 0.4);
+        color: #ff9b9b;
+      }
+
+      &.success-alert {
+        background: rgba($primary-color, 0.2);
+        border-color: rgba($primary-color, 0.5);
+        color: lighten($primary-color, 20%);
+      }
+    }
+  }
+  
+  .booking-success {
+    max-width: 700px;
+    margin: $spacing-xl auto;
+    background: rgba(255, 255, 255, 0.05);
+    padding: $spacing-xl;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    text-align: left;
+
+    @include mobile {
+      padding: $spacing-lg;
+      margin: $spacing-lg $spacing-md;
+    }
+
+    .success-details {
+      font-family: $paragraph-font;
+      font-size: 1rem;
+      color: rgba($text-color, 0.85);
+      display: grid;
+      gap: $spacing-sm;
+      margin: $spacing-md 0 $spacing-lg;
+      @include desktop {
+        font-size: 1.15rem;
+      }
+
+      strong {
+        color: $primary-color;
+      }
+    }
+
+    .success-contact-link {
+      color: lighten($primary-color, 15%);
+      text-decoration: none;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: lighten($primary-color, 25%);
+        text-decoration: underline;
+      }
+    }
+
+    .success-actions {
+      display: flex;
+      justify-content: center;
+    }
+
+    .new-booking-button {
+      background: linear-gradient(45deg, $primary-color, lighten($primary-color, 10%));
+      color: #000;
+      border: none;
+      padding: $spacing-md $spacing-xl;
+      font-family: $primary-font;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba($primary-color, 0.4);
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba($primary-color, 0.6);
+        background: linear-gradient(45deg, lighten($primary-color, 5%), lighten($primary-color, 15%));
+      }
+
+      &:active {
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: $spacing-lg;
+    
+    .form-label {
+      display: block;
+      font-family: $primary-font;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $text-color;
+      margin-bottom: $spacing-sm;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: $spacing-md;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      color: $text-color;
+      font-family: $paragraph-font;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      
+      &[type="date"] {
+        position: relative;
+        padding-right: 3.5rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 20px 20px;
+        
+        // Hide default calendar icon and make custom one visible
+        &::-webkit-calendar-picker-indicator {
+          cursor: pointer;
+          opacity: 0 !important;
+          position: absolute;
+          right: 0;
+          width: 100%;
+          height: 100%;
+          background: transparent;
+        }
+        
+        // For Firefox - use the background image approach
+        &::-moz-calendar-picker-indicator {
+          cursor: pointer;
+          opacity: 0 !important;
+        }
+        
+        // For Edge
+        &::-ms-clear {
+          display: none;
+        }
+      }
+      
+      &::placeholder {
+        color: rgba($text-color, 0.6);
+      }
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba($primary-color, 0.3);
+      }
+      
+      &.error {
+        border-color: #ff4444;
+        box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+      }
+    }
+    
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    
+    .form-file {
+      width: 100%;
+      padding: $spacing-md;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      color: $text-color;
+      font-family: $paragraph-font;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        border-color: $primary-color;
+        background: rgba(255, 255, 255, 0.15);
+      }
+    }
+    
+    .form-help {
+      font-family: $paragraph-font;
+      font-size: 0.9rem;
+      color: rgba($text-color, 0.6);
+      margin-top: $spacing-xs;
+    }
+    
+    .error-message {
+      display: block;
+      color: #ff4444;
+      font-family: $paragraph-font;
+      font-size: 0.9rem;
+      margin-top: $spacing-xs;
+    }
+  }
+
+  .artist-availability {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: $spacing-lg;
+
+    .availability-status {
+      font-family: $paragraph-font;
+      color: rgba($text-color, 0.75);
+      font-size: 0.95rem;
+    }
+
+    .artist-options {
+      display: grid;
+      gap: $spacing-md;
+      margin-top: $spacing-md;
+    }
+
+    .artist-option {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      padding: $spacing-md;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.35);
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: rgba($primary-color, 0.6);
+        box-shadow: 0 0 20px rgba($primary-color, 0.25);
+      }
+
+      &.selected {
+        border-color: rgba($primary-color, 0.8);
+        background: rgba($primary-color, 0.2);
+        box-shadow: 0 0 25px rgba($primary-color, 0.3);
+      }
+
+      input[type='radio'] {
+        margin: 0;
+        transform: scale(1.2);
+        accent-color: $primary-color;
+      }
+
+      .artist-option-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xs;
+
+        .artist-option-name {
+          font-family: $primary-font;
+          font-size: 1.1rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+        }
+
+        .artist-option-badge {
+          background: rgba($primary-color, 0.2);
+          color: lighten($primary-color, 15%);
+          font-size: 0.75rem;
+          padding: 0 $spacing-xs;
+          border-radius: 999px;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+        }
+
+        .artist-option-meta {
+          font-family: $paragraph-font;
+          font-size: 0.95rem;
+          color: rgba($text-color, 0.65);
+        }
+      }
+
+      .artist-option-link {
+        font-family: $primary-font;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: lighten($primary-color, 10%);
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: lighten($primary-color, 20%);
+          text-decoration: underline;
+        }
+      }
+    }
+
+    @include mobile {
+      padding: $spacing-md;
+
+      .artist-option {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .artist-option-link {
+          align-self: flex-end;
+        }
+      }
+    }
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-lg;
+    
+    @include mobile {
+      grid-template-columns: 1fr;
+      gap: $spacing-md;
+    }
+  }
+  
+  .recaptcha-container {
+    .recaptcha-placeholder {
+      padding: $spacing-lg;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      text-align: center;
+      color: rgba($text-color, 0.6);
+      font-family: $paragraph-font;
+    }
+  }
+  
+  .form-checkboxes {
+    margin: $spacing-xl 0;
+    
+    .checkbox-group {
+      margin-bottom: $spacing-lg;
+      
+      .form-checkbox {
+        margin-right: $spacing-sm;
+        appearance: none;
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        border-radius: 6px;
+        background: rgba(15, 15, 15, 0.8);
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: rgba(255, 255, 255, 0.9);
+          background: rgba(25, 25, 25, 0.9);
+        }
+
+        &:checked {
+          background: $primary-color;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.35);
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 7px;
+            height: 12px;
+            border: solid #000;
+            border-width: 0 3px 3px 0;
+            transform: translate(-50%, -60%) rotate(45deg);
+          }
+        }
+
+        @include mobile {
+          width: 26px;
+          height: 26px;
+          border-width: 2.5px;
+
+          &:checked::after {
+            width: 8px;
+            height: 14px;
+          }
+        }
+      }
+      
+      .checkbox-label {
+        font-family: $paragraph-font;
+        color: $text-color;
+        line-height: 1.6;
+        cursor: pointer;
+        
+        .terms-link {
+          color: $primary-color;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            color: lighten($primary-color, 20%);
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+  
+  .form-submit {
+    text-align: center;
+    margin-top: $spacing-xl;
+    
+    .submit-button {
+      display: inline-block;
+      padding: $spacing-md $spacing-lg;
+      border-radius: 28px;
+      border: 2px solid transparent;
+      background: linear-gradient(45deg, #ff6b35, #f7931e);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-family: $primary-font;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 12px 35px rgba(255, 107, 53, 0.35);
+      min-width: 180px;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 45px rgba(255, 107, 53, 0.45);
+        background: linear-gradient(45deg, #ff7a4a, #ffa726);
+        color: #000;
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+  
+}
