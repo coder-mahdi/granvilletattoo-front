@@ -2,468 +2,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Container from '@/components/Container';
+import { ARTIST_PROFILES } from '../artistProfiles';
+import { discoverArtistPortfolioWebp } from '@/lib/discoverArtistPortfolioWebp';
 
-const mockArtists = {
-  'kian-mokhtari': {
-    id: 1,
-    name: 'Kian Mokhtari',
-    title: 'Realism & Portrait Specialist',
-    bio: 'Kian crafts high-impact realism pieces with a cinematic touch, blending fine art training and tattoo craft. He loves transforming your references into hyper-detailed, story-driven tattoos.',
-    specialties: ['Realistic Portraits', 'Black & Grey', 'Fine Line', 'Color Realism'],
-    experience: '10+ Years',
-    location: 'Vancouver, BC',
-    heroImage: '/images/Kian/kian_hero.webp',
-    social: {
-      instagram: 'tattoo_kian',
-      facebook: 'KianMokhtariTattoo',
-      website: 'redtattoo.ca'
-    },
-    portfolio: [
-      {
-        id: 1,
-        title: 'Monochrome Character Study',
-        image: '/images/Kian/kian_gallery-1.webp',
-        category: 'Portrait',
-        year: '2024'
-      },
-      {
-        id: 2,
-        title: 'Cinematic Narrative Sleeve',
-        image: '/images/Kian/kian_gallery-2.webp',
-        category: 'Black & Grey',
-        year: '2023'
-      },
-      {
-        id: 3,
-        title: 'Textured Realism Composition',
-        image: '/images/general/general-1.webp',
-        category: 'Black & Grey',
-        year: '2024'
-      },
-      {
-        id: 4,
-        title: 'Mythic Guardian Detail',
-        image: '/images/general/general-2.webp',
-        category: 'Realism',
-        year: '2024'
-      },
-      {
-        id: 5,
-        title: 'High-Contrast Character Profile',
-        image: '/images/general/general-3.webp',
-        category: 'Portrait',
-        year: '2024'
-      },
-      {
-        id: 6,
-        title: 'Cinematic Knight Portrait',
-        image: '/images/general/Kian-2.webp',
-        category: 'Black & Grey',
-        year: '2024'
-      },
-      {
-        id: 7,
-        title: 'Story-Driven Sleeve Segment',
-        image: '/images/general/Kian-3.webp',
-        category: 'Realism',
-        year: '2024'
-      },
-    
-    ],
-    availability: {
-      status: 'Available',
-      nextAppointment: 'Next week',
-      bookingLink: '#book'
-    }
-  },
-  'masi-aghdam': {
-    id: 2,
-    name: 'Masi Aghdam',
-    title: 'Fine Line & Script Specialist',
-    bio: 'Masi focuses on refined fine-line compositions, bespoke lettering, and meaningful micro-realism pieces. Her work blends elegance with clean execution for long-lasting detail.',
-    specialties: ['Fine Line', 'Script', 'Micro Realism', 'Color', 'Black & Grey'],
-    experience: '8+ Years',
-    location: 'Vancouver, BC',
-    heroImage: '/images/Masi/Masi-1.webp',
-    social: {
-      instagram: 'masiworldtattoo',
-      facebook: 'MasiAghdamTattoo',
-      website: 'vansunstudio.com'
-    },
-    portfolio: [
-      {
-        id: 1,
-        title: 'Delicate Fine Line Rose',
-        image: '/images/Masi/Masi-tattoo.webp',
-        category: 'Fine Line',
-        year: '2025'
-      },
-      {
-        id: 2,
-        title: 'Micro Realism Portrait Detail',
-        image: '/images/Masi/Masi-tattoo-7.webp',
-        category: 'Micro Realism',
-        year: '2025'
-      },
-      {
-        id: 3,
-        title: 'Elegant Script Accent',
-        image: '/images/Masi/Masi-tattoo-8.webp',
-        category: 'Script',
-        year: '2024'
-      },
-      {
-        id: 4,
-        title: 'Color Bloom Panel',
-        image: '/images/Masi/Masi-tattoo-9.webp',
-        category: 'Color',
-        year: '2024'
-      },
-      {
-        id: 5,
-        title: 'Gradient Script Flow',
-        image: '/images/Masi/Masi-tattoo-10.webp',
-        category: 'Color Script',
-        year: '2023'
-      },
-      {
-        id: 6,
-        title: 'Sculpted Script Panel',
-        image: '/images/Masi/Masi-tattoo-11.webp',
-        category: 'Script',
-        year: '2023'
-      },
-      {
-        id: 7,
-        title: 'Abstract Fine Line Bloom',
-        image: '/images/Masi/Masi-tattoo-13.webp',
-        category: 'Fine Line',
-        year: '2022'
-      },
-      {
-        id: 8,
-        title: 'Color Washed Florals',
-        image: '/images/Masi/Masi-tattoo-14.webp',
-        category: 'Color',
-        year: '2022'
-      },
-      {
-        id: 9,
-        title: 'Minimal Botanical Wrap',
-        image: '/images/Masi/Masi-tattoo-15.webp',
-        category: 'Fine Line',
-        year: '2022'
-      },
-      {
-        id: 10,
-        title: 'Chromatic Linear Flow',
-        image: '/images/Masi/Masi-tattoo-16.webp',
-        category: 'Color',
-        year: '2021'
-      },
-      {
-        id: 11,
-        title: 'Pastel Script Accent',
-        image: '/images/Masi/Masi-tattoo-18.webp',
-        category: 'Color Script',
-        year: '2021'
-      },
-      {
-        id: 12,
-        title: 'Watercolor Bloom',
-        image: '/images/Masi/Masi-Tattoo-6.webp',
-        category: 'Watercolor',
-        year: '2020'
-      },
-      {
-        id: 13,
-        title: 'Soft Gradient Floral',
-        image: '/images/Masi/21.webp',
-        category: 'Color',
-        year: '2020'
-      },
-      {
-        id: 14,
-        title: 'Elegant Script Detail',
-        image: '/images/general/Masi-tattoo-8.webp',
-        category: 'Script',
-        year: '2024'
-      }
-    ],
-    availability: {
-      status: 'Available',
-      nextAppointment: 'This week',
-      bookingLink: '#book'
-    }
-  },
-  'mina-khanian': {
-    id: 3,
-    name: 'Mina Khanian',
-    title: 'Watercolor & Illustrative Artist',
-    bio: 'Mina Khanian combines fluid watercolor gradients with precision line work, layering minimalist structure over emotive color to keep every piece vibrant and full of motion.',
-    specialties: ['Fine Line', 'Minimalist', 'Color', 'Black & Grey', 'Watercolor'],
-    experience: '8+ Years',
-    location: 'Vancouver, BC',
-    heroImage: '/images/Mina/Mina-1.webp',
-    social: {
-      instagram: 'minatattoominimal',
-      facebook: 'MinaKhanianTattoo',
-      website: 'redtattoo.ca'
-    },
-    portfolio: [
-      {
-        id: 1,
-        title: 'Pastel Bloom Flow',
-        image: '/images/Mina/Mina-2.webp',
-        category: 'Color',
-        year: '2024'
-      },
-      {
-        id: 2,
-        title: 'Minimal Botanical Accent',
-        image: '/images/Mina/Mina-3.webp',
-        category: 'Fine Line',
-        year: '2024'
-      },
-      {
-        id: 3,
-        title: 'Chromatic Feather Detail',
-        image: '/images/Mina/Mina-4.webp',
-        category: 'Color Realism',
-        year: '2023'
-      },
-      {
-        id: 4,
-        title: 'Monochrome Floral Wrap',
-        image: '/images/Mina/Mina-5.webp',
-        category: 'Black & Grey',
-        year: '2023'
-      },
-      {
-        id: 5,
-        title: 'Geometric Line Harmony',
-        image: '/images/Mina/Mina-6.webp',
-        category: 'Minimalist',
-        year: '2022'
-      },
-      {
-        id: 6,
-        title: 'Watercolor Flow Sleeve',
-        image: '/images/Mina/Mina-7.webp',
-        category: 'Watercolor',
-        year: '2022'
-      },
-      {
-        id: 7,
-        title: 'Minimal Flower Cluster',
-        image: '/images/Mina/Mina-8.webp',
-        category: 'Fine Line',
-        year: '2021'
-      },
-      {
-        id: 8,
-        title: 'Color Burst Bouquet',
-        image: '/images/Mina/Mina-9.webp',
-        category: 'Color',
-        year: '2021'
-      },
-      {
-        id: 9,
-        title: 'Chromatic Feather',
-        image: '/images/Mina/Mina-10.webp',
-        category: 'Color',
-        year: '2021'
-      },
-      {
-        id: 10,
-        title: 'Pastel Floral Cascade',
-        image: '/images/Mina/Mina-11.webp',
-        category: 'Watercolor',
-        year: '2020'
-      }
-    ],
-    availability: {
-      status: 'Available',
-      nextAppointment: 'This month',
-      bookingLink: '#book'
-    }
-  },
-  'mina-khani': {
-    id: 3,
-    name: 'Mina Khanian',
-    title: 'Watercolor & Illustrative Artist',
-    bio: 'Mina Khanian combines fluid watercolor gradients with precision line work, layering minimalist structure over emotive color to keep every piece vibrant and full of motion.',
-    specialties: ['Fine Line', 'Minimalist', 'Color', 'Black & Grey', 'Watercolor'],
-    experience: '8+ Years',
-    location: 'Vancouver, BC',
-    heroImage: '/images/Mina/Mina-1.webp',
-    social: {
-      instagram: 'minatattoominimal',
-      facebook: 'MinaKhanianTattoo',
-      website: 'redtattoo.ca'
-    },
-    portfolio: [
-      {
-        id: 1,
-        title: 'Pastel Bloom Flow',
-        image: '/images/Mina/Mina-2.webp',
-        category: 'Color',
-        year: '2024'
-      },
-      {
-        id: 2,
-        title: 'Minimal Botanical Accent',
-        image: '/images/Mina/Mina-3.webp',
-        category: 'Fine Line',
-        year: '2024'
-      },
-      {
-        id: 3,
-        title: 'Chromatic Feather Detail',
-        image: '/images/Mina/Mina-4.webp',
-        category: 'Color Realism',
-        year: '2023'
-      },
-      {
-        id: 4,
-        title: 'Monochrome Floral Wrap',
-        image: '/images/Mina/Mina-5.webp',
-        category: 'Black & Grey',
-        year: '2023'
-      },
-      {
-        id: 5,
-        title: 'Geometric Line Harmony',
-        image: '/images/Mina/Mina-6.webp',
-        category: 'Minimalist',
-        year: '2022'
-      },
-      {
-        id: 6,
-        title: 'Watercolor Flow Sleeve',
-        image: '/images/Mina/Mina-7.webp',
-        category: 'Watercolor',
-        year: '2022'
-      },
-      {
-        id: 7,
-        title: 'Minimal Flower Cluster',
-        image: '/images/Mina/Mina-8.webp',
-        category: 'Fine Line',
-        year: '2021'
-      },
-      {
-        id: 8,
-        title: 'Color Burst Bouquet',
-        image: '/images/Mina/Mina-9.webp',
-        category: 'Color',
-        year: '2021'
-      },
-      {
-        id: 9,
-        title: 'Chromatic Feather',
-        image: '/images/Mina/Mina-10.webp',
-        category: 'Color',
-        year: '2021'
-      },
-      {
-        id: 10,
-        title: 'Pastel Floral Cascade',
-        image: '/images/Mina/Mina-11.webp',
-        category: 'Watercolor',
-        year: '2020'
-      }
-    ],
-    availability: {
-      status: 'Available',
-      nextAppointment: 'This month',
-      bookingLink: '#book'
-    }
-  },
-  'sami-amiri': {
-    id: 4,
-    name: 'Sami Amiri',
-    title: 'Fine Line, Color & Realism Artist',
-    bio: 'Sami specializes in refined fine line work, bold color gradients, and realistic storytelling. Her minimalist approach channels depth without sacrificing emotion.',
-    specialties: ['Fine Line', 'Minimalist', 'Blackwork', 'Color', 'Realism'],
-    experience: '8+ Years',
-    location: 'Vancouver, BC',
-    heroImage: '/images/sami/hero-sami.webp',
-    social: {
-      instagram: '@sami_amiri_art',
-      facebook: 'SamiAmiriTattoos',
-      website: 'samiamiri.com'
-    },
-    portfolio: [
-      {
-        id: 1,
-        title: 'Fine Line Mandala Accent',
-        image: '/images/sami/IMG_2654.webp',
-        category: 'Fine Line',
-        year: '2024'
-      },
-      {
-        id: 2,
-        title: 'Geometric Pattern Flow',
-        image: '/images/sami/IMG_3041.webp',
-        category: 'Geometric',
-        year: '2023'
-      },
-      {
-        id: 3,
-        title: 'Color Gradient Script',
-        image: '/images/sami/20250803_162655 (1).webp',
-        category: 'Color',
-        year: '2024'
-      },
-      {
-        id: 4,
-        title: 'Realistic Floral Panel',
-        image: '/images/sami/IMG_3636.webp',
-        category: 'Realism',
-        year: '2022'
-      },
-      {
-        id: 6,
-        title: 'Bold Blackwork Contrast',
-        image: '/images/sami/IMG_4056.webp',
-        category: 'Blackwork',
-        year: '2023'
-      },
-      {
-        id: 7,
-        title: 'Fine Script Accent',
-        image: '/images/sami/IMG_4765.webp',
-        category: 'Fine Line',
-        year: '2023'
-      },
-      {
-        id: 8,
-        title: 'Textured Mythical Study',
-        image: '/images/sami/97992305-F07C-4910-B9A7-2BE771A9CB0B (1).webp',
-        category: 'Realism',
-        year: '2021'
-      },
-      {
-        id: 9,
-        title: 'Detailed Texture Panel',
-        image: '/images/sami/BCBFE364-3E30-45A8-B6EF-725FCB9F0C49.webp',
-        category: 'Realism',
-        year: '2021'
-      }
-    ],
-    availability: {
-      status: 'Available',
-      nextAppointment: 'Next month',
-      bookingLink: '#book'
-    }
-  }
-} as const;
+type ArtistSlug = keyof typeof ARTIST_PROFILES;
 
-type ArtistKey = keyof typeof mockArtists;
+/** New shuffle + portfolio list on each visit */
+export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  return Object.keys(mockArtists).map((slug) => ({ slug }));
+  return Object.keys(ARTIST_PROFILES).map((slug) => ({ slug }));
 }
 
 interface ArtistPageProps {
@@ -474,16 +22,17 @@ interface ArtistPageProps {
 export default async function ArtistPage({ params }: ArtistPageProps) {
   const resolvedParams = params ? await params : undefined;
   const slug = resolvedParams?.slug ?? 'kian-mokhtari';
-  const artist = mockArtists[slug as ArtistKey];
+  const artist = ARTIST_PROFILES[slug as ArtistSlug];
 
   if (!artist) {
     notFound();
   }
 
+  const portfolio = discoverArtistPortfolioWebp(slug, artist.heroImage);
+
   return (
     <div className="single-artist-page">
       <div className="main-content show">
-        {/* Hero Section */}
         <section className="single-artist-hero">
           <Container>
             <div className="artist-hero-content">
@@ -491,7 +40,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
                 <h1 className="artist-name">{artist.name}</h1>
                 <h2 className="artist-title">{artist.title}</h2>
                 <p className="artist-bio">{artist.bio}</p>
-                
+
                 <div className="artist-details">
                   <div className="detail-item">
                     <span className="detail-label">Experience:</span>
@@ -515,7 +64,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
                   </Link>
                 </div>
               </div>
-              
+
               <div className="artist-image">
                 <Image
                   src={artist.heroImage ?? '/images/hero.webp'}
@@ -531,7 +80,6 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
           </Container>
         </section>
 
-        {/* Specialties Section */}
         <section className="single-artist-specialties">
           <Container>
             <h3>Specialties</h3>
@@ -545,24 +93,25 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
           </Container>
         </section>
 
-        {/* Portfolio Section */}
         <section id="portfolio" className="single-artist-portfolio">
           <Container>
             <h3>Portfolio</h3>
             <div className="portfolio-grid">
-              {artist.portfolio.map((work) => (
+              {portfolio.map((work) => (
                 <div key={work.id} className="portfolio-item">
                   <div className="portfolio-image">
                     <Image
                       src={work.image}
-                      alt={work.title}
+                      alt={`${artist.name} portfolio — ${work.id}`}
                       width={480}
                       height={480}
                       className="portfolio-img"
                     />
                     <div className="portfolio-overlay">
                       <h4>{work.title}</h4>
-                      <p>{work.category} • {work.year}</p>
+                      {[work.category, work.year].filter(Boolean).length > 0 ? (
+                        <p>{[work.category, work.year].filter(Boolean).join(' • ')}</p>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -571,7 +120,6 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
           </Container>
         </section>
 
-        {/* Contact Section */}
         <section className="single-artist-contact">
           <Container>
             <h3>Connect with {artist.name}</h3>

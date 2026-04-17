@@ -4,7 +4,7 @@ import Container from '@/components/Container';
 export default function AboutSection() {
   const features = [
     {
-      image: '/images/general/general-2 copy 2.webp',
+      image: '/images/general/about-1.webp',
       title: 'Professional Artists',
       description: 'Our team of skilled artists brings years of experience and passion to every piece.'
     },
