@@ -22,6 +22,26 @@ export interface ReCAPTCHARef {
   execute: () => Promise<string | null>;
 }
 
+function parseRenderKeyFromScriptSrc(src: string): string | null {
+  const m = src.match(/[?&]render=([^&]+)/);
+  if (!m) return null;
+  try {
+    return decodeURIComponent(m[1]);
+  } catch {
+    return m[1];
+  }
+}
+
+/** Drop a stale api.js if Vercel env key changed but the browser kept an old script. */
+function removeRecaptchaGlobals() {
+  try {
+    delete (window as unknown as { grecaptcha?: unknown }).grecaptcha;
+    delete (window as unknown as { ___grecaptcha_cfg?: unknown }).___grecaptcha_cfg;
+  } catch {
+    /* ignore */
+  }
+}
+
 function createSiteKeyResolver(): () => Promise<string | null> {
   let promise: Promise<string | null> | null = null;
   return () => {
@@ -50,22 +70,29 @@ const ReCAPTCHA = forwardRef<ReCAPTCHARef, ReCAPTCHAProps>(
     const resolveSiteKey = useRef(createSiteKeyResolver()).current;
 
     const injectScript = useCallback((siteKey: string) => {
-      if (!document.querySelector('script[src*="recaptcha"]')) {
-        const script = document.createElement('script');
-        script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
-        script.async = true;
-        script.defer = true;
-        script.onload = () => {
+      const existing = document.querySelector<HTMLScriptElement>('script[src*="recaptcha/api.js"]');
+      if (existing) {
+        const loadedKey = parseRenderKeyFromScriptSrc(existing.src);
+        if (loadedKey === siteKey) {
           scriptLoadedRef.current = !!window.grecaptcha;
-        };
-        script.onerror = () => {
-          scriptLoadedRef.current = false;
-          if (mountedRef.current && onError) onError();
-        };
-        document.head.appendChild(script);
-      } else {
-        scriptLoadedRef.current = !!window.grecaptcha;
+          return;
+        }
+        existing.remove();
+        removeRecaptchaGlobals();
       }
+
+      const script = document.createElement('script');
+      script.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        scriptLoadedRef.current = !!window.grecaptcha;
+      };
+      script.onerror = () => {
+        scriptLoadedRef.current = false;
+        if (mountedRef.current && onError) onError();
+      };
+      document.head.appendChild(script);
     }, [onError]);
 
     useEffect(() => {
@@ -92,9 +119,7 @@ const ReCAPTCHA = forwardRef<ReCAPTCHARef, ReCAPTCHAProps>(
           if (!siteKey) {
             return null;
           }
-          if (!document.querySelector('script[src*="recaptcha"]')) {
-            injectScript(siteKey);
-          }
+          injectScript(siteKey);
 
           const waitMs = 15000;
           const start = Date.now();
