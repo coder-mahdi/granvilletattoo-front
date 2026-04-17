@@ -1,6 +1,4 @@
-/** WordPress `granville/v1` REST base (blog, booking, gift card). Override on Vercel via env. */
-export const API_BASE = process.env.NEXT_PUBLIC_BOOKING_API_BASE?.replace(/\/$/, '')
-  || 'https://cms.granvilletattoo.ca/wp-json/granville/v1';
+import { buildGranvilleFetchUrl } from './granvilleFetchUrl';
 
 export type AvailabilityArtist = {
   id: number;
@@ -41,19 +39,24 @@ export type BookingResponse = {
 };
 
 function buildUrl(path: string, params?: Record<string, string>): string {
-  const url = new URL(`${API_BASE}${path}`);
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        url.searchParams.append(key, value);
-      }
-    });
+  return buildGranvilleFetchUrl(path, params);
+}
+
+async function fetchWithNetworkError(url: string, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch (e) {
+    if (e instanceof TypeError) {
+      throw new Error(
+        'Unable to reach the booking service. Please check your connection and try again.',
+      );
+    }
+    throw e;
   }
-  return url.toString();
 }
 
 export async function fetchAvailability(date: string, time: string): Promise<AvailabilityResponse> {
-  const response = await fetch(buildUrl('/availability', { date, time }), {
+  const response = await fetchWithNetworkError(buildUrl('/availability', { date, time }), {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
@@ -61,8 +64,7 @@ export async function fetchAvailability(date: string, time: string): Promise<Ava
   });
 
   if (!response.ok) {
-    const errorBody = await safeParseJson(response);
-    throw new Error(errorBody?.message || 'Unable to check availability');
+    throw new Error(await readErrorMessage(response, 'Unable to check availability'));
   }
 
   return response.json();
@@ -110,24 +112,33 @@ export async function submitBooking(payload: BookingRequestPayload): Promise<Boo
     formData.append('recaptcha_token', payload.recaptcha_token);
   }
 
-  const response = await fetch(buildUrl('/booking'), {
+  const response = await fetchWithNetworkError(buildUrl('/booking'), {
     method: 'POST',
     body: formData,
   });
 
   if (!response.ok) {
-    const errorBody = await safeParseJson(response);
-    throw new Error(errorBody?.message || 'Unable to create booking');
+    throw new Error(await readErrorMessage(response, 'Unable to create booking'));
   }
 
   return response.json();
 }
 
-async function safeParseJson(response: Response) {
+async function readErrorMessage(response: Response, fallback: string): Promise<string> {
+  const text = await response.text();
   try {
-    return await response.json();
+    const body = JSON.parse(text) as { message?: string; code?: string };
+    if (body?.message) return String(body.message);
+    if (body?.code) return String(body.code);
   } catch {
-    return null;
+    /* not JSON */
   }
+  if (response.status >= 500 && text.includes('<!DOCTYPE')) {
+    return `${fallback} (HTTP ${response.status} from CMS).`;
+  }
+  if (!response.ok) {
+    return `${fallback} (HTTP ${response.status}).`;
+  }
+  return fallback;
 }
 

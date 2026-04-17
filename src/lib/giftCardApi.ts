@@ -1,5 +1,4 @@
-export const API_BASE = process.env.NEXT_PUBLIC_BOOKING_API_BASE?.replace(/\/$/, '')
-  || 'https://cms.granvilletattoo.ca/wp-json/granville/v1';
+import { buildGranvilleFetchUrl } from './granvilleFetchUrl';
 
 export type GiftCardRequestPayload = {
   giftCardType: 'silver' | 'gold';
@@ -28,7 +27,7 @@ export type GiftCardResponse = {
 };
 
 function buildUrl(path: string): string {
-  return `${API_BASE}${path}`;
+  return buildGranvilleFetchUrl(path);
 }
 
 async function safeParseJson(response: Response) {

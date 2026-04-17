@@ -1,4 +1,4 @@
-import { API_BASE } from './bookingApi';
+import { buildGranvilleFetchUrl } from './granvilleFetchUrl';
 
 export type ConsentAnswers = Record<string, 'yes' | 'no'>;
 
@@ -26,7 +26,7 @@ export type ConsentFormResponse = {
 };
 
 function buildUrl(path: string): string {
-  return `${API_BASE}${path}`;
+  return buildGranvilleFetchUrl(path);
 }
 
 async function safeParseJson(response: Response) {

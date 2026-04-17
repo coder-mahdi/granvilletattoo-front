@@ -1,4 +1,4 @@
-import { API_BASE } from './bookingApi';
+import { buildGranvilleDirectUrl } from './granvilleFetchUrl';
 
 /** Seconds — blog list & posts revalidate on Vercel (ISR). */
 const BLOG_REVALIDATE_SECONDS = 300;
@@ -50,15 +50,7 @@ type BlogListParams = {
 };
 
 function buildUrl(path: string, params?: Record<string, string | number | undefined>) {
-  const url = new URL(`${API_BASE}${path}`);
-  if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        url.searchParams.append(key, String(value));
-      }
-    });
-  }
-  return url.toString();
+  return buildGranvilleDirectUrl(path, params);
 }
 
 type NextFetchOptions = {
