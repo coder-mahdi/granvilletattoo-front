@@ -47,9 +47,9 @@ const ReCAPTCHA = forwardRef<ReCAPTCHARef, ReCAPTCHAProps>(({
       script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
       script.async = true;
       script.defer = true;
-      
+
       script.onload = () => {
-        scriptLoadedRef.current = true;
+        scriptLoadedRef.current = !!window.grecaptcha;
       };
 
       script.onerror = () => {
@@ -62,7 +62,8 @@ const ReCAPTCHA = forwardRef<ReCAPTCHARef, ReCAPTCHAProps>(({
 
       document.head.appendChild(script);
     } else {
-      scriptLoadedRef.current = true;
+      // Tag may exist from a prior navigation but API not ready yet — do not mark loaded here
+      scriptLoadedRef.current = !!window.grecaptcha;
     }
 
     return () => {
@@ -79,54 +80,51 @@ const ReCAPTCHA = forwardRef<ReCAPTCHARef, ReCAPTCHAProps>(({
         return null;
       }
 
-      // Wait for script to load and be ready
-      if (!scriptLoadedRef.current && !window.grecaptcha) {
-        await new Promise<void>((resolve) => {
-          const checkInterval = setInterval(() => {
-            if (window.grecaptcha || document.querySelector('script[src*="recaptcha"]')) {
-              clearInterval(checkInterval);
-              scriptLoadedRef.current = true;
-              resolve();
-            }
-          }, 100);
-
-          setTimeout(() => {
-            clearInterval(checkInterval);
-            resolve();
-          }, 5000);
-        });
+      const waitMs = 15000;
+      const start = Date.now();
+      while (!window.grecaptcha && Date.now() - start < waitMs) {
+        await new Promise((r) => setTimeout(r, 50));
       }
 
       if (!window.grecaptcha) {
-        console.error('reCAPTCHA script not loaded');
+        console.error('reCAPTCHA API not available (blocked script, slow network, or invalid domain for this site key)');
         if (onError) onError();
         return null;
       }
 
-      try {
-        // Use grecaptcha.ready() to ensure API is fully initialized
-        const token = await new Promise<string>((resolve, reject) => {
+      scriptLoadedRef.current = true;
+
+      const runExecute = () =>
+        new Promise<string>((resolve, reject) => {
           window.grecaptcha.ready(() => {
-            window.grecaptcha.execute(siteKey, { action })
-              .then((token: string) => {
-                resolve(token);
-              })
-              .catch((error: Error) => {
-                reject(error);
-              });
+            window.grecaptcha
+              .execute(siteKey, { action })
+              .then((t: string) => resolve(t))
+              .catch((err: Error) => reject(err));
           });
         });
 
-        if (mountedRef.current) {
+      try {
+        let token = await runExecute();
+        if (!token) {
+          token = await runExecute();
+        }
+        if (mountedRef.current && token) {
           onVerify();
         }
-        return token;
+        return token || null;
       } catch (error) {
         console.error('Error executing reCAPTCHA v3:', error);
-        if (mountedRef.current && onError) {
-          onError();
+        try {
+          const token = await runExecute();
+          if (mountedRef.current && token) onVerify();
+          return token || null;
+        } catch {
+          if (mountedRef.current && onError) {
+            onError();
+          }
+          return null;
         }
-        return null;
       }
     },
   }), [siteKey, action, onVerify, onError]);

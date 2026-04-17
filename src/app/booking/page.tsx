@@ -425,7 +425,9 @@ export default function BookingPage() {
 
     // Validate reCAPTCHA token
     if (!token) {
-      setRecaptchaError('Please complete the reCAPTCHA verification.');
+      setRecaptchaError(
+        'Security check did not complete. Try refreshing the page or briefly disabling ad blockers for this site. If it keeps happening, the live domain may need to be added to the reCAPTCHA key in Google Admin.',
+      );
       return;
     }
 
