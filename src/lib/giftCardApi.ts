@@ -1,5 +1,5 @@
 export const API_BASE = process.env.NEXT_PUBLIC_BOOKING_API_BASE?.replace(/\/$/, '')
-  || 'https://granvilletattoo.ca/cms/wp-json/granville/v1';
+  || 'https://cms.granvilletattoo.ca/wp-json/granville/v1';
 
 export type GiftCardRequestPayload = {
   giftCardType: 'silver' | 'gold';

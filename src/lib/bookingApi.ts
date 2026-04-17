@@ -1,6 +1,6 @@
 /** WordPress `granville/v1` REST base (blog, booking, gift card). Override on Vercel via env. */
 export const API_BASE = process.env.NEXT_PUBLIC_BOOKING_API_BASE?.replace(/\/$/, '')
-  || 'https://granvilletattoo.ca/cms/wp-json/granville/v1';
+  || 'https://cms.granvilletattoo.ca/wp-json/granville/v1';
 
 export type AvailabilityArtist = {
   id: number;

@@ -175,7 +175,11 @@ export default function BookingPage() {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+        ...(name === 'service' && value === 'piercing' ? { designUpload: null } : {}),
+      }));
     }
 
     if (name === 'service' && value !== 'tattoo') {
@@ -694,21 +698,23 @@ export default function BookingPage() {
             {errors.phone && <span className="error-message">{errors.phone}</span>}
           </div>
 
-          {/* Design Upload */}
-          <div className="form-group">
-            <label htmlFor="designUpload" className="form-label">
-              Design Upload (Optional)
-            </label>
-            <input
-              type="file"
-              id="designUpload"
-              name="designUpload"
-              onChange={handleFileChange}
-              accept="image/*"
-              className="form-file"
-            />
-            <p className="form-help">Upload your design reference (JPG, PNG, PDF)</p>
-          </div>
+          {/* Design upload — tattoo only (not used for piercing) */}
+          {formData.service === 'tattoo' && (
+            <div className="form-group">
+              <label htmlFor="designUpload" className="form-label">
+                Design Upload (Optional)
+              </label>
+              <input
+                type="file"
+                id="designUpload"
+                name="designUpload"
+                onChange={handleFileChange}
+                accept="image/*"
+                className="form-file"
+              />
+              <p className="form-help">Upload your design reference (JPG, PNG, PDF)</p>
+            </div>
+          )}
 
           {/* Additional Explanation */}
           <div className="form-group">

@@ -5,7 +5,7 @@
 Blog posts, booking, and gift-card requests talk to the **WordPress custom REST** namespace `granville/v1` on the studio CMS.
 
 - **Base URL:** `NEXT_PUBLIC_BOOKING_API_BASE` (optional).  
-  If unset, the app uses: `https://granvilletattoo.ca/cms/wp-json/granville/v1`
+  If unset, the app uses: `https://cms.granvilletattoo.ca/wp-json/granville/v1`
 - **Blog list:** `GET {API_BASE}/blog`
 - **Single post:** `GET {API_BASE}/blog/{slug}`
 
