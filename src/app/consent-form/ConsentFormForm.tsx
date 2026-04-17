@@ -3,6 +3,7 @@
 import { ChangeEvent, FormEvent, useMemo, useState, useRef } from 'react';
 import Container from '@/components/Container';
 import ReCAPTCHA, { ReCAPTCHARef } from '@/components/ReCAPTCHA';
+import { IS_RECAPTCHA_STRICT } from '@/lib/recaptchaConfig';
 import { ConsentAnswers, submitConsentForm } from '@/lib/consentApi';
 
 type ConsentFormValues = {
@@ -141,9 +142,10 @@ export default function ConsentFormForm() {
       }
     }
 
-    // Validate reCAPTCHA token
-    if (!token) {
-      setRecaptchaError('Please complete the reCAPTCHA verification.');
+    if (IS_RECAPTCHA_STRICT && !token) {
+      setRecaptchaError(
+        'Security check did not complete. Try refreshing or disabling ad blockers for this site.',
+      );
       return;
     }
 
@@ -473,7 +475,6 @@ export default function ConsentFormForm() {
                 {/* Removed internal-use signature fields */}
               </div>
 
-              {/* reCAPTCHA v3 - invisible, executes on submit */}
               <ReCAPTCHA
                 ref={recaptchaRef}
                 onVerify={handleRecaptchaVerify}

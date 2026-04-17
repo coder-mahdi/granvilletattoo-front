@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import Container from '@/components/Container';
 import ReCAPTCHA, { ReCAPTCHARef } from '@/components/ReCAPTCHA';
+import { IS_RECAPTCHA_STRICT } from '@/lib/recaptchaConfig';
 import { submitGiftCard } from '@/lib/giftCardApi';
 
 type GiftCardType = 'silver' | 'gold';
@@ -168,9 +169,10 @@ export default function GiftCardPage() {
       }
     }
 
-    // Validate reCAPTCHA token
-    if (!token) {
-      setRecaptchaError('Please complete the reCAPTCHA verification.');
+    if (IS_RECAPTCHA_STRICT && !token) {
+      setRecaptchaError(
+        'Security check did not complete. Try refreshing or disabling ad blockers for this site.',
+      );
       return;
     }
 
@@ -191,7 +193,7 @@ export default function GiftCardPage() {
         price: calculatePrice(),
         sender: senderData,
         recipient: recipientData,
-        recaptcha_token: token
+        recaptcha_token: token ?? undefined,
       });
 
       console.log('Gift card created:', response);
@@ -568,7 +570,6 @@ export default function GiftCardPage() {
             </div>
           </div>
 
-          {/* reCAPTCHA v3 - invisible, executes on submit */}
           <ReCAPTCHA
             ref={recaptchaRef}
             onVerify={handleRecaptchaVerify}

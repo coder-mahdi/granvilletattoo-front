@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Container from '@/components/Container';
 import FAQSection from '@/components/FAQSection';
 import ReCAPTCHA, { ReCAPTCHARef } from '@/components/ReCAPTCHA';
+import { IS_RECAPTCHA_STRICT } from '@/lib/recaptchaConfig';
 import { AvailabilityArtist, AvailabilityResponse, fetchAvailability, submitBooking } from '@/lib/bookingApi';
 
 const ARTIST_SLUG_MAP: Record<string, string> = {
@@ -423,8 +424,7 @@ export default function BookingPage() {
       }
     }
 
-    // Validate reCAPTCHA token
-    if (!token) {
+    if (IS_RECAPTCHA_STRICT && !token) {
       setRecaptchaError(
         'Security check did not complete. Try refreshing the page or briefly disabling ad blockers for this site. If it keeps happening, the live domain may need to be added to the reCAPTCHA key in Google Admin.',
       );
@@ -854,7 +854,6 @@ export default function BookingPage() {
             {errors.birthDate && <span className="error-message">{errors.birthDate}</span>}
           </div>
 
-          {/* reCAPTCHA v3 - invisible, executes on submit */}
           <ReCAPTCHA
             ref={recaptchaRef}
             onVerify={handleRecaptchaVerify}

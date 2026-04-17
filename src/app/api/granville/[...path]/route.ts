@@ -10,6 +10,7 @@ const ALLOWED_FIRST_SEGMENT = new Set([
   'gift-card',
   'consent',
   'blog',
+  'recaptcha-site-key',
 ]);
 
 function assertSafePath(segments: string[]): string | null {
