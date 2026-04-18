@@ -23,11 +23,11 @@ export default function Header() {
     ? [
         { name: 'Home', href: '/' },
         { name: 'About Us', href: aboutHref },
-        { name: 'Blogs', href: '/blog' }
+        { name: 'Blog', href: '/blog' }
       ]
     : [
         { name: 'About Us', href: aboutHref },
-        { name: 'Blogs', href: '/blog' }
+        { name: 'Blog', href: '/blog' }
       ]
   ), [aboutHref, isSingleArtistPage]);
 

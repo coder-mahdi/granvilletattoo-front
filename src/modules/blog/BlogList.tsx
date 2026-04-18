@@ -25,7 +25,7 @@ export default function BlogList({ posts, initialCategory = 'all' }: BlogListPro
     const categoryMap = new Map<string, BlogTerm>();
 
     posts.forEach((post) => {
-      post.categories.forEach((category) => {
+      (post.categories ?? []).forEach((category) => {
         if (!categoryMap.has(category.slug)) {
           categoryMap.set(category.slug, category);
         }
@@ -48,7 +48,7 @@ export default function BlogList({ posts, initialCategory = 'all' }: BlogListPro
     }
 
     return posts.filter((post) =>
-      post.categories.some((category) => category.slug === selectedCategory)
+      (post.categories ?? []).some((category) => category.slug === selectedCategory),
     );
   }, [posts, selectedCategory]);
 
@@ -122,7 +122,7 @@ export default function BlogList({ posts, initialCategory = 'all' }: BlogListPro
                       <div className="blog-card__meta">
                         <span className="blog-card__date">{formattedDate(post.publishedAt)}</span>
                         <div className="blog-card__categories">
-                          {post.categories.map((category) => (
+                          {(post.categories ?? []).map((category) => (
                             <span key={category.id} className="blog-card__category">
                               {category.name}
                             </span>

@@ -1,13 +1,17 @@
 'use client';
 
 import { useEffect, useRef, useImperativeHandle, forwardRef, useCallback } from 'react';
-import { RECAPTCHA_SITE_KEY } from '@/lib/recaptchaConfig';
+import { RECAPTCHA_SITE_KEY, RECAPTCHA_USE_ENTERPRISE } from '@/lib/recaptchaConfig';
+
+type GrecaptchaClient = {
+  ready: (callback: () => void) => void;
+  execute: (siteKey: string, options: { action: string }) => Promise<string>;
+};
 
 declare global {
   interface Window {
-    grecaptcha: {
-      ready: (callback: () => void) => void;
-      execute: (siteKey: string, options: { action: string }) => Promise<string>;
+    grecaptcha?: GrecaptchaClient & {
+      enterprise?: GrecaptchaClient;
     };
   }
 }
@@ -32,7 +36,11 @@ function parseRenderKeyFromScriptSrc(src: string): string | null {
   }
 }
 
-/** Drop a stale api.js if Vercel env key changed but the browser kept an old script. */
+function isEnterpriseScriptSrc(src: string): boolean {
+  return src.includes('recaptcha/enterprise.js');
+}
+
+/** Drop stale script/globals when key or standard vs Enterprise changes. */
 function removeRecaptchaGlobals() {
   try {
     delete (window as unknown as { grecaptcha?: unknown }).grecaptcha;
@@ -40,6 +48,21 @@ function removeRecaptchaGlobals() {
   } catch {
     /* ignore */
   }
+}
+
+function findRecaptchaLoaderScript(): HTMLScriptElement | null {
+  return document.querySelector<HTMLScriptElement>(
+    'script[src*="recaptcha/api.js"], script[src*="recaptcha/enterprise.js"]',
+  );
+}
+
+function getRecaptchaClient(): GrecaptchaClient | null {
+  const g = window.grecaptcha;
+  if (!g) return null;
+  if (RECAPTCHA_USE_ENTERPRISE) {
+    return g.enterprise ?? null;
+  }
+  return g;
 }
 
 function createSiteKeyResolver(): () => Promise<string | null> {
@@ -69,31 +92,39 @@ const ReCAPTCHA = forwardRef<ReCAPTCHARef, ReCAPTCHAProps>(
     const scriptLoadedRef = useRef(false);
     const resolveSiteKey = useRef(createSiteKeyResolver()).current;
 
-    const injectScript = useCallback((siteKey: string) => {
-      const existing = document.querySelector<HTMLScriptElement>('script[src*="recaptcha/api.js"]');
-      if (existing) {
-        const loadedKey = parseRenderKeyFromScriptSrc(existing.src);
-        if (loadedKey === siteKey) {
-          scriptLoadedRef.current = !!window.grecaptcha;
-          return;
+    const injectScript = useCallback(
+      (siteKey: string) => {
+        const existing = findRecaptchaLoaderScript();
+        if (existing) {
+          const loadedKey = parseRenderKeyFromScriptSrc(existing.src);
+          const sameKey = loadedKey === siteKey;
+          const sameMode = isEnterpriseScriptSrc(existing.src) === RECAPTCHA_USE_ENTERPRISE;
+          if (sameKey && sameMode) {
+            scriptLoadedRef.current = !!getRecaptchaClient();
+            return;
+          }
+          existing.remove();
+          removeRecaptchaGlobals();
         }
-        existing.remove();
-        removeRecaptchaGlobals();
-      }
 
-      const script = document.createElement('script');
-      script.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        scriptLoadedRef.current = !!window.grecaptcha;
-      };
-      script.onerror = () => {
-        scriptLoadedRef.current = false;
-        if (mountedRef.current && onError) onError();
-      };
-      document.head.appendChild(script);
-    }, [onError]);
+        const script = document.createElement('script');
+        const base = RECAPTCHA_USE_ENTERPRISE
+          ? 'https://www.google.com/recaptcha/enterprise.js'
+          : 'https://www.google.com/recaptcha/api.js';
+        script.src = `${base}?render=${encodeURIComponent(siteKey)}`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          scriptLoadedRef.current = !!getRecaptchaClient();
+        };
+        script.onerror = () => {
+          scriptLoadedRef.current = false;
+          if (mountedRef.current && onError) onError();
+        };
+        document.head.appendChild(script);
+      },
+      [onError],
+    );
 
     useEffect(() => {
       mountedRef.current = true;
@@ -123,13 +154,14 @@ const ReCAPTCHA = forwardRef<ReCAPTCHARef, ReCAPTCHAProps>(
 
           const waitMs = 15000;
           const start = Date.now();
-          while (!window.grecaptcha && Date.now() - start < waitMs) {
+          while (!getRecaptchaClient() && Date.now() - start < waitMs) {
             await new Promise((r) => setTimeout(r, 50));
           }
 
-          if (!window.grecaptcha) {
+          const client = getRecaptchaClient();
+          if (!client) {
             console.error(
-              'reCAPTCHA API not available (blocked script, slow network, or invalid domain for this site key)',
+              'reCAPTCHA API not available (blocked script, wrong key type for Standard vs Enterprise, or domain not allowed)',
             );
             if (onError) onError();
             return null;
@@ -139,8 +171,8 @@ const ReCAPTCHA = forwardRef<ReCAPTCHARef, ReCAPTCHAProps>(
 
           const runExecute = () =>
             new Promise<string>((resolve, reject) => {
-              window.grecaptcha.ready(() => {
-                window.grecaptcha
+              client.ready(() => {
+                client
                   .execute(siteKey, { action })
                   .then((t: string) => resolve(t))
                   .catch((err: Error) => reject(err));
@@ -157,7 +189,7 @@ const ReCAPTCHA = forwardRef<ReCAPTCHARef, ReCAPTCHAProps>(
             }
             return token || null;
           } catch (error) {
-            console.error('Error executing reCAPTCHA v3:', error);
+            console.error('Error executing reCAPTCHA:', error);
             try {
               const token = await runExecute();
               if (mountedRef.current && token) onVerify();

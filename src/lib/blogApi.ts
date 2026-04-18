@@ -1,6 +1,13 @@
 import { buildGranvilleDirectUrl } from './granvilleFetchUrl';
 
-/** Seconds — blog list & posts revalidate on Vercel (ISR). */
+/**
+ * Granville REST (server-side fetch):
+ * - List: `GET` with `rest_route=/granville/v1/blog` (+ `per_page`, `page`, `category`, `tag` when set).
+ * - Single: `rest_route=/granville/v1/blog/{slug}`.
+ * Base URL comes from `BOOKING_API_BASE_URL` / `NEXT_PUBLIC_BOOKING_API_BASE`, else default
+ * `https://cms.granvilletattoo.ca/index.php` (see `granvilleFetchUrl.ts`).
+ */
+/** Seconds — blog list & posts revalidate on Vercel (ISR) unless overridden per fetch. */
 const BLOG_REVALIDATE_SECONDS = 300;
 
 export type BlogImage = {
@@ -86,15 +93,15 @@ export async function fetchBlogPosts(
 
   const { headers: customHeaders, next: nextOptions, ...restOptions } = fetchOptions;
   const headers = createHeaders(customHeaders);
+  const next = { revalidate: BLOG_REVALIDATE_SECONDS, ...nextOptions };
+  const bypassDataCache = next.revalidate === 0;
 
   const response = await fetch(url, {
     headers,
     ...restOptions,
     method: 'GET',
-    next: {
-      revalidate: BLOG_REVALIDATE_SECONDS,
-      ...nextOptions,
-    },
+    ...(bypassDataCache ? { cache: 'no-store' as const } : {}),
+    next,
   });
 
   if (!response.ok) {
@@ -112,15 +119,15 @@ export async function fetchBlogPostBySlug(
 
   const { headers: customHeaders, next: nextOptions, ...restOptions } = fetchOptions;
   const headers = createHeaders(customHeaders);
+  const next = { revalidate: BLOG_REVALIDATE_SECONDS, ...nextOptions };
+  const bypassDataCache = next.revalidate === 0;
 
   const response = await fetch(url, {
     headers,
     ...restOptions,
     method: 'GET',
-    next: {
-      revalidate: BLOG_REVALIDATE_SECONDS,
-      ...nextOptions,
-    },
+    ...(bypassDataCache ? { cache: 'no-store' as const } : {}),
+    next,
   });
 
   if (response.status === 404) {

@@ -41,7 +41,7 @@ export default function HamburgerMenu({ menuItems, onCloseMenu }: HamburgerMenuP
         { name: 'Home', href: '/' },
         { name: 'Artists', href: '/#our-artists' },
         { name: 'About Us', href: '/#about-granville-tattoo' },
-        { name: 'Blogs', href: '/blogs' }
+        { name: 'Blog', href: '/blog' }
       ];
 
   const menuContent = (

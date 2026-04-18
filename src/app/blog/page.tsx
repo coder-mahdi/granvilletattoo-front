@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { fetchBlogPosts } from '@/lib/blogApi';
+import { buildGranvilleDirectUrl } from '@/lib/granvilleFetchUrl';
 import BlogList from '@/modules/blog/BlogList';
 
 /** Do not prerender at build — WordPress may be unreachable during CI/Vercel build. */
@@ -12,7 +13,12 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const blogResponse = await fetchBlogPosts({ perPage: 50 }, {});
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[blog] CMS list URL:', buildGranvilleDirectUrl('/blog', { per_page: 50 }));
+  }
+
+  // No Data Cache — list matches WordPress right after publish (see `blogApi.ts` default revalidate for other callers).
+  const blogResponse = await fetchBlogPosts({ perPage: 50 }, { next: { revalidate: 0 } });
   const posts = blogResponse.items ?? [];
 
   return <BlogList posts={posts} initialCategory="all" />;

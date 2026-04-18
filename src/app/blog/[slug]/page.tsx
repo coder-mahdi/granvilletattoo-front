@@ -7,14 +7,16 @@ import { fetchBlogPostBySlug, fetchBlogPosts } from '@/lib/blogApi';
 
 const DEFAULT_IMAGE = '/images/general/general-1.webp';
 
-/** ISR: refresh single post from WordPress every 5 minutes on Vercel. */
-export const revalidate = 300;
+/** Every request hits the server + CMS (no stale SSG shell, new slugs work without redeploy). */
+export const dynamic = 'force-dynamic';
+
+export const dynamicParams = true;
 
 type BlogPageParams = { slug: string };
 
 export async function generateStaticParams(): Promise<BlogPageParams[]> {
   try {
-    const { items = [] } = await fetchBlogPosts({ perPage: 100 }, {});
+    const { items = [] } = await fetchBlogPosts({ perPage: 100 }, { next: { revalidate: 0 } });
     if (items.length === 0) {
       return [];
     }
@@ -30,7 +32,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = params as BlogPageParams;
   try {
-    const post = await fetchBlogPostBySlug(slug);
+    const post = await fetchBlogPostBySlug(slug, { next: { revalidate: 0 } });
     return {
       title: `${post.title} | Granville Tattoo Blog`,
       description: post.excerpt,
@@ -61,7 +63,7 @@ export default async function BlogPostPage(
   const { slug } = params as BlogPageParams;
   let post;
   try {
-    post = await fetchBlogPostBySlug(slug, {});
+    post = await fetchBlogPostBySlug(slug, { next: { revalidate: 0 } });
   } catch {
     return notFound();
   }
@@ -87,7 +89,7 @@ export default async function BlogPostPage(
           <div className="blog-single__hero-content">
             <div className="blog-single__chips">
               <span className="blog-chip blog-chip--date">{formatDate(post.publishedAt)}</span>
-              {post.categories.map((category) => (
+              {(post.categories ?? []).map((category) => (
                 <span key={category.id} className="blog-chip">
                   {category.name}
                 </span>
@@ -103,11 +105,11 @@ export default async function BlogPostPage(
         <Container>
           <article className="blog-single__article" dangerouslySetInnerHTML={{ __html: post.content }} />
 
-          {post.gallery.length > 0 && (
+          {(post.gallery ?? []).length > 0 && (
             <div className="blog-gallery">
               <h2 className="blog-gallery__title">Gallery</h2>
               <div className="blog-gallery__grid">
-                {post.gallery.map((item, index) => {
+                {(post.gallery ?? []).map((item, index) => {
                   const image = item.image;
                   if (!image?.url) {
                     return null;
@@ -129,11 +131,11 @@ export default async function BlogPostPage(
             </div>
           )}
 
-          {post.tags.length > 0 && (
+          {(post.tags ?? []).length > 0 && (
             <div className="blog-single__tags">
               <span className="blog-single__tags-label">Tags:</span>
               <div className="blog-single__tags-list">
-                {post.tags.map((tag) => (
+                {(post.tags ?? []).map((tag) => (
                   <span key={tag.id} className="blog-chip blog-chip--tag">
                     #{tag.name}
                   </span>
