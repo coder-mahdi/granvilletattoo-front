@@ -99,7 +99,13 @@ export async function fetchBlogPosts(
   const next = { revalidate: BLOG_REVALIDATE_SECONDS, ...nextOptions };
   const bypassDataCache = next.revalidate === 0;
 
-  const response = await fetch(url, {
+  if (bypassDataCache) {
+    headers.set('Cache-Control', 'no-cache');
+    headers.set('Pragma', 'no-cache');
+  }
+  const requestUrl = bypassDataCache ? `${url}&_=${Date.now()}` : url;
+
+  const response = await fetch(requestUrl, {
     headers,
     ...restOptions,
     method: 'GET',
@@ -125,7 +131,13 @@ export async function fetchBlogPostBySlug(
   const next = { revalidate: BLOG_REVALIDATE_SECONDS, ...nextOptions };
   const bypassDataCache = next.revalidate === 0;
 
-  const response = await fetch(url, {
+  if (bypassDataCache) {
+    headers.set('Cache-Control', 'no-cache');
+    headers.set('Pragma', 'no-cache');
+  }
+  const requestUrl = bypassDataCache ? `${url}&_=${Date.now()}` : url;
+
+  const response = await fetch(requestUrl, {
     headers,
     ...restOptions,
     method: 'GET',

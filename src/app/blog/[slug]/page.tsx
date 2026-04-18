@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import Container from '@/components/Container';
-import { fetchBlogPostBySlug, fetchBlogPosts } from '@/lib/blogApi';
+import { fetchBlogPostBySlug } from '@/lib/blogApi';
 import { formatStudioDateLong } from '@/lib/formatStudioDate';
 
 const DEFAULT_IMAGE = '/images/general/general-1.webp';
@@ -13,19 +13,9 @@ export const dynamic = 'force-dynamic';
 
 export const dynamicParams = true;
 
-type BlogPageParams = { slug: string };
+/** No `generateStaticParams` — avoids shipping stale HTML for old slugs after posts are removed from CMS. */
 
-export async function generateStaticParams(): Promise<BlogPageParams[]> {
-  try {
-    const { items = [] } = await fetchBlogPosts({ perPage: 100 }, { next: { revalidate: 0 } });
-    if (items.length === 0) {
-      return [];
-    }
-    return items.map((post) => ({ slug: post.slug }));
-  } catch {
-    return [];
-  }
-}
+type BlogPageParams = { slug: string };
 
 export async function generateMetadata(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
