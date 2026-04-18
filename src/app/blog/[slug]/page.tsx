@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Container from '@/components/Container';
 import { fetchBlogPostBySlug, fetchBlogPosts } from '@/lib/blogApi';
+import { formatStudioDateLong } from '@/lib/formatStudioDate';
 
 const DEFAULT_IMAGE = '/images/general/general-1.webp';
 
@@ -44,18 +45,6 @@ export async function generateMetadata(
   }
 }
 
-function formatDate(isoDate: string) {
-  try {
-    return new Intl.DateTimeFormat('en-CA', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(new Date(isoDate));
-  } catch {
-    return isoDate;
-  }
-}
-
 export default async function BlogPostPage(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   { params }: any
@@ -88,7 +77,9 @@ export default async function BlogPostPage(
         <Container>
           <div className="blog-single__hero-content">
             <div className="blog-single__chips">
-              <span className="blog-chip blog-chip--date">{formatDate(post.publishedAt)}</span>
+              <span className="blog-chip blog-chip--date">
+                {formatStudioDateLong(post.publishedAt)}
+              </span>
               {(post.categories ?? []).map((category) => (
                 <span key={category.id} className="blog-chip">
                   {category.name}

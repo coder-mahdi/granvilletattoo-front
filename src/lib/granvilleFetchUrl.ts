@@ -4,6 +4,10 @@
  * On cms.granvilletattoo.ca, pretty permalinks `/wp-json/...` return 500 while
  * `index.php?rest_route=/granville/v1/...` works. Default therefore uses the
  * query form unless you set a non-.php `NEXT_PUBLIC_BOOKING_API_BASE` (pretty root).
+ *
+ * **Important:** `URLSearchParams` encodes `/` in `rest_route` as `%2F`. On this CMS that
+ * truncates blog results (e.g. newest posts missing). We build `rest_route=...` with literal
+ * `/` and only use `URLSearchParams` for the other query keys (`per_page`, etc.).
  */
 
 const DEFAULT_PHP_REST_ENTRY = 'https://cms.granvilletattoo.ca/index.php';
@@ -30,6 +34,20 @@ function appendParams(
       url.searchParams.append(key, String(value));
     }
   });
+}
+
+/** Query string for extra params only (never includes `rest_route`). */
+function extraParamsQueryString(
+  params?: Record<string, string | number | undefined>,
+): string {
+  if (!params) return '';
+  const sp = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      sp.append(key, String(value));
+    }
+  });
+  return sp.toString();
 }
 
 function clientBasePathPrefix(): string {
@@ -59,10 +77,10 @@ export function buildGranvilleDirectUrl(
 
   const entry =
     configured && isPhpRestEntry(configured) ? configured : DEFAULT_PHP_REST_ENTRY;
-  const url = new URL(entry);
-  url.searchParams.set('rest_route', `/granville/v1${p}`);
-  appendParams(url, params);
-  return url.toString();
+  const restRoutePath = `/granville/v1${p}`;
+  const tail = extraParamsQueryString(params);
+  const query = tail ? `rest_route=${restRoutePath}&${tail}` : `rest_route=${restRoutePath}`;
+  return `${entry}?${query}`;
 }
 
 /**

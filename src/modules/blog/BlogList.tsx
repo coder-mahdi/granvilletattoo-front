@@ -4,10 +4,10 @@ import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Container from '@/components/Container';
-import type { BlogPost, BlogTerm } from '@/lib/blogApi';
+import type { BlogListItem, BlogTerm } from '@/lib/blogApi';
 
 type BlogListProps = {
-  posts: BlogPost[];
+  posts: BlogListItem[];
   initialCategory?: string;
 };
 
@@ -37,7 +37,7 @@ export default function BlogList({ posts, initialCategory = 'all' }: BlogListPro
       value: category.slug,
     }));
 
-    options.sort((a, b) => a.label.localeCompare(b.label));
+    options.sort((a, b) => a.label.localeCompare(b.label, 'en', { sensitivity: 'base' }));
 
     return [{ label: 'All Posts', value: 'all' }, ...options];
   }, [posts]);
@@ -51,18 +51,6 @@ export default function BlogList({ posts, initialCategory = 'all' }: BlogListPro
       (post.categories ?? []).some((category) => category.slug === selectedCategory),
     );
   }, [posts, selectedCategory]);
-
-  const formattedDate = (isoDate: string) => {
-    try {
-      return new Intl.DateTimeFormat('en-CA', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      }).format(new Date(isoDate));
-    } catch {
-      return isoDate;
-    }
-  };
 
   return (
     <div className="blog-page">
@@ -120,7 +108,7 @@ export default function BlogList({ posts, initialCategory = 'all' }: BlogListPro
                     </Link>
                     <div className="blog-card__body">
                       <div className="blog-card__meta">
-                        <span className="blog-card__date">{formattedDate(post.publishedAt)}</span>
+                        <span className="blog-card__date">{post.publishedAtLabel}</span>
                         <div className="blog-card__categories">
                           {(post.categories ?? []).map((category) => (
                             <span key={category.id} className="blog-card__category">

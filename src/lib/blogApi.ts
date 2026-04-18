@@ -42,6 +42,9 @@ export type BlogPost = {
   publishedAt: string;
 };
 
+/** Server adds `publishedAtLabel` so the client list never runs `Intl` (avoids hydration #418). */
+export type BlogListItem = BlogPost & { publishedAtLabel: string };
+
 export type BlogListResponse = {
   items: BlogPost[];
   found_posts: number;
