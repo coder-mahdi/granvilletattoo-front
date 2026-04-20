@@ -1,5 +1,5 @@
 import { ARTIST_PROFILES } from '@/app/single-artist/artistProfiles';
-import { buildGranvilleDirectUrl } from './granvilleFetchUrl';
+import { buildGranvilleDirectUrl, buildWpV2DirectUrl } from './granvilleFetchUrl';
 import type { DiscoveredGalleryImage } from './discoverGalleryWebp';
 import { discoverAllGalleryWebpImages } from './discoverGalleryWebp';
 import { discoverArtistPortfolioWebp, type ArtistPortfolioItem } from './discoverArtistPortfolioWebp';
@@ -32,6 +32,10 @@ export type GranvilleArtistRow = {
   title: string;
   link?: string;
   gallery?: unknown;
+  /** If the plugin exposes ACF under another key, keep it on the type as unknown. */
+  acf?: unknown;
+  photo_gallery?: unknown;
+  photoGallery?: unknown;
 };
 
 function shuffleArray<T>(items: T[]): T[] {
@@ -59,14 +63,75 @@ function extractUrlFromGalleryEntry(entry: unknown): string | null {
     const rendered = (guid as { rendered?: unknown }).rendered;
     if (typeof rendered === 'string' && rendered.trim()) return rendered.trim();
   }
+  const sizes = o.sizes;
+  if (sizes && typeof sizes === 'object') {
+    const s = sizes as Record<string, unknown>;
+    for (const k of ['large', 'medium_large', 'medium', 'full', 'thumbnail']) {
+      const v = s[k];
+      if (typeof v === 'string' && v.trim()) return v.trim();
+    }
+  }
   return null;
 }
 
-function normalizeGalleryList(raw: unknown): string[] {
+/** PHP/JSON sometimes sends a list as object with numeric keys, or a JSON string. */
+function coerceGalleryIterable(raw: unknown): unknown[] {
   if (raw == null) return [];
-  if (!Array.isArray(raw)) return [];
+  if (typeof raw === 'string') {
+    const t = raw.trim();
+    if (!t) return [];
+    try {
+      return coerceGalleryIterable(JSON.parse(t) as unknown);
+    } catch {
+      return [];
+    }
+  }
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === 'object') {
+    const vals = Object.values(raw as Record<string, unknown>);
+    const looksLikeList =
+      vals.length > 0 && Object.keys(raw as object).every((k) => /^\d+$/.test(k));
+    if (looksLikeList) return vals;
+  }
+  return [];
+}
+
+/** Prefer REST `gallery`, then common plugin/ACF field names. */
+function pickGalleryRaw(row: GranvilleArtistRow): unknown {
+  const candidates: unknown[] = [
+    row.gallery,
+    (row as Record<string, unknown>).artist_gallery,
+    row.photo_gallery,
+    row.photoGallery,
+  ];
+  const acf = row.acf;
+  if (acf && typeof acf === 'object') {
+    const a = acf as Record<string, unknown>;
+    candidates.push(a.gallery, a.photo_gallery, a.photoGallery);
+  }
+  const loose = row as Record<string, unknown>;
+  for (const key of [
+    'artist_gallery',
+    'photo_gallery',
+    'photoGallery',
+    'photo_gallery_images',
+    'gallery_images',
+  ]) {
+    if (loose[key] !== undefined && !candidates.includes(loose[key])) {
+      candidates.push(loose[key]);
+    }
+  }
+  for (const c of candidates) {
+    const list = coerceGalleryIterable(c);
+    if (list.length > 0) return list;
+  }
+  return row.gallery;
+}
+
+function normalizeGalleryList(raw: unknown): string[] {
+  const iterable = coerceGalleryIterable(raw);
   const urls: string[] = [];
-  for (const item of raw) {
+  for (const item of iterable) {
     const u = extractUrlFromGalleryEntry(item);
     if (u) urls.push(u);
   }
@@ -92,12 +157,12 @@ function profileSlugOrFallback(row: GranvilleArtistRow): string {
  * Returns [] if the API fails or every gallery is empty.
  */
 export async function fetchTattooGalleryImagesFromCms(): Promise<DiscoveredGalleryImage[]> {
-  const rows = await fetchGranvilleArtists();
-  if (!rows) return [];
+  const rows = await fetchArtistRowsWithGallery();
+  if (!rows.length) return [];
 
   const out: DiscoveredGalleryImage[] = [];
   for (const row of rows) {
-    const urls = shuffleArray(normalizeGalleryList(row.gallery));
+    const urls = shuffleArray(normalizeGalleryList(pickGalleryRaw(row)));
     const profileSlug = profileSlugOrFallback(row);
     const artistName = displayNameForApiRow(row);
     const link = `/single-artist/${profileSlug}#portfolio`;
@@ -132,6 +197,56 @@ async function fetchGranvilleArtists(): Promise<GranvilleArtistRow[] | null> {
   }
 }
 
+/** CPT `artist` — `gallery` is populated via `register_rest_field` (often ahead of `granville/v1/artists`). */
+async function fetchWpV2Artists(): Promise<GranvilleArtistRow[] | null> {
+  try {
+    const url = buildWpV2DirectUrl('/artist', { per_page: 100 });
+    const res = await fetch(url, {
+      headers: { Accept: 'application/json' },
+      next: { revalidate: ARTISTS_REVALIDATE_SECONDS },
+    });
+    if (!res.ok) return null;
+    const data: unknown = await res.json();
+    if (!Array.isArray(data)) return null;
+    return data as GranvilleArtistRow[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Prefer `gallery` from `GET /wp/v2/artist` when it has URLs; otherwise keep `granville/v1/artists`
+ * (email, schedule, order) and its `gallery` if any.
+ */
+async function fetchArtistRowsWithGallery(): Promise<GranvilleArtistRow[]> {
+  const [wp, gv] = await Promise.all([fetchWpV2Artists(), fetchGranvilleArtists()]);
+  const wpList = wp ?? [];
+  const gvList = gv ?? [];
+
+  if (gvList.length === 0) {
+    return wpList;
+  }
+
+  const wpBySlug = new Map(wpList.map((r) => [r.slug, r]));
+  const gvBySlug = new Map(gvList.map((r) => [r.slug, r]));
+  const out: GranvilleArtistRow[] = [];
+
+  for (const gvRow of gvList) {
+    const wpRow = wpBySlug.get(gvRow.slug);
+    const wpUrls = wpRow ? normalizeGalleryList(pickGalleryRaw(wpRow)) : [];
+    const gallery = wpUrls.length > 0 && wpRow ? wpRow.gallery : gvRow.gallery;
+    out.push({ ...gvRow, gallery });
+  }
+
+  for (const wpRow of wpList) {
+    if (!gvBySlug.has(wpRow.slug)) {
+      out.push(wpRow);
+    }
+  }
+
+  return out;
+}
+
 /**
  * Shop gallery: tattoo rows from CMS when any photo exists; otherwise local `.webp` discovery.
  * Piercing always uses local `public/images/piercing`.
@@ -158,13 +273,13 @@ export async function fetchArtistPortfolioForSlug(
     return discoverArtistPortfolioWebp(profileSlug, heroImageUrl);
   }
 
-  const rows = await fetchGranvilleArtists();
-  if (!rows) {
+  const rows = await fetchArtistRowsWithGallery();
+  if (!rows.length) {
     return discoverArtistPortfolioWebp(profileSlug, heroImageUrl);
   }
 
   const row = rows.find((r) => r.slug === apiSlug);
-  const urls = row ? shuffleArray(normalizeGalleryList(row.gallery)) : [];
+  const urls = row ? shuffleArray(normalizeGalleryList(pickGalleryRaw(row))) : [];
 
   if (urls.length === 0) {
     return discoverArtistPortfolioWebp(profileSlug, heroImageUrl);

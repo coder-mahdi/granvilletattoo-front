@@ -84,6 +84,33 @@ export function buildGranvilleDirectUrl(
 }
 
 /**
+ * Core WordPress REST (`/wp/v2/...`), same host rules as {@link buildGranvilleDirectUrl}.
+ * Pretty base is expected to end with `/granville/v1` (see env README); that segment is stripped
+ * so paths resolve under `/wp-json/wp/v2`.
+ */
+export function buildWpV2DirectUrl(
+  path: string,
+  params?: Record<string, string | number | undefined>,
+): string {
+  const p = path.startsWith('/') ? path : `/${path}`;
+  const configured = resolveConfiguredGranvilleRoot();
+
+  if (configured && !isPhpRestEntry(configured)) {
+    const wpJsonBase = configured.replace(/\/granville\/v1\/?$/i, '');
+    const url = new URL(`${wpJsonBase}/wp/v2${p}`);
+    appendParams(url, params);
+    return url.toString();
+  }
+
+  const entry =
+    configured && isPhpRestEntry(configured) ? configured : DEFAULT_PHP_REST_ENTRY;
+  const restRoutePath = `/wp/v2${p}`;
+  const tail = extraParamsQueryString(params);
+  const query = tail ? `rest_route=${restRoutePath}&${tail}` : `rest_route=${restRoutePath}`;
+  return `${entry}?${query}`;
+}
+
+/**
  * Browser → same-origin `/api/granville/...` (CORS-safe). Server → `buildGranvilleDirectUrl`.
  * Path must start with `/` (e.g. `/availability`, `/blog`).
  */
