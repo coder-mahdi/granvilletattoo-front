@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-/** Blog is CMS-driven — avoid CDN/browser holding HTML after posts are deleted or renamed. */
+/** CMS-driven routes — avoid CDN/browser holding stale HTML after CMS edits. */
 export function middleware() {
   const res = NextResponse.next();
   res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
@@ -9,5 +9,15 @@ export function middleware() {
 }
 
 export const config = {
-  matcher: ['/blog', '/blog/', '/blog/:path*'],
+  matcher: [
+    '/blog',
+    '/blog/',
+    '/blog/:path*',
+    '/gallery',
+    '/gallery/',
+    '/gallery/:path*',
+    '/single-artist',
+    '/single-artist/',
+    '/single-artist/:path*',
+  ],
 };

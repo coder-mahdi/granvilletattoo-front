@@ -9,6 +9,8 @@ type ArtistSlug = keyof typeof ARTIST_PROFILES;
 
 /** New shuffle + portfolio list on each visit */
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   return Object.keys(ARTIST_PROFILES).map((slug) => ({ slug }));

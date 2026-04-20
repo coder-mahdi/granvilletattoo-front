@@ -4,8 +4,11 @@ import type { DiscoveredGalleryImage } from './discoverGalleryWebp';
 import { discoverAllGalleryWebpImages } from './discoverGalleryWebp';
 import { discoverArtistPortfolioWebp, type ArtistPortfolioItem } from './discoverArtistPortfolioWebp';
 
-/** Always fresh — gallery edits in CMS were hidden behind the default 300s Data Cache. */
-const ARTISTS_GALLERY_FETCH_REVALIDATE = 0;
+/** Bypass Next Data Cache so CMS gallery edits show on the next request (see also `fetchCache` on pages). */
+const CMS_GALLERY_FETCH_INIT: RequestInit = {
+  cache: 'no-store',
+  headers: { Accept: 'application/json' },
+};
 
 /** CMS `slug` on `/granville/v1/artists` → `single-artist/[slug]` profile key */
 const PROFILE_SLUG_BY_API_SLUG: Record<string, string> = {
@@ -130,13 +133,35 @@ function pickGalleryRaw(row: GranvilleArtistRow): unknown {
 }
 
 function normalizeGalleryList(raw: unknown): string[] {
+  return collectGallerySrcEntries(raw).map((e) => e.src);
+}
+
+function attachmentIdFromGalleryEntry(entry: unknown): number | undefined {
+  if (!entry || typeof entry !== 'object') return undefined;
+  const o = entry as Record<string, unknown>;
+  const id = o.id ?? o.ID;
+  if (typeof id === 'number' && Number.isFinite(id)) return id;
+  if (typeof id === 'string' && /^\d+$/.test(id)) return parseInt(id, 10);
+  return undefined;
+}
+
+/** Bust browser/CDN caches when the same media URL is reused after a replace in WordPress. */
+function cacheBustCmsMediaUrl(url: string, attachmentId?: number): string {
+  if (!attachmentId || !/^https?:\/\//i.test(url)) return url;
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}ver=${attachmentId}`;
+}
+
+function collectGallerySrcEntries(raw: unknown): { src: string }[] {
   const iterable = coerceGalleryIterable(raw);
-  const urls: string[] = [];
+  const out: { src: string }[] = [];
   for (const item of iterable) {
     const u = extractUrlFromGalleryEntry(item);
-    if (u) urls.push(u);
+    if (!u) continue;
+    const id = attachmentIdFromGalleryEntry(item);
+    out.push({ src: cacheBustCmsMediaUrl(u, id) });
   }
-  return urls;
+  return out;
 }
 
 function displayNameForApiRow(row: GranvilleArtistRow): string {
@@ -163,7 +188,7 @@ export async function fetchTattooGalleryImagesFromCms(): Promise<DiscoveredGalle
 
   const out: DiscoveredGalleryImage[] = [];
   for (const row of rows) {
-    const urls = shuffleArray(normalizeGalleryList(pickGalleryRaw(row)));
+    const urls = shuffleArray(collectGallerySrcEntries(pickGalleryRaw(row))).map((e) => e.src);
     const profileSlug = profileSlugOrFallback(row);
     const artistName = displayNameForApiRow(row);
     const link = `/single-artist/${profileSlug}#portfolio`;
@@ -185,10 +210,7 @@ export async function fetchTattooGalleryImagesFromCms(): Promise<DiscoveredGalle
 async function fetchGranvilleArtists(): Promise<GranvilleArtistRow[] | null> {
   try {
     const url = buildGranvilleDirectUrl('/artists');
-    const res = await fetch(url, {
-      headers: { Accept: 'application/json' },
-      next: { revalidate: ARTISTS_GALLERY_FETCH_REVALIDATE },
-    });
+    const res = await fetch(url, CMS_GALLERY_FETCH_INIT);
     if (!res.ok) return null;
     const data: unknown = await res.json();
     if (!Array.isArray(data)) return null;
@@ -198,14 +220,16 @@ async function fetchGranvilleArtists(): Promise<GranvilleArtistRow[] | null> {
   }
 }
 
-/** Full `gallery` like the admin — avoids batch/list truncation. */
-async function fetchWpV2ArtistSingleById(id: number): Promise<GranvilleArtistRow | null> {
+/**
+ * On this CMS, `GET /wp/v2/artist/{id}` sometimes returns a truncated `gallery` (e.g. Kian: 1 vs 20),
+ * while `GET /wp/v2/artist?include={id}` returns the full list — same quirk as the collection endpoint.
+ */
+async function fetchWpV2ArtistRowWithFullGallery(id: number): Promise<GranvilleArtistRow | null> {
+  const fromInclude = await fetchWpV2ArtistsByIncludeIds([id]);
+  if (fromInclude?.[0]) return fromInclude[0];
   try {
     const url = buildWpV2DirectUrl(`/artist/${id}`);
-    const res = await fetch(url, {
-      headers: { Accept: 'application/json' },
-      next: { revalidate: ARTISTS_GALLERY_FETCH_REVALIDATE },
-    });
+    const res = await fetch(url, CMS_GALLERY_FETCH_INIT);
     if (!res.ok) return null;
     const data: unknown = await res.json();
     if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
@@ -218,10 +242,7 @@ async function fetchWpV2ArtistSingleById(id: number): Promise<GranvilleArtistRow
 async function fetchWpV2ArtistFirstBySlug(slug: string): Promise<GranvilleArtistRow | null> {
   try {
     const url = buildWpV2DirectUrl('/artist', { slug, per_page: 5 });
-    const res = await fetch(url, {
-      headers: { Accept: 'application/json' },
-      next: { revalidate: ARTISTS_GALLERY_FETCH_REVALIDATE },
-    });
+    const res = await fetch(url, CMS_GALLERY_FETCH_INIT);
     if (!res.ok) return null;
     const data: unknown = await res.json();
     if (!Array.isArray(data) || !data[0]) return null;
@@ -238,10 +259,7 @@ async function fetchWpV2ArtistFirstBySlug(slug: string): Promise<GranvilleArtist
 async function fetchWpV2ArtistsList(): Promise<GranvilleArtistRow[] | null> {
   try {
     const url = buildWpV2DirectUrl('/artist', { per_page: 100 });
-    const res = await fetch(url, {
-      headers: { Accept: 'application/json' },
-      next: { revalidate: ARTISTS_GALLERY_FETCH_REVALIDATE },
-    });
+    const res = await fetch(url, CMS_GALLERY_FETCH_INIT);
     if (!res.ok) return null;
     const data: unknown = await res.json();
     if (!Array.isArray(data)) return null;
@@ -251,7 +269,7 @@ async function fetchWpV2ArtistsList(): Promise<GranvilleArtistRow[] | null> {
   }
 }
 
-/** Full `gallery` arrays — matches single-post / `include=` behaviour on the CMS. */
+/** Full `gallery` arrays — `include=` matches the full payload on this CMS (unlike bare list or `/artist/{id}` for some posts). */
 async function fetchWpV2ArtistsByIncludeIds(ids: number[]): Promise<GranvilleArtistRow[] | null> {
   if (!ids.length) return [];
   try {
@@ -259,10 +277,7 @@ async function fetchWpV2ArtistsByIncludeIds(ids: number[]): Promise<GranvilleArt
       include: ids.join(','),
       per_page: Math.max(ids.length, 20),
     });
-    const res = await fetch(url, {
-      headers: { Accept: 'application/json' },
-      next: { revalidate: ARTISTS_GALLERY_FETCH_REVALIDATE },
-    });
+    const res = await fetch(url, CMS_GALLERY_FETCH_INIT);
     if (!res.ok) return null;
     const data: unknown = await res.json();
     if (!Array.isArray(data)) return null;
@@ -345,13 +360,18 @@ export async function fetchArtistPortfolioForSlug(
   const gvRow = gvRows?.find((r) => r.slug === apiSlug);
   let wpRow: GranvilleArtistRow | null = null;
   if (gvRow && Number.isFinite(gvRow.id)) {
-    wpRow = await fetchWpV2ArtistSingleById(gvRow.id);
+    wpRow = await fetchWpV2ArtistRowWithFullGallery(gvRow.id);
   }
   if (!wpRow) {
-    wpRow = await fetchWpV2ArtistFirstBySlug(apiSlug);
+    const bySlug = await fetchWpV2ArtistFirstBySlug(apiSlug);
+    if (bySlug && Number.isFinite(bySlug.id)) {
+      wpRow = (await fetchWpV2ArtistsByIncludeIds([bySlug.id]))?.[0] ?? bySlug;
+    } else {
+      wpRow = bySlug;
+    }
   }
 
-  const urls = wpRow ? shuffleArray(normalizeGalleryList(pickGalleryRaw(wpRow))) : [];
+  const urls = wpRow ? shuffleArray(collectGallerySrcEntries(pickGalleryRaw(wpRow))).map((e) => e.src) : [];
 
   if (urls.length === 0) {
     return discoverArtistPortfolioWebp(profileSlug, heroImageUrl);
