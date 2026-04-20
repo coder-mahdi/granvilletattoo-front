@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Container from '@/components/Container';
 import { ARTIST_PROFILES } from '../artistProfiles';
-import { discoverArtistPortfolioWebp } from '@/lib/discoverArtistPortfolioWebp';
+import { fetchArtistPortfolioForSlug } from '@/lib/artistGalleryApi';
 
 type ArtistSlug = keyof typeof ARTIST_PROFILES;
 
@@ -28,7 +28,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
     notFound();
   }
 
-  const portfolio = discoverArtistPortfolioWebp(slug, artist.heroImage);
+  const portfolio = await fetchArtistPortfolioForSlug(slug, artist.heroImage);
 
   return (
     <div className="single-artist-page">

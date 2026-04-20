@@ -1,10 +1,10 @@
 import GalleryPageClient from './GalleryPageClient';
-import { discoverAllGalleryWebpImages } from '@/lib/discoverGalleryWebp';
+import { fetchShopGalleryImages } from '@/lib/artistGalleryApi';
 
-/** Re-scan `public/images/**` on each request so new `.webp` files show in dev without rebuild. */
+/** CMS artist galleries + local piercing; tattoo falls back to `public/images` when CMS galleries are empty. */
 export const dynamic = 'force-dynamic';
 
-export default function GalleryPage() {
-  const allImages = discoverAllGalleryWebpImages();
+export default async function GalleryPage() {
+  const allImages = await fetchShopGalleryImages();
   return <GalleryPageClient allImages={allImages} />;
 }
