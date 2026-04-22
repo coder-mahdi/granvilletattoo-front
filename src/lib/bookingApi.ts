@@ -38,6 +38,18 @@ export type BookingResponse = {
   assigned_artist: AvailabilityArtist;
 };
 
+export type PiercingWorkDay = {
+  day: string;
+  start_time: string;
+  end_time: string;
+};
+
+export type PiercingWorkResponse = {
+  ok: boolean;
+  schedule: PiercingWorkDay[];
+  slot_interval_minutes: number;
+};
+
 function buildUrl(path: string, params?: Record<string, string>): string {
   return buildGranvilleFetchUrl(path, params);
 }
@@ -119,6 +131,21 @@ export async function submitBooking(payload: BookingRequestPayload): Promise<Boo
 
   if (!response.ok) {
     throw new Error(await readErrorMessage(response, 'Unable to create booking'));
+  }
+
+  return response.json();
+}
+
+export async function fetchPiercingWork(): Promise<PiercingWorkResponse> {
+  const response = await fetchWithNetworkError(buildUrl('/piercing-work'), {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response, 'Unable to load piercing work hours'));
   }
 
   return response.json();

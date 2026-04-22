@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic';
 const ALLOWED_FIRST_SEGMENT = new Set([
   'availability',
   'booking',
+  'piercing-work',
   'gift-card',
   'consent',
   'blog',

@@ -6,7 +6,14 @@ import Container from '@/components/Container';
 import FAQSection from '@/components/FAQSection';
 import ReCAPTCHA, { ReCAPTCHARef } from '@/components/ReCAPTCHA';
 import { IS_RECAPTCHA_STRICT } from '@/lib/recaptchaConfig';
-import { AvailabilityArtist, AvailabilityResponse, fetchAvailability, submitBooking } from '@/lib/bookingApi';
+import {
+  AvailabilityArtist,
+  AvailabilityResponse,
+  PiercingWorkDay,
+  fetchAvailability,
+  fetchPiercingWork,
+  submitBooking,
+} from '@/lib/bookingApi';
 
 const ARTIST_SLUG_MAP: Record<string, string> = {
   'kian mokhtari': 'kian-mokhtari',
@@ -42,6 +49,9 @@ export default function BookingPage() {
   const [availableArtists, setAvailableArtists] = useState<AvailabilityArtist[]>([]);
   const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
+  const [piercingWorkSchedule, setPiercingWorkSchedule] = useState<PiercingWorkDay[]>([]);
+  const [piercingSlotIntervalMinutes, setPiercingSlotIntervalMinutes] = useState(30);
+  const [piercingWorkError, setPiercingWorkError] = useState<string | null>(null);
   const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
   const recaptchaRef = useRef<ReCAPTCHARef>(null);
   const [successDetails, setSuccessDetails] = useState<{
@@ -69,10 +79,106 @@ export default function BookingPage() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    let isActive = true;
+
+    const loadPiercingWork = async () => {
+      try {
+        const response = await fetchPiercingWork();
+        if (!isActive) return;
+        setPiercingWorkSchedule(response.schedule || []);
+        setPiercingSlotIntervalMinutes(
+          response.slot_interval_minutes && response.slot_interval_minutes > 0
+            ? response.slot_interval_minutes
+            : 30,
+        );
+        setPiercingWorkError(null);
+      } catch (error) {
+        if (!isActive) return;
+        setPiercingWorkSchedule([]);
+        setPiercingSlotIntervalMinutes(30);
+        setPiercingWorkError(
+          error instanceof Error ? error.message : 'Unable to load piercing work hours.',
+        );
+      }
+    };
+
+    loadPiercingWork();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const getWeekdayForBookingDate = (date: string): string | null => {
+    if (!date) return null;
+    const parts = date.split('-');
+    if (parts.length !== 3) return null;
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    const parsed = new Date(year, month, day, 12, 0, 0);
+    if (Number.isNaN(parsed.getTime())) return null;
+
+    try {
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Vancouver',
+        weekday: 'long',
+      })
+        .format(parsed)
+        .toLowerCase();
+    } catch {
+      return parsed
+        .toLocaleDateString('en-US', { weekday: 'long' })
+        .toLowerCase();
+    }
+  };
+
+  const parseTimeToMinutes = (time24: string): number | null => {
+    const [hoursRaw, minutesRaw] = time24.split(':');
+    const hours = Number.parseInt(hoursRaw, 10);
+    const minutes = Number.parseInt(minutesRaw, 10);
+    if (
+      Number.isNaN(hours) ||
+      Number.isNaN(minutes) ||
+      hours < 0 ||
+      hours > 23 ||
+      minutes < 0 ||
+      minutes > 59
+    ) {
+      return null;
+    }
+    return hours * 60 + minutes;
+  };
+
   const timeSlots = useMemo(() => {
     const slots: string[] = [];
-    const startMinutes = 12 * 60; // 12:00 PM
-    const endMinutes = 23 * 60 + 30; // 11:30 PM
+    let startMinutes = 12 * 60; // 12:00 PM
+    let endMinutes = 23 * 60 + 30; // 11:30 PM
+    let slotIntervalMinutes = 30;
+
+    if (formData.service === 'piercing') {
+      const selectedWeekday = getWeekdayForBookingDate(formData.date);
+      const dayConfig = selectedWeekday
+        ? piercingWorkSchedule.find((schedule) => schedule.day.toLowerCase() === selectedWeekday)
+        : null;
+
+      if (!dayConfig) {
+        return [];
+      }
+
+      const parsedStart = parseTimeToMinutes(dayConfig.start_time);
+      const parsedEnd = parseTimeToMinutes(dayConfig.end_time);
+
+      if (parsedStart === null || parsedEnd === null || parsedStart > parsedEnd) {
+        return [];
+      }
+
+      startMinutes = parsedStart;
+      endMinutes = parsedEnd;
+      slotIntervalMinutes =
+        piercingSlotIntervalMinutes > 0 ? piercingSlotIntervalMinutes : 30;
+    }
 
     // Get current time in Vancouver timezone (America/Vancouver)
     // Use currentTime state to trigger recalculation when time changes
@@ -129,7 +235,7 @@ export default function BookingPage() {
       }
     }
 
-    for (let minutes = startMinutes; minutes <= endMinutes; minutes += 30) {
+    for (let minutes = startMinutes; minutes <= endMinutes; minutes += slotIntervalMinutes) {
       // Skip times that are too early if booking for today
       if (minTimeMinutes !== null && minutes < minTimeMinutes) {
         continue;
@@ -144,7 +250,13 @@ export default function BookingPage() {
     }
 
     return slots;
-  }, [formData.date, currentTime]);
+  }, [
+    formData.service,
+    formData.date,
+    currentTime,
+    piercingWorkSchedule,
+    piercingSlotIntervalMinutes,
+  ]);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -772,6 +884,14 @@ export default function BookingPage() {
                 ))}
               </select>
               {errors.time && <span className="error-message">{errors.time}</span>}
+              {formData.service === 'piercing' && piercingWorkError && (
+                <span className="error-message">{piercingWorkError}</span>
+              )}
+              {formData.service === 'piercing' && formData.date && !piercingWorkError && !timeSlots.length && (
+                <span className="error-message">
+                  No piercing work hours are available for the selected date.
+                </span>
+              )}
             </div>
           </div>
 
