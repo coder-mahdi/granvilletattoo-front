@@ -113,11 +113,30 @@ export async function fetchBlogPosts(
     next,
   });
 
+  const contentType = response.headers.get('content-type') || '';
+  const rawText = await response.text();
+
   if (!response.ok) {
+    console.error('[fetchBlogPosts] HTTP error', {
+      requestUrl,
+      status: response.status,
+      contentType,
+      bodyPreview: rawText.slice(0, 300),
+    });
     throw new Error('Unable to fetch blog posts');
   }
 
-  return response.json();
+  if (!contentType.includes('application/json')) {
+    console.error('[fetchBlogPosts] Non-JSON response', {
+      requestUrl,
+      status: response.status,
+      contentType,
+      bodyPreview: rawText.slice(0, 300),
+    });
+    throw new Error('Blog API did not return JSON');
+  }
+
+  return JSON.parse(rawText);
 }
 
 export async function fetchBlogPostBySlug(
