@@ -16,12 +16,12 @@ export const dynamicParams = true;
 /** No `generateStaticParams` — avoids shipping stale HTML for old slugs after posts are removed from CMS. */
 
 type BlogPageParams = { slug: string };
+type BlogPageProps = { params: Promise<BlogPageParams> };
 
 export async function generateMetadata(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  { params }: any
+  { params }: BlogPageProps
 ): Promise<Metadata> {
-  const { slug } = params as BlogPageParams;
+  const { slug } = await params;
   try {
     const post = await fetchBlogPostBySlug(slug, { next: { revalidate: 0 } });
     return {
@@ -35,11 +35,8 @@ export async function generateMetadata(
   }
 }
 
-export default async function BlogPostPage(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  { params }: any
-) {
-  const { slug } = params as BlogPageParams;
+export default async function BlogPostPage({ params }: BlogPageProps) {
+  const { slug } = await params;
   let post;
   try {
     post = await fetchBlogPostBySlug(slug, { next: { revalidate: 0 } });
