@@ -265,6 +265,33 @@
       }
     }
 
+    .tattnix-promo {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.35rem;
+      max-width: 200px;
+
+      @include mobile {
+        align-items: center;
+        max-width: 160px;
+      }
+
+      .tattnix-promo-caption {
+        font-family: $paragraph-font;
+        font-size: 0.68rem;
+        line-height: 1.35;
+        color: rgba($text-color, 0.75);
+        text-align: right;
+        margin: 0;
+
+        @include mobile {
+          font-size: 0.6rem;
+          text-align: center;
+        }
+      }
+    }
+
     .hero-dropdown {
       position: relative;
       display: inline-block;
