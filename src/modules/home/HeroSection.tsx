@@ -65,29 +65,6 @@ export default function HeroSection() {
           </div>
           <div className="hero-side-nav">
             <Link href="/#our-artists" className="nav-link mobile-hidden">Artists</Link>
-            <div
-               className={`hero-dropdown ${isGalleryMenuOpen ? 'open' : ''}`}
-               ref={dropdownRef}
-             >
-              <button
-                type="button"
-                className="nav-link gallery-toggle"
-                onClick={() => setIsGalleryMenuOpen(prev => !prev)}
-                aria-haspopup="true"
-                aria-expanded={isGalleryMenuOpen}
-              >
-                Gallery
-              </button>
-              <div className="dropdown-menu">
-                <Link href="/gallery?category=tattoo" onClick={() => setIsGalleryMenuOpen(false)}>
-                  Tattoo Gallery
-                </Link>
-                <Link href="/gallery?category=piercing" onClick={() => setIsGalleryMenuOpen(false)}>
-                  Piercing Gallery
-                </Link>
-              </div>
-            </div>
-            <Link href="/booking" className={`nav-link ${showStickyButton ? 'hidden' : ''}`}>Book Now</Link>
             <a
               href="https://app.tattnix.com/"
               className="nav-link tattnix-promo-link"
@@ -99,6 +76,31 @@ export default function HeroSection() {
                 Looking for tattoo ideas based on your mood? Try this fun app.
               </span>
             </a>
+            <div className="hero-nav-actions">
+              <Link href="/booking" className={`nav-link ${showStickyButton ? 'hidden' : ''}`}>Book Now</Link>
+              <div
+                className={`hero-dropdown ${isGalleryMenuOpen ? 'open' : ''}`}
+                ref={dropdownRef}
+              >
+                <button
+                  type="button"
+                  className="nav-link gallery-toggle"
+                  onClick={() => setIsGalleryMenuOpen(prev => !prev)}
+                  aria-haspopup="true"
+                  aria-expanded={isGalleryMenuOpen}
+                >
+                  Gallery
+                </button>
+                <div className="dropdown-menu">
+                  <Link href="/gallery?category=tattoo" onClick={() => setIsGalleryMenuOpen(false)}>
+                    Tattoo Gallery
+                  </Link>
+                  <Link href="/gallery?category=piercing" onClick={() => setIsGalleryMenuOpen(false)}>
+                    Piercing Gallery
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="hero-social">

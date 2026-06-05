@@ -152,25 +152,57 @@
 
   .hero-side-nav {
     position: absolute;
-    top: 5%;
+    top: 8%;
     right: $spacing-md;
-    transform: translateY(-50%) translateX(0);
+    transform: translateY(0);
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    align-items: flex-end;
+    gap: 1.25rem;
     opacity: 1;
     z-index: 1500;
+    max-width: 220px;
 
     @include mobile {
       position: absolute;
-      bottom: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      flex-direction: row;
-      justify-content: center;
-      gap: 0.5rem;
       top: auto;
+      bottom: 18%;
+      left: 50%;
       right: auto;
+      transform: translateX(-50%);
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.65rem;
+      max-width: 280px;
+      width: calc(100% - 2rem);
+    }
+
+    .hero-nav-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1.25rem;
+
+      @include mobile {
+        order: 2;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+
+        .nav-link,
+        .hero-dropdown {
+          flex: 1;
+        }
+
+        .nav-link {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
     }
 
     .nav-link {
@@ -235,7 +267,9 @@
         flex-direction: column;
         align-items: center;
         gap: 0.25rem;
+        width: 100%;
         max-width: 200px;
+        margin-bottom: 0.25rem;
         background: linear-gradient(45deg, #ff6b35, #f7931e);
         color: #000;
         font-family: $paragraph-font;
@@ -275,8 +309,11 @@
         }
 
         @include mobile {
-          max-width: 160px;
+          order: 1;
+          width: 100%;
+          max-width: 260px;
           padding: 0.6rem 0.85rem;
+          margin-bottom: 0;
           background: linear-gradient(45deg, #ff6b35, #f7931e);
           border: 2px solid transparent;
           backdrop-filter: none;
@@ -373,8 +410,10 @@
 
       @include mobile {
         position: relative;
+        width: 100%;
  
          .gallery-toggle {
+           width: 100%;
            background: rgba(255, 255, 255, 0.1);
            border: 1px solid rgba(255, 255, 255, 0.2);
            border-radius: 20px;
@@ -412,7 +451,7 @@
 
   .hero-social {
     position: absolute;
-    bottom: -10rem;
+    bottom: 2.5rem;
     right: $spacing-md;
     display: flex;
     flex-direction: row;
