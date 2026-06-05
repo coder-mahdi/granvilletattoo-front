@@ -87,15 +87,21 @@
       left: 0;
       right: 0;
       opacity: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
       
       @include mobile {
         text-align: center;
-        top: 50%;
-        left: 50%;
-        right: auto;
-        transform: translate(-50%, -50%);
-        max-width: 95%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transform: none;
+        max-width: 100%;
         width: 100%;
+        align-items: center;
+        justify-content: center;
       }
     }
 
@@ -383,10 +389,8 @@
   }
 
   .hero-tattnix-promo {
-    position: absolute;
-    bottom: 5.5rem;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    align-self: center;
     z-index: 1500;
     display: flex;
     flex-direction: column;
@@ -394,6 +398,7 @@
     gap: 0.25rem;
     width: 100%;
     max-width: 280px;
+    margin-top: 1.75rem;
     padding: 0.7rem 1.1rem;
     border-radius: 26px;
     background: linear-gradient(45deg, #ff6b35, #f7931e);
@@ -424,15 +429,20 @@
 
     &:hover {
       background: linear-gradient(45deg, #ff7a4a, #ffa726);
-      transform: translateX(-50%) translateY(-3px);
+      transform: translateY(-3px);
       box-shadow: 0 12px 35px rgba(255, 107, 53, 0.6);
       color: #000;
     }
 
     @include mobile {
+      position: absolute;
       bottom: 18%;
+      left: 50%;
+      align-self: auto;
+      margin-top: 0;
       max-width: 260px;
       padding: 0.6rem 0.85rem;
+      transform: translateX(-50%);
 
       .tattnix-promo-title {
         font-size: 0.9rem;
@@ -440,6 +450,10 @@
 
       .tattnix-promo-caption {
         font-size: 0.55rem;
+      }
+
+      &:hover {
+        transform: translateX(-50%) translateY(-3px);
       }
     }
   }
