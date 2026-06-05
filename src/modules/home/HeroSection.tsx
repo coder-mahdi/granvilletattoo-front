@@ -62,17 +62,6 @@ export default function HeroSection() {
               Where tattoos and piercings meet art Vancouver&apos;s premier studio for bold designs, expert artists, and an unforgettable experience
             </p>
             <p className="hero-subtitle">Walk in, always welcome</p>
-            <a
-              href="https://app.tattnix.com/"
-              className="hero-tattnix-promo tattnix-promo-link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="tattnix-promo-title">Find Your Tattoo Style</span>
-              <span className="tattnix-promo-caption">
-                Looking for tattoo ideas based on your mood? Try this fun app.
-              </span>
-            </a>
           </div>
           <div className="hero-side-nav">
             <Link href="/#our-artists" className="nav-link mobile-hidden">Artists</Link>
@@ -101,6 +90,20 @@ export default function HeroSection() {
                 </div>
               </div>
             </div>
+            <a
+              href="https://app.tattnix.com/"
+              className="hero-tattnix-promo tattnix-promo-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="tattnix-promo-title">
+                <span className="tattnix-promo-title-line">Find Your</span>
+                <span className="tattnix-promo-title-line">Tattoo Style</span>
+              </span>
+              <span className="tattnix-promo-caption">
+                Looking for tattoo ideas based on your mood? Try this fun app.
+              </span>
+            </a>
           </div>
           
           <div className="hero-social">

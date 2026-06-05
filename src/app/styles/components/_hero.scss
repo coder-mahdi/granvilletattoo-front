@@ -87,21 +87,15 @@
       left: 0;
       right: 0;
       opacity: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
       
       @include mobile {
         text-align: center;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        transform: none;
-        max-width: 100%;
+        top: 50%;
+        left: 50%;
+        right: auto;
+        transform: translate(-50%, -50%);
+        max-width: 95%;
         width: 100%;
-        align-items: center;
-        justify-content: center;
       }
     }
 
@@ -179,7 +173,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      gap: 0.5rem;
+      gap: 0.65rem;
       max-width: 280px;
       width: calc(100% - 2rem);
     }
@@ -191,6 +185,7 @@
       gap: 1.25rem;
 
       @include mobile {
+        order: 2;
         flex-direction: row;
         align-items: center;
         justify-content: center;
@@ -390,15 +385,14 @@
 
   .hero-tattnix-promo {
     position: relative;
-    align-self: center;
+    align-self: flex-end;
     z-index: 1500;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
     gap: 0.25rem;
     width: 100%;
-    max-width: 280px;
-    margin-top: 1.75rem;
+    max-width: 200px;
     padding: 0.7rem 1.1rem;
     border-radius: 26px;
     background: linear-gradient(45deg, #ff6b35, #f7931e);
@@ -406,18 +400,22 @@
     font-family: $paragraph-font;
     font-weight: 700;
     text-decoration: none;
-    text-align: center;
+    text-align: right;
     letter-spacing: 0.02em;
     -webkit-font-smoothing: antialiased;
     box-shadow: 0 6px 20px rgba(255, 107, 53, 0.38);
     border: 2px solid transparent;
     white-space: normal;
-    animation: giftCardPulse 2s ease-in-out infinite;
+    animation: giftCardPulse 2s ease-in-out infinite, tattnixShake 4s ease-in-out infinite;
     transition: all 0.3s ease;
 
     .tattnix-promo-title {
       font-size: 1.1rem;
       line-height: 1.2;
+
+      .tattnix-promo-title-line {
+        display: block;
+      }
     }
 
     .tattnix-promo-caption {
@@ -429,31 +427,34 @@
 
     &:hover {
       background: linear-gradient(45deg, #ff7a4a, #ffa726);
+      animation: giftCardPulse 2s ease-in-out infinite;
       transform: translateY(-3px);
       box-shadow: 0 12px 35px rgba(255, 107, 53, 0.6);
       color: #000;
     }
 
     @include mobile {
-      position: absolute;
-      bottom: 18%;
-      left: 50%;
-      align-self: auto;
-      margin-top: 0;
+      order: 1;
+      align-self: center;
+      align-items: center;
+      text-align: center;
       max-width: 260px;
       padding: 0.6rem 0.85rem;
-      transform: translateX(-50%);
 
       .tattnix-promo-title {
         font-size: 0.9rem;
+
+        .tattnix-promo-title-line {
+          display: inline;
+
+          &:first-child::after {
+            content: ' ';
+          }
+        }
       }
 
       .tattnix-promo-caption {
         font-size: 0.55rem;
-      }
-
-      &:hover {
-        transform: translateX(-50%) translateY(-3px);
       }
     }
   }
@@ -570,5 +571,29 @@
   }
   50% {
     box-shadow: 0 8px 35px rgba(255, 107, 53, 0.7);
+  }
+}
+
+@keyframes tattnixShake {
+  0%, 82%, 100% {
+    transform: translateX(0) rotate(0);
+  }
+  84% {
+    transform: translateX(-4px) rotate(-1deg);
+  }
+  86% {
+    transform: translateX(4px) rotate(1deg);
+  }
+  88% {
+    transform: translateX(-3px) rotate(-0.5deg);
+  }
+  90% {
+    transform: translateX(3px) rotate(0.5deg);
+  }
+  92% {
+    transform: translateX(-2px) rotate(0);
+  }
+  94% {
+    transform: translateX(0) rotate(0);
   }
 }
