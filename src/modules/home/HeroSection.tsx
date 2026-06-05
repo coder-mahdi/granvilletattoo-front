@@ -101,7 +101,8 @@ export default function HeroSection() {
                 <span className="tattnix-promo-title-line">Tattoo Style</span>
               </span>
               <span className="tattnix-promo-caption">
-                Looking for tattoo ideas based on your mood? Try this fun app.
+                <span className="tattnix-promo-caption-line">Looking for tattoo ideas based on your mood?</span>
+                <span className="tattnix-promo-caption-line">Try this fun app.</span>
               </span>
             </a>
           </div>
