@@ -88,7 +88,14 @@ export default function HeroSection() {
               </div>
             </div>
             <Link href="/booking" className={`nav-link ${showStickyButton ? 'hidden' : ''}`}>Book Now</Link>
-            <Link href="/gift-card" className="nav-link gift-card-link">Buy Gift Card</Link>
+            <a
+              href="https://app.tattnix.com/"
+              className="nav-link tattnix-promo-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Find Your Tattoo Style
+            </a>
           </div>
           
           <div className="hero-social">

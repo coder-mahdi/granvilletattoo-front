@@ -230,17 +230,19 @@
         transform: translateX(20px);
       }
 
-      &.gift-card-link {
+      &.tattnix-promo-link {
         background: linear-gradient(45deg, #ff6b35, #f7931e);
         color: #000;
+        font-family: $paragraph-font;
         font-weight: 700;
         padding: 0.55rem 1.2rem;
         border-radius: 26px;
         box-shadow: 0 6px 20px rgba(255, 107, 53, 0.38);
         border: 2px solid transparent;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        font-size: 1.05rem;
+        text-transform: none;
+        letter-spacing: 0.02em;
+        font-size: 1.1rem;
+        -webkit-font-smoothing: antialiased;
         animation: giftCardPulse 2s ease-in-out infinite;
 
         &::after {
@@ -255,7 +257,7 @@
         }
 
         @include mobile {
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           padding: 0.6rem 1.2rem;
           background: linear-gradient(45deg, #ff6b35, #f7931e);
           box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);

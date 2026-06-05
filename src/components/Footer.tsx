@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Footer() {
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -59,6 +60,19 @@ export default function Footer() {
                 Facebook
               </a>
             </div>
+          </div>
+        </div>
+
+        <div className="footer-gift-card">
+          <div className="footer-gift-card-content">
+            <span className="footer-gift-card-icon" aria-hidden="true">🎁</span>
+            <div className="footer-gift-card-text">
+              <h4>Gift Cards</h4>
+              <p>Give the gift of tattoos &amp; piercings — pay $100, get $150 value!</p>
+            </div>
+            <Link href="/gift-card" className="footer-gift-card-btn">
+              Buy Gift Card
+            </Link>
           </div>
         </div>
         
